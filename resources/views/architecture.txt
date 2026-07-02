@@ -1,0 +1,37 @@
+resources/
+├── views/
+│   ├── layouts/
+│   │   └── app.blade.php
+│   │
+│   ├── partials/
+│   │   ├── ticker.blade.php
+│   │   ├── header.blade.php
+│   │   ├── search-modal.blade.php
+│   │   ├── footer.blade.php
+│   │   └── radio-player.blade.php
+│   │
+│   ├── sections/
+│   │   ├── hero.blade.php
+│   │   ├── programs.blade.php
+│   │   ├── news.blade.php
+│   │   ├── podcasts.blade.php
+│   │   └── newsletter.blade.php
+│   │
+│   └── home.blade.php
+│
+├── css/
+│   ├── app.css
+│   ├── components/
+│   │   ├── header.css
+│   │   ├── hero.css
+│   │   ├── programs.css
+│   │   ├── news.css
+│   │   ├── footer.css
+│   │   └── player.css
+│
+└── js/
+    ├── app.js
+    ├── carousel.js
+    ├── search.js
+    ├── mobile-menu.js
+    └── player.js
