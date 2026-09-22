@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de bord - SIOKA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap" rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="{{ asset('images/icones/favicon.svg') }}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ asset('images/icones/favicon-96x96.png') }}">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+
+    <!-- Apple -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/icones/apple-touch-icon.png') }}">
+
+    <!-- PWA -->
+    <link rel="manifest" href="{{ asset('images/icones/site.webmanifest') }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('images/icones/web-app-manifest-192x192.png') }}">
+    <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('images/icones/web-app-manifest-512x512.png') }}">
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+
+<body class="dash-body">
+
+    <div class="ambient">
+        <div class="orb orb-a"></div>
+        <div class="orb orb-b"></div>
+    </div>
+
+    <header class="topbar">
+        <div class="topbar-row">
+            <button class="icon-btn nav-toggle" id="navToggle" aria-label="Ouvrir le menu" aria-controls="dashSide" aria-expanded="false">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+            </button>
+            <a href="#" class="logo" aria-label="SIOKA WebRadio">
+                <img src="{{ asset('images/SIOKA-LogoOfficiel.png') }}" alt="SIOKA" class="logo-image">
+            </a>
+            <div class="search">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.35-4.35" />
+                </svg>
+                <input type="text" placeholder="Rechercher un contenu…">
+            </div>
+            <div class="topbar-spacer"></div>
+            <div class="topbar-actions">
+                <button class="icon-btn" id="themeToggle" title="Changer de thème">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
+                    </svg>
+                </button>
+                <button class="icon-btn" title="Notifications">
+                    <span class="ping"></span>
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                    </svg>
+                </button>
+                <div class="avatar-chip">
+                    <span>{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="side-overlay" id="sideOverlay"></div>
+
+    <div class="shell">
+
+        <aside class="side" id="dashSide">
+            <div class="side-card">
+                <div class="side-user">
+                    <div class="side-avatar">
+                        <span>{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                    </div>
+                    <div>
+                        <h3>{{ auth()->user()->name }}</h3>
+                        <p>{{ ucfirst(auth()->user()->role) }}</p>
+                    </div>
+                </div>
+
+                <nav class="nav">
+                    <div class="nav-label">Général</div>
+                    <a href="#" class="active">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <rect x="3" y="3" width="7" height="9" />
+                            <rect x="14" y="3" width="7" height="5" />
+                            <rect x="14" y="12" width="7" height="9" />
+                            <rect x="3" y="16" width="7" height="5" />
+                        </svg>
+                        Vue d'ensemble
+                    </a>
+                    <a href="#">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M4 19V6a2 2 0 0 1 2-2h9l5 5v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z" />
+                            <path d="M14 4v5h5" />
+                        </svg>
+                        Actualités
+                    </a>
+                    <a href="#">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z" />
+                        </svg>
+                        Flash infos
+                    </a>
+                    <a href="#">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                        </svg>
+                        Fil d'infos en continu
+                    </a>
+                    <a href="#">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="2" />
+                            <path d="M16.24 7.76a6 6 0 0 1 0 8.49M7.76 16.24a6 6 0 0 1 0-8.49M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14" />
+                        </svg>
+                        Émissions
+                    </a>
+                    <a href="#">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 8v4l3 2" />
+                        </svg>
+                        Podcasts
+                    </a>
+                    <div class="nav-sep"></div>
+                    <div class="nav-label">Communauté</div>
+                    <a href="#">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <rect x="2" y="4" width="20" height="16" rx="2" />
+                            <path d="m22 7-10 5L2 7" />
+                        </svg>
+                        Abonnés newsletter
+                    </a>
+                    <a href="#">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        </svg>
+                        L'équipe
+                    </a>
+                    <div class="nav-sep"></div>
+                    <div class="nav-label">Compte</div>
+                    <a href="#">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <circle cx="12" cy="7" r="4" />
+                            <path d="M5.5 21a6.5 6.5 0 0 1 13 0" />
+                        </svg>
+                        Mon profil
+                    </a>
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="nav" style="all:unset; width:100%; cursor:pointer;">
+                            <a>
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                                    <polyline points="16 17 21 12 16 7" />
+                                    <line x1="21" y1="12" x2="9" y2="12" />
+                                </svg>
+                                Déconnexion
+                            </a>
+                        </button>
+                    </form>
+                </nav>
+            </div>
+
+            <div class="side-card side-live">
+                <div class="side-live-top"><span class="dot"></span><span>À l'antenne</span></div>
+                <p>SIOKA Webradio — FM 106 Mhz</p>
+                <button class="side-live-btn">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <polygon points="5 3 19 12 5 21 5 3" />
+                    </svg>
+                    Écouter le direct
+                </button>
+            </div>
+        </aside>
+
+        <main class="main">
+
+            <div class="welcome">
+                <div>
+                    <h1>Bonjour, <em>{{ auth()->user()->name }}</em> <span>👋</span></h1>
+                    <p>Voici un aperçu de l'activité SIOKA aujourd'hui.</p>
+                </div>
+                <div class="date-pill">Mardi 7 juillet 2026</div>
+            </div>
+
+            <div class="stats">
+                <div class="stat" style="--stat-glow:var(--magenta-glow); --stat-color:var(--magenta);">
+                    <div class="stat-top">
+                        <div class="stat-icon"><svg fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                <path d="M11 5 6 9H2v6h4l5 4V5Z" />
+                                <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+                            </svg></div>
+                        <span class="stat-delta up">▲ 8,2%</span>
+                    </div>
+                    <div class="stat-value">1 284</div>
+                    <div class="stat-label">Auditeurs live</div>
+                    <svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none">
+                        <polyline points="0,20 14,17 28,19 42,10 56,13 70,6 84,9 100,3" fill="none"
+                            stroke="var(--magenta)" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </div>
+
+                <div class="stat" style="--stat-glow:var(--bleu-glow); --stat-color:var(--bleu);">
+                    <div class="stat-top">
+                        <div class="stat-icon"><svg fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                <path d="M4 19V6a2 2 0 0 1 2-2h9l5 5v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z" />
+                                <path d="M14 4v5h5" />
+                            </svg></div>
+                        <span class="stat-delta up">▲ 5</span>
+                    </div>
+                    <div class="stat-value">37</div>
+                    <div class="stat-label">Actualités publiées</div>
+                    <svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none">
+                        <polyline points="0,22 14,20 28,15 42,17 56,9 70,12 84,7 100,8" fill="none"
+                            stroke="var(--bleu)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+
+                <div class="stat" style="--stat-glow:rgba(201,162,39,.18); --stat-color:var(--or);">
+                    <div class="stat-top">
+                        <div class="stat-icon"><svg fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 8v4l3 2" />
+                            </svg></div>
+                        <span class="stat-delta up">▲ 2</span>
+                    </div>
+                    <div class="stat-value">18</div>
+                    <div class="stat-label">Podcasts en ligne</div>
+                    <svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none">
+                        <polyline points="0,18 14,19 28,14 42,16 56,11 70,13 84,8 100,10" fill="none"
+                            stroke="var(--or)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+
+                <div class="stat" style="--stat-glow:var(--vert-glow); --stat-color:var(--vert);">
+                    <div class="stat-top">
+                        <div class="stat-icon"><svg fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                <rect x="2" y="4" width="20" height="16" rx="2" />
+                                <path d="m22 7-10 5L2 7" />
+                            </svg></div>
+                        <span class="stat-delta up">▲ 128</span>
+                    </div>
+                    <div class="stat-value">3 942</div>
+                    <div class="stat-label">Abonnés newsletter</div>
+                    <svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none">
+                        <polyline points="0,24 14,22 28,20 42,17 56,15 70,11 84,8 100,4" fill="none"
+                            stroke="var(--vert)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </div>
+            </div>
+
+            <section>
+                <div class="dash-sec-head">
+                    <div class="dash-sec-title">Actions rapides</div>
+                </div>
+                <div class="actions">
+                    <a href="#" class="action">
+                        <div class="action-top">
+                            <div class="action-icon"><svg fill="none" stroke="currentColor" stroke-width="2"
+                                        viewBox="0 0 24 24">
+                                    <path d="M12 5v14M5 12h14" />
+                                </svg></div>
+                            <span class="action-arrow"><svg fill="none" stroke="currentColor" stroke-width="2"
+                                        viewBox="0 0 24 24">
+                                    <path d="M5 12h14M13 6l6 6-6 6" />
+                                </svg></span>
+                        </div>
+                        <h4>Publier une actualité</h4>
+                        <p>Rédigez et publiez un nouvel article sur le site SIOKA.</p>
+                    </a>
+                    <a href="#" class="action">
+                        <div class="action-top">
+                            <div class="action-icon"><svg fill="none" stroke="currentColor" stroke-width="2"
+                                        viewBox="0 0 24 24">
+                                    <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z" />
+                                </svg></div>
+                            <span class="action-arrow"><svg fill="none" stroke="currentColor" stroke-width="2"
+                                        viewBox="0 0 24 24">
+                                    <path d="M5 12h14M13 6l6 6-6 6" />
+                                </svg></span>
+                        </div>
+                        <h4>Diffuser un flash info</h4>
+                        <p>Envoyez une alerte prioritaire sur le fil d'infos en continu.</p>
+                    </a>
+                    <a href="#" class="action">
+                        <div class="action-top">
+                            <div class="action-icon"><svg fill="none" stroke="currentColor" stroke-width="2"
+                                        viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <path d="M12 8v4l3 2" />
+                                </svg></div>
+                            <span class="action-arrow"><svg fill="none" stroke="currentColor" stroke-width="2"
+                                        viewBox="0 0 24 24">
+                                    <path d="M5 12h14M13 6l6 6-6 6" />
+                                </svg></span>
+                        </div>
+                        <h4>Gérer les podcasts</h4>
+                        <p>Ajoutez ou modifiez un épisode de podcast.</p>
+                    </a>
+                </div>
+            </section>
+
+            <div class="grid2">
+                <section class="panel">
+                    <div class="panel-pad">
+                        <div class="dash-sec-head">
+                            <div class="dash-sec-title">Activité récente</div>
+                            <a href="#" class="dash-sec-link">Tout voir</a>
+                        </div>
+                    </div>
+
+                    <div class="activity" style="--a-glow:var(--bleu-glow); --a-color:var(--bleu);">
+                        <div class="activity-icon"><svg fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                <path d="M4 19V6a2 2 0 0 1 2-2h9l5 5v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z" />
+                            </svg></div>
+                        <div class="activity-text">
+                            <p><strong>Élections communales</strong> — article mis à jour</p>
+                            <span>Il y a 24 minutes</span>
+                        </div>
+                        <span class="pill ok">Publié</span>
+                    </div>
+
+                    <div class="activity" style="--a-glow:var(--magenta-glow); --a-color:var(--magenta);">
+                        <div class="activity-icon"><svg fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z" />
+                            </svg></div>
+                        <div class="activity-text">
+                            <p><strong>Coupure d'électricité à Analamanga</strong> — flash info diffusé</p>
+                            <span>Il y a 2 heures</span>
+                        </div>
+                        <span class="pill ok">En ligne</span>
+                    </div>
+
+                    <div class="activity" style="--a-glow:var(--vert-glow); --a-color:var(--vert);">
+                        <div class="activity-icon"><svg fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                <rect x="2" y="4" width="20" height="16" rx="2" />
+                                <path d="m22 7-10 5L2 7" />
+                            </svg></div>
+                        <div class="activity-text">
+                            <p><strong>128 nouveaux abonnés</strong> à la newsletter cette semaine</p>
+                            <span>Hier à 18:40</span>
+                        </div>
+                        <span class="pill ok">En hausse</span>
+                    </div>
+
+                    <div class="activity" style="--a-glow:var(--bleu-glow); --a-color:var(--bleu);">
+                        <div class="activity-icon"><svg fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                <path d="M4 19V6a2 2 0 0 1 2-2h9l5 5v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z" />
+                            </svg></div>
+                        <div class="activity-text">
+                            <p><strong>Budget municipal 2027</strong> — brouillon enregistré</p>
+                            <span>Hier à 15:02</span>
+                        </div>
+                        <span class="pill pending">Brouillon</span>
+                    </div>
+                </section>
+
+                <section class="panel live-panel">
+                    <div class="live-top">
+                        <span class="live-title">SIOKA en direct</span>
+                        <span class="live-badge"><span class="dot"></span>Live</span>
+                    </div>
+
+                    <div class="radial">
+                        <svg viewBox="0 0 150 150">
+                            <circle cx="75" cy="75" r="64" fill="none" stroke="var(--glass-bord)"
+                                stroke-width="10" />
+                            <circle cx="75" cy="75" r="64" fill="none" stroke="url(#g1)"
+                                stroke-width="10" stroke-linecap="round" stroke-dasharray="402"
+                                stroke-dashoffset="90" />
+                            <defs>
+                                <linearGradient id="g1" x1="0" y1="0" x2="1"
+                                    y2="1">
+                                    <stop offset="0%" stop-color="var(--magenta)" />
+                                    <stop offset="100%" stop-color="var(--bleu)" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="radial-center">
+                            <strong>1 284</strong>
+                            <span>Auditeurs</span>
+                        </div>
+                    </div>
+
+                    <div class="trend-label"><span>Tendance 7 jours</span><span>+12%</span></div>
+                    <svg class="trend" viewBox="0 0 200 44" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="g2" x1="0" y1="0" x2="0"
+                                y2="1">
+                                <stop offset="0%" stop-color="var(--bleu)" stop-opacity="0.35" />
+                                <stop offset="100%" stop-color="var(--bleu)" stop-opacity="0" />
+                            </linearGradient>
+                        </defs>
+                        <path d="M0,34 L28,28 L57,31 L85,18 L114,22 L142,10 L171,15 L200,4 L200,44 L0,44 Z"
+                            fill="url(#g2)" />
+                        <polyline points="0,34 28,28 57,31 85,18 114,22 142,10 171,15 200,4" fill="none"
+                            stroke="var(--bleu)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+
+                    <div class="mini-player">
+                        <button class="mini-play" aria-label="Écouter"><svg fill="currentColor" viewBox="0 0 24 24">
+                                <polygon points="6 4 20 12 6 20 6 4" />
+                            </svg></button>
+                        <div class="mini-text">
+                            <p>SIOKA Webradio</p>
+                            <span>FM 106 Mhz · En direct</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <section>
+                <div class="dash-sec-head">
+                    <div class="dash-sec-title">Statistiques de visite</div>
+                </div>
+                <div class="panel visits-panel" id="visitsPanel">
+                    <div class="visits-head">
+                        <div class="visits-total">
+                            <strong id="visitsTotal" data-t7="24680" data-t30="104920" data-tyear="1187450">0</strong>
+                            <span>Visites <span id="visitsPeriodLabel">cette semaine</span> · <span id="visitsDelta" style="color:var(--vert); font-weight:700;" data-d7="▲ 14,6%" data-d30="▲ 9,3%" data-dyear="▲ 22,4%">▲ 14,6%</span> vs période précédente</span>
+                        </div>
+                        <div class="visits-period">
+                            <button class="on" data-period="7">7 jours</button>
+                            <button data-period="30">30 jours</button>
+                            <button data-period="year">Année dernière</button>
+                        </div>
+                    </div>
+
+                    <div class="visits-chart-wrap">
+                        <svg class="visits-chart" viewBox="0 0 700 210" preserveAspectRatio="xMidYMid meet"
+                            role="img" aria-label="Visiteurs uniques et pages vues">
+                            <defs>
+                                <linearGradient id="gradBleu" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="var(--bleu)" stop-opacity="1" />
+                                    <stop offset="100%" stop-color="var(--bleu)" stop-opacity=".25" />
+                                </linearGradient>
+                                <linearGradient id="gradMagenta" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="var(--magenta)" stop-opacity="1" />
+                                    <stop offset="100%" stop-color="var(--magenta)" stop-opacity=".25" />
+                                </linearGradient>
+                                <linearGradient id="gradTrend" x1="0" y1="0" x2="1" y2="0">
+                                    <stop offset="0%" stop-color="var(--magenta)" />
+                                    <stop offset="100%" stop-color="var(--bleu)" />
+                                </linearGradient>
+                                <filter id="barGlow" x="-60%" y="-60%" width="220%" height="220%">
+                                    <feGaussianBlur stdDeviation="3.5" result="blur" />
+                                    <feMerge>
+                                        <feMergeNode in="blur" />
+                                        <feMergeNode in="SourceGraphic" />
+                                    </feMerge>
+                                </filter>
+                            </defs>
+
+                            <line class="grid-line" x1="0" y1="170" x2="700" y2="170" stroke="var(--glass-bord)" stroke-width="1" />
+                            <line class="grid-line grid-line-dash" x1="0" y1="113" x2="700" y2="113" stroke="var(--glass-bord)" stroke-width="1" stroke-dasharray="3 6" />
+                            <line class="grid-line grid-line-dash" x1="0" y1="56" x2="700" y2="56" stroke="var(--glass-bord)" stroke-width="1" stroke-dasharray="3 6" />
+
+                            <g class="bar-set" id="daysSet">
+                            <!-- Lundi -->
+                            <g class="bar-group" style="--i:0" data-day="Lundi" data-u7="2210" data-p7="3980" data-u30="9350" data-p30="16850">
+                                <rect class="bar bar-u" filter="url(#barGlow)" x="25" y="125" width="22" height="45" rx="4" fill="url(#gradBleu)" data-y7="125" data-h7="45" data-y30="100" data-h30="70" />
+                                <rect class="bar bar-p" filter="url(#barGlow)" x="53" y="80" width="22" height="90" rx="4" fill="url(#gradMagenta)" data-y7="80" data-h7="90" data-y30="40" data-h30="130" />
+                                <text x="50" y="190" text-anchor="middle" font-size="11" fill="var(--plomb)">Lun</text>
+                            </g>
+
+                            <!-- Mardi -->
+                            <g class="bar-group" style="--i:1" data-day="Mardi" data-u7="2450" data-p7="4550" data-u30="10370" data-p30="19270">
+                                <rect class="bar bar-u" filter="url(#barGlow)" x="125" y="117" width="22" height="53" rx="4" fill="url(#gradBleu)" data-y7="117" data-h7="53" data-y30="85" data-h30="85" />
+                                <rect class="bar bar-p" filter="url(#barGlow)" x="153" y="65" width="22" height="105" rx="4" fill="url(#gradMagenta)" data-y7="65" data-h7="105" data-y30="20" data-h30="150" />
+                                <text x="150" y="190" text-anchor="middle" font-size="11" fill="var(--plomb)">Mar</text>
+                            </g>
+
+                            <!-- Mercredi -->
+                            <g class="bar-group" style="--i:2" data-day="Mercredi" data-u7="2320" data-p7="4200" data-u30="9820" data-p30="17780">
+                                <rect class="bar bar-u" filter="url(#barGlow)" x="225" y="121" width="22" height="49" rx="4" fill="url(#gradBleu)" data-y7="121" data-h7="49" data-y30="95" data-h30="75" />
+                                <rect class="bar bar-p" filter="url(#barGlow)" x="253" y="72" width="22" height="98" rx="4" fill="url(#gradMagenta)" data-y7="72" data-h7="98" data-y30="30" data-h30="140" />
+                                <text x="250" y="190" text-anchor="middle" font-size="11" fill="var(--plomb)">Mer</text>
+                            </g>
+
+                            <!-- Jeudi -->
+                            <g class="bar-group" style="--i:3" data-day="Jeudi" data-u7="2600" data-p7="5100" data-u30="11010" data-p30="21590">
+                                <rect class="bar bar-u" filter="url(#barGlow)" x="325" y="110" width="22" height="60" rx="4" fill="url(#gradBleu)" data-y7="110" data-h7="60" data-y30="75" data-h30="95" />
+                                <rect class="bar bar-p" filter="url(#barGlow)" x="353" y="50" width="22" height="120" rx="4" fill="url(#gradMagenta)" data-y7="50" data-h7="120" data-y30="10" data-h30="160" />
+                                <text x="350" y="190" text-anchor="middle" font-size="11" fill="var(--plomb)">Jeu</text>
+                            </g>
+
+                            <!-- Vendredi -->
+                            <g class="bar-group" style="--i:4" data-day="Vendredi" data-u7="2780" data-p7="5700" data-u30="11770" data-p30="24130">
+                                <rect class="bar bar-u" filter="url(#barGlow)" x="425" y="104" width="22" height="66" rx="4" fill="url(#gradBleu)" data-y7="104" data-h7="66" data-y30="70" data-h30="100" />
+                                <rect class="bar bar-p" filter="url(#barGlow)" x="453" y="35" width="22" height="135" rx="4" fill="url(#gradMagenta)" data-y7="35" data-h7="135" data-y30="12" data-h30="158" />
+                                <text x="450" y="190" text-anchor="middle" font-size="11" fill="var(--plomb)">Ven</text>
+                            </g>
+
+                            <!-- Samedi -->
+                            <g class="bar-group" style="--i:5" data-day="Samedi" data-u7="3150" data-p7="6800" data-u30="13340" data-p30="28790">
+                                <rect class="bar bar-u" filter="url(#barGlow)" x="525" y="88" width="22" height="82" rx="4" fill="url(#gradBleu)" data-y7="88" data-h7="82" data-y30="50" data-h30="120" />
+                                <rect class="bar bar-p" filter="url(#barGlow)" x="553" y="10" width="22" height="160" rx="4" fill="url(#gradMagenta)" data-y7="10" data-h7="160" data-y30="4" data-h30="166" />
+                                <text x="550" y="190" text-anchor="middle" font-size="11" fill="var(--plomb)">Sam</text>
+                            </g>
+
+                            <!-- Dimanche -->
+                            <g class="bar-group" style="--i:6" data-day="Dimanche" data-u7="2900" data-p7="6200" data-u30="12280" data-p30="26260">
+                                <rect class="bar bar-u" filter="url(#barGlow)" x="625" y="97" width="22" height="73" rx="4" fill="url(#gradBleu)" data-y7="97" data-h7="73" data-y30="65" data-h30="105" />
+                                <rect class="bar bar-p" filter="url(#barGlow)" x="653" y="26" width="22" height="144" rx="4" fill="url(#gradMagenta)" data-y7="26" data-h7="144" data-y30="20" data-h30="150" />
+                                <text x="650" y="190" text-anchor="middle" font-size="11" fill="var(--plomb)">Dim</text>
+                            </g>
+                            </g>
+
+                            <g class="bar-set" id="monthsSet" style="display:none">
+                                <g class="bar-group" style="--i:0" data-day="Janvier 2025" data-uyear="8200" data-pyear="15400">
+                                    <rect class="bar bar-u" filter="url(#barGlow)" x="17" y="130" width="10" height="40" rx="3" fill="url(#gradBleu)" data-yyear="130" data-hyear="40" />
+                                    <rect class="bar bar-p" filter="url(#barGlow)" x="31" y="100" width="10" height="70" rx="3" fill="url(#gradMagenta)" data-yyear="100" data-hyear="70" />
+                                    <text x="29" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">Jan</text>
+                                </g>
+                                <g class="bar-group" style="--i:1" data-day="Février 2025" data-uyear="8900" data-pyear="16800">
+                                    <rect class="bar bar-u" filter="url(#barGlow)" x="76" y="125" width="10" height="45" rx="3" fill="url(#gradBleu)" data-yyear="125" data-hyear="45" />
+                                    <rect class="bar bar-p" filter="url(#barGlow)" x="90" y="92" width="10" height="78" rx="3" fill="url(#gradMagenta)" data-yyear="92" data-hyear="78" />
+                                    <text x="88" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">Fév</text>
+                                </g>
+                                <g class="bar-group" style="--i:2" data-day="Mars 2025" data-uyear="9600" data-pyear="18100">
+                                    <rect class="bar bar-u" filter="url(#barGlow)" x="134" y="120" width="10" height="50" rx="3" fill="url(#gradBleu)" data-yyear="120" data-hyear="50" />
+                                    <rect class="bar bar-p" filter="url(#barGlow)" x="148" y="85" width="10" height="85" rx="3" fill="url(#gradMagenta)" data-yyear="85" data-hyear="85" />
+                                    <text x="146" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">Mar</text>
+                                </g>
+                                <g class="bar-group" style="--i:3" data-day="Avril 2025" data-uyear="10200" data-pyear="19500">
+                                    <rect class="bar bar-u" filter="url(#barGlow)" x="192" y="115" width="10" height="55" rx="3" fill="url(#gradBleu)" data-yyear="115" data-hyear="55" />
+                                    <rect class="bar bar-p" filter="url(#barGlow)" x="206" y="78" width="10" height="92" rx="3" fill="url(#gradMagenta)" data-yyear="78" data-hyear="92" />
+                                    <text x="204" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">Avr</text>
+                                </g>
+                                <g class="bar-group" style="--i:4" data-day="Mai 2025" data-uyear="11000" data-pyear="21000">
+                                    <rect class="bar bar-u" filter="url(#barGlow)" x="250" y="108" width="10" height="62" rx="3" fill="url(#gradBleu)" data-yyear="108" data-hyear="62" />
+                                    <rect class="bar bar-p" filter="url(#barGlow)" x="264" y="70" width="10" height="100" rx="3" fill="url(#gradMagenta)" data-yyear="70" data-hyear="100" />
+                                    <text x="262" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">Mai</text>
+                                </g>
+                                <g class="bar-group" style="--i:5" data-day="Juin 2025" data-uyear="11800" data-pyear="22600">
+                                    <rect class="bar bar-u" filter="url(#barGlow)" x="309" y="102" width="10" height="68" rx="3" fill="url(#gradBleu)" data-yyear="102" data-hyear="68" />
+                                    <rect class="bar bar-p" filter="url(#barGlow)" x="323" y="62" width="10" height="108" rx="3" fill="url(#gradMagenta)" data-yyear="62" data-hyear="108" />
+                                    <text x="321" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">Jun</text>
+                                </g>
+                                <g class="bar-group" style="--i:6" data-day="Juillet 2025" data-uyear="10600" data-pyear="20200">
+                                    <rect class="bar bar-u" filter="url(#barGlow)" x="367" y="112" width="10" height="58" rx="3" fill="url(#gradBleu)" data-yyear="112" data-hyear="58" />
+                                    <rect class="bar bar-p" filter="url(#barGlow)" x="381" y="75" width="10" height="95" rx="3" fill="url(#gradMagenta)" data-yyear="75" data-hyear="95" />
+                                    <text x="379" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">Jul</text>
+                                </g>
+                                <g class="bar-group" style="--i:7" data-day="Août 2025" data-uyear="9700" data-pyear="18400">
+                                    <rect class="bar bar-u" filter="url(#barGlow)" x="425" y="120" width="10" height="50" rx="3" fill="url(#gradBleu)" data-yyear="120" data-hyear="50" />
+                                    <rect class="bar bar-p" filter="url(#barGlow)" x="440" y="88" width="10" height="82" rx="3" fill="url(#gradMagenta)" data-yyear="88" data-hyear="82" />
+                                    <text x="438" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">Aoû</text>
+                                </g>
+                                <g class="bar-group" style="--i:8" data-day="Septembre 2025" data-uyear="12600" data-pyear="24800">
+                                    <rect class="bar bar-u" filter="url(#barGlow)" x="484" y="98" width="10" height="72" rx="3" fill="url(#gradBleu)" data-yyear="98" data-hyear="72" />
+                                    <rect class="bar bar-p" filter="url(#barGlow)" x="498" y="52" width="10" height="118" rx="3" fill="url(#gradMagenta)" data-yyear="52" data-hyear="118" />
+                                    <text x="496" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">Sep</text>
+                                </g>
+                                <g class="bar-group" style="--i:9" data-day="Octobre 2025" data-uyear="13800" data-pyear="27200">
+                                    <rect class="bar bar-u" filter="url(#barGlow)" x="542" y="90" width="10" height="80" rx="3" fill="url(#gradBleu)" data-yyear="90" data-hyear="80" />
+                                    <rect class="bar bar-p" filter="url(#barGlow)" x="556" y="42" width="10" height="128" rx="3" fill="url(#gradMagenta)" data-yyear="42" data-hyear="128" />
+                                    <text x="554" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">Oct</text>
+                                </g>
+                                <g class="bar-group" style="--i:10" data-day="Novembre 2025" data-uyear="15200" data-pyear="30100">
+                                    <rect class="bar bar-u" filter="url(#barGlow)" x="600" y="80" width="10" height="90" rx="3" fill="url(#gradBleu)" data-yyear="80" data-hyear="90" />
+                                    <rect class="bar bar-p" filter="url(#barGlow)" x="614" y="30" width="10" height="140" rx="3" fill="url(#gradMagenta)" data-yyear="30" data-hyear="140" />
+                                    <text x="612" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">Nov</text>
+                                </g>
+                                <g class="bar-group" style="--i:11" data-day="Décembre 2025" data-uyear="17400" data-pyear="34600">
+                                    <rect class="bar bar-u" filter="url(#barGlow)" x="659" y="70" width="10" height="100" rx="3" fill="url(#gradBleu)" data-yyear="70" data-hyear="100" />
+                                    <rect class="bar bar-p" filter="url(#barGlow)" x="673" y="10" width="10" height="160" rx="3" fill="url(#gradMagenta)" data-yyear="10" data-hyear="160" />
+                                    <text x="671" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">Déc</text>
+                                </g>
+                            </g>
+
+                            <polyline id="visitsTrend" class="trend-overlay" fill="none" stroke="url(#gradTrend)"
+                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                                points="50,80 150,65 250,72 350,50 450,35 550,10 650,26" />
+                        </svg>
+                        <div class="visits-tooltip" id="visitsTooltip"></div>
+                    </div>
+
+                    <div class="visits-legend">
+                        <div class="visits-legend-item"><span class="visits-legend-dot" style="background:var(--bleu);"></span>Visiteurs uniques</div>
+                        <div class="visits-legend-item"><span class="visits-legend-dot" style="background:var(--magenta);"></span>Pages vues</div>
+                        <div class="visits-legend-item"><span class="visits-legend-dot" style="background:linear-gradient(90deg,var(--magenta),var(--bleu));"></span>Tendance</div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <div class="dash-sec-head">
+                    <div class="dash-sec-title">Top contenus de la semaine</div><a href="#"
+                        class="dash-sec-link">Statistiques</a>
+                </div>
+                <div class="rank-grid">
+                    <div class="rank-card">
+                        <span class="rank-num">01</span>
+                        <div class="rank-info">
+                            <p>Élections communales : les résultats commune par commune</p><span>4 210 lectures</span>
+                        </div>
+                    </div>
+                    <div class="rank-card">
+                        <span class="rank-num">02</span>
+                        <div class="rank-info">
+                            <p>Épisode 42 — Culture Malagasy</p><span>1 860 écoutes</span>
+                        </div>
+                    </div>
+                    <div class="rank-card">
+                        <span class="rank-num">03</span>
+                        <div class="rank-info">
+                            <p>Marché d'Analakely : reportage terrain</p><span>1 402 lectures</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const root = document.documentElement;
+            if (root.getAttribute('data-theme') === 'light') root.removeAttribute('data-theme');
+            else root.setAttribute('data-theme', 'light');
+        });
+
+        // Menu tiroir (mobile-first) : ouverture, overlay, fermeture au clic sur un lien
+        const navToggle = document.getElementById('navToggle');
+        const sideOverlay = document.getElementById('sideOverlay');
+
+        function openNav() {
+            document.body.classList.add('nav-open');
+            navToggle.setAttribute('aria-expanded', 'true');
+        }
+        function closeNav() {
+            document.body.classList.remove('nav-open');
+            navToggle.setAttribute('aria-expanded', 'false');
+        }
+
+        navToggle.addEventListener('click', () => {
+            document.body.classList.contains('nav-open') ? closeNav() : openNav();
+        });
+        sideOverlay.addEventListener('click', closeNav);
+        document.querySelectorAll('#dashSide .nav a').forEach(link => link.addEventListener('click', closeNav));
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeNav(); });
+
+        // Referme le tiroir si on repasse en largeur bureau
+        const desktopQuery = window.matchMedia('(min-width: 861px)');
+        desktopQuery.addEventListener('change', (e) => { if (e.matches) closeNav(); });
+    </script>
+
+    <script>
+        // ── Carte "Statistiques de visite" : version avancée ──────────
+        (function () {
+            const panel = document.getElementById('visitsPanel');
+            if (!panel) return;
+
+            const fmt = new Intl.NumberFormat('fr-FR');
+            const totalEl = document.getElementById('visitsTotal');
+            const deltaEl = document.getElementById('visitsDelta');
+            const periodLabelEl = document.getElementById('visitsPeriodLabel');
+            const trend = document.getElementById('visitsTrend');
+            const tooltip = document.getElementById('visitsTooltip');
+            const wrap = panel.querySelector('.visits-chart-wrap');
+            const daysSet = document.getElementById('daysSet');
+            const monthsSet = document.getElementById('monthsSet');
+            const allGroups = panel.querySelectorAll('.bar-group');
+            const periodButtons = panel.querySelectorAll('.visits-period button');
+
+            function activeGroups(period) {
+                return period === 'year' ? monthsSet.querySelectorAll('.bar-group') : daysSet.querySelectorAll('.bar-group');
+            }
+
+            // Compteur animé (ease-out)
+            function animateNumber(el, from, to, duration) {
+                const start = performance.now();
+                function tick(now) {
+                    const p = Math.min(1, (now - start) / duration);
+                    const eased = 1 - Math.pow(1 - p, 3);
+                    el.textContent = fmt.format(Math.round(from + (to - from) * eased));
+                    if (p < 1) requestAnimationFrame(tick);
+                }
+                requestAnimationFrame(tick);
+            }
+
+            // Recalcule la courbe de tendance à partir du sommet des barres "pages vues" du jeu actif
+            function refreshTrend(period) {
+                const pts = Array.from(activeGroups(period)).map(g => {
+                    const bp = g.querySelector('.bar-p');
+                    const x = parseFloat(bp.getAttribute('x')) + parseFloat(bp.getAttribute('width')) / 2;
+                    const y = parseFloat(bp.getAttribute('y'));
+                    return x + ',' + y;
+                });
+                trend.setAttribute('points', pts.join(' '));
+            }
+
+            function setPeriod(period, animateCount) {
+                const isYear = period === 'year';
+                daysSet.style.display = isYear ? 'none' : '';
+                monthsSet.style.display = isYear ? '' : 'none';
+
+                activeGroups(period).forEach(g => {
+                    ['u', 'p'].forEach(k => {
+                        const rect = g.querySelector('.bar-' + k);
+                        rect.setAttribute('y', rect.getAttribute('data-y' + period));
+                        rect.setAttribute('height', rect.getAttribute('data-h' + period));
+                    });
+                });
+
+                const targetTotal = parseInt(totalEl.getAttribute('data-t' + period), 10);
+                const currentTotal = parseInt((totalEl.textContent || '0').replace(/\s/g, ''), 10) || 0;
+                if (animateCount) animateNumber(totalEl, currentTotal, targetTotal, 700);
+                else totalEl.textContent = fmt.format(targetTotal);
+
+                deltaEl.textContent = deltaEl.getAttribute('data-d' + period);
+                periodLabelEl.textContent = period === '7' ? 'cette semaine'
+                    : period === '30' ? 'ces 30 derniers jours'
+                    : "sur l'année dernière";
+
+                // La courbe se redessine en douceur après la transition des barres
+                setTimeout(() => refreshTrend(period), isYear ? 0 : 350);
+                // Ré-anime l'entrée des barres du jeu qui vient d'apparaître
+                if (isYear) {
+                    panel.classList.remove('is-ready');
+                    requestAnimationFrame(() => requestAnimationFrame(() => panel.classList.add('is-ready')));
+                }
+            }
+
+            periodButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (btn.classList.contains('on')) return;
+                    periodButtons.forEach(b => b.classList.remove('on'));
+                    btn.classList.add('on');
+                    setPeriod(btn.getAttribute('data-period'), true);
+                });
+            });
+
+            // Tooltip interactif au survol des groupes de barres (jours ou mois)
+            allGroups.forEach(g => {
+                g.addEventListener('mouseenter', () => {
+                    const currentPeriod = panel.querySelector('.visits-period button.on').getAttribute('data-period');
+                    activeGroups(currentPeriod).forEach(o => o.classList.toggle('dim', o !== g));
+                    const u = fmt.format(parseInt(g.getAttribute('data-u' + currentPeriod), 10));
+                    const p = fmt.format(parseInt(g.getAttribute('data-p' + currentPeriod), 10));
+                    tooltip.innerHTML = '<strong>' + g.getAttribute('data-day') + '</strong>' +
+                        '<span><i style="background:var(--bleu)"></i>Uniques : ' + u + '</span>' +
+                        '<span><i style="background:var(--magenta)"></i>Pages vues : ' + p + '</span>';
+                    tooltip.classList.add('show');
+                });
+                g.addEventListener('mousemove', (e) => {
+                    const box = wrap.getBoundingClientRect();
+                    let left = e.clientX - box.left + 14;
+                    let top = e.clientY - box.top - 10;
+                    const maxLeft = box.width - 170;
+                    if (left > maxLeft) left = e.clientX - box.left - 170 - 14;
+                    tooltip.style.left = left + 'px';
+                    tooltip.style.top = top + 'px';
+                });
+                g.addEventListener('mouseleave', () => {
+                    const currentPeriod = panel.querySelector('.visits-period button.on').getAttribute('data-period');
+                    activeGroups(currentPeriod).forEach(o => o.classList.remove('dim'));
+                    tooltip.classList.remove('show');
+                });
+            });
+
+            // Animation d'entrée + premier affichage
+            requestAnimationFrame(() => panel.classList.add('is-ready'));
+            refreshTrend('7');
+            animateNumber(totalEl, 0, parseInt(totalEl.getAttribute('data-t7'), 10), 1100);
+        })();
+    </script>
+</body>
+
+</html>

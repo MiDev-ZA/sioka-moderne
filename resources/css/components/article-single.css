@@ -1,0 +1,54 @@
+.art-single {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.art-single-hero {
+  margin-bottom: 2rem;
+}
+
+.art-single-hero img {
+  width: 100%;
+  height: auto;
+  max-height: 480px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.art-single-caption {
+  font-size: 0.85rem;
+  color: light-dark(#4b5563, #cbd5e1);
+  opacity: 0.85;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+.art-single-title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0.75rem 0 1.5rem;
+  color: light-dark(#111827, #f9fafb);
+}
+
+.art-single-content {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: light-dark(#1f2937, #e5e7eb);
+}
+
+.art-single-content p {
+  margin-bottom: 1.25rem;
+}
+
+.art-related {
+  max-width: 1100px;
+  margin: 3rem auto 0;
+  padding: 0 1.5rem 4rem;
+}
+
+.art-related .sec-title {
+  font-size: 1.35rem;
+  margin-bottom: 1.5rem;
+}

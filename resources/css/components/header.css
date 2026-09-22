@@ -519,7 +519,7 @@
   border-left: 2px solid var(--glass-bord);
   margin-left: 14px;
 }
-.mnav-panel > * { min-height: 0; }
+.mnav-panel > .mnav-panel-inner { min-height: 0; overflow: hidden; }
 .mnav-panel.open { grid-template-rows: 1fr; }
 
 .mnav-panel a {

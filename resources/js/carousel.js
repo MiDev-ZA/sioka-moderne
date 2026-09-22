@@ -1,5 +1,10 @@
-(function () {
-  const track  = document.getElementById('crslTrack');
+document.addEventListener('turbo:load', function () {
+  const track = document.getElementById('crslTrack');
+  const wrap  = document.getElementById('carousel');
+
+  // Le carousel n'existe que sur la homepage — on sort silencieusement ailleurs
+  if (!track || !wrap) return;
+
   const slides = [...track.querySelectorAll('.crsl-slide')];
   const dots   = [...document.getElementById('crslDots').querySelectorAll('.crsl-dot')];
   const glass  = document.getElementById('crslGlass');
@@ -18,7 +23,7 @@
     elTitle.textContent  = s.dataset.title;
     elExc.textContent    = s.dataset.excerpt;
     elLive.style.display = s.dataset.live === 'true' ? 'flex' : 'none';
-    
+
     elMeta.innerHTML =
       `<span><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>${s.dataset.time}</span>` +
       `<span><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>${s.dataset.read}</span>` +
@@ -46,7 +51,7 @@
 
   function resetTimer() {
     clearInterval(timer);
-    timer = setInterval(() => go(cur + 1), 6000); 
+    timer = setInterval(() => go(cur + 1), 6000);
   }
 
   updateGlass(0);
@@ -57,7 +62,6 @@
   document.getElementById('crslNext').addEventListener('click', () => { go(cur + 1); resetTimer(); });
   dots.forEach((d, i) => d.addEventListener('click', () => { go(i); resetTimer(); }));
 
-  const wrap = document.getElementById('carousel');
   wrap.addEventListener('mouseenter', () => clearInterval(timer));
   wrap.addEventListener('mouseleave', () => resetTimer());
 
@@ -81,4 +85,4 @@
     if (e.key === 'ArrowLeft')  { go(cur - 1); resetTimer(); e.preventDefault(); }
     if (e.key === 'ArrowRight') { go(cur + 1); resetTimer(); e.preventDefault(); }
   });
-})();
+});

@@ -1,43 +1,143 @@
+/* ==========================================================
+   PARTENAIRES — 3 niveaux : Initié par / Mis en œuvre par /
+   Financé par. ROHY et l'UE utilisent le modificateur
+   --featured pour un badge plus grand (mise en évidence),
+   les 8 porteurs de "Mis en œuvre par" restent en taille standard.
+   ========================================================== */
 .partners {
+    padding: 50px var(--gap) 60px;
+}
+
+.partners-inner {
     max-width: var(--max);
-    margin: 60px auto 0;
-    padding: 30px var(--gap);
-    border-top: 1px solid var(--glass-bord);
+    margin: 0 auto;
+    background: var(--ink-4);
+    border: 1px solid var(--glass-bord);
+    border-radius: 16px;
+    padding: 36px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+}
+
+.partners-tier {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+}
+
+.partners-heading {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--plomb);
+    text-align: center;
+}
+
+.partners-divider {
+    width: 60px;
+    height: 1px;
+    background: var(--glass-bord);
+}
+
+.partners-grid {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: 40px;
-    opacity: 0.7;
-    transition: opacity 0.3s;
-}
-.partners:hover {
-    opacity: 1;
-}
-.partner-logo {
-    font-size: 18px;
-    font-weight: 800;
-    color: var(--plomb);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-.partner-eu {
-    border-left: 2px solid var(--bleu);
-    padding-left: 12px;
+    gap: 20px;
 }
 
+/* Grille dédiée aux 8 porteurs de "Mis en œuvre par" : responsive,
+   4 colonnes max en desktop pour garder chaque logo lisible. */
+.partners-grid--network {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    width: 100%;
+    max-width: 900px;
+}
+
+@media (min-width: 560px) {
+    .partners-grid--network {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.partner-card {
+    display: flex;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.partner-card:hover,
+.partner-card:focus-visible {
+    transform: translateY(-3px);
+}
+
+/* Badge standard (8 porteurs "Mis en œuvre par") */
+.partner-card-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 64px;
+    width: 100%;
+    padding: 10px 16px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.partner-card-logo img {
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+/* Badge agrandi : ROHY (initiateur) et UE (financeur), les deux
+   entités singulières du footer, se démarquent visuellement des
+   8 logos du niveau "Mis en œuvre par". */
+.partner-card-logo--featured {
+    height: 92px;
+    padding: 16px 28px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.partner-card-logo--featured img {
+    max-width: 260px;
+}
+
+@media (max-width: 480px) {
+    .partner-card-logo {
+        height: 52px;
+        padding: 8px 12px;
+    }
+    .partner-card-logo--featured {
+        height: 72px;
+        padding: 12px 20px;
+    }
+    .partner-card-logo--featured img {
+        max-width: 200px;
+    }
+}
+
+/* ==========================================================
+   FOOTER
+   ========================================================== */
 footer {
     background: var(--ink-3);
     border-top: 1px solid var(--glass-bord);
     margin-top: 20px;
     /* Le lecteur radio est en position:fixed et recouvre le bas du
-     viewport. --rp-player-h est mesuré dynamiquement en JS (voir
-     radio-player.blade.php) pour correspondre à sa hauteur réelle
-     (mobile/desktop/safe-area iOS) et garantit que le footer reste
-     toujours entièrement visible au scroll, jamais éclipsé. */
+       viewport. --rp-player-h est mesuré dynamiquement en JS (voir
+       radio-player.blade.php) pour correspondre à sa hauteur réelle
+       (mobile/desktop/safe-area iOS) et garantit que le footer reste
+       toujours entièrement visible au scroll, jamais éclipsé. */
     margin-bottom: var(--rp-player-h, 96px);
 }
 
@@ -47,13 +147,16 @@ footer {
     padding: 60px var(--gap) 40px;
     display: grid;
     grid-template-columns: 1fr;
+    align-items: start;
     gap: 40px;
 }
+
 @media (min-width: 481px) {
     .footer-main {
         grid-template-columns: 1fr 1fr;
     }
 }
+
 @media (min-width: 1060px) {
     .footer-main {
         grid-template-columns: 2fr 1fr 1fr 1.5fr;
@@ -61,10 +164,12 @@ footer {
     }
 }
 
+/* --- Bloc identité --- */
 .footer-brand .logo {
     font-size: 32px;
     margin-bottom: 16px;
 }
+
 .footer-brand p {
     font-size: 13px;
     font-weight: 300;
@@ -72,11 +177,15 @@ footer {
     line-height: 1.7;
     max-width: 320px;
     margin-bottom: 24px;
+    background: transparent;
 }
+
 .socials {
     display: flex;
     gap: 10px;
+    list-style: none;
 }
+
 .social-btn {
     width: 38px;
     height: 38px;
@@ -87,18 +196,22 @@ footer {
     align-items: center;
     justify-content: center;
     color: var(--blanc);
-    transition: all 0.2s;
+    transition: background 0.2s, border-color 0.2s, transform 0.2s;
 }
-.social-btn:hover {
+
+.social-btn:hover,
+.social-btn:focus-visible {
     background: var(--magenta);
     border-color: var(--magenta);
     transform: translateY(-3px);
 }
+
 .social-btn svg {
     width: 18px;
     height: 18px;
 }
 
+/* --- Colonnes de navigation --- */
 .footer-col h4 {
     font-size: 13px;
     font-weight: 800;
@@ -107,22 +220,35 @@ footer {
     color: var(--blanc);
     margin-bottom: 20px;
 }
+
 .footer-col ul {
     list-style: none;
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
+
 .footer-col a {
     font-size: 13px;
     font-weight: 400;
     color: var(--plomb);
     transition: color 0.2s;
 }
-.footer-col a:hover {
+
+.footer-col a:hover,
+.footer-col a:focus-visible {
     color: var(--bleu);
 }
 
+.footer-col address {
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--plomb);
+}
+
+/* --- Bas de page --- */
 .footer-bottom {
     border-top: 1px solid var(--glass-bord);
     background: var(--ink-4);
@@ -132,7 +258,19 @@ footer {
     font-weight: 300;
     color: var(--plomb);
 }
+
 .footer-bottom strong {
     font-weight: 600;
     color: var(--blanc);
+}
+
+/* ==========================================================
+   ACCESSIBILITÉ — focus clavier visible sur tous les liens du footer
+   ========================================================== */
+.partner-card:focus-visible,
+.social-btn:focus-visible,
+.footer-col a:focus-visible {
+    outline: 2px solid var(--bleu);
+    outline-offset: 3px;
+    border-radius: 2px;
 }

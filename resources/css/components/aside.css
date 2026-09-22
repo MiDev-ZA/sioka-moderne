@@ -77,3 +77,38 @@ a.feed-item:hover {
 .feed-title {
   font-size: 0.87rem; font-weight: 500; line-height: 1.4; margin: 0;
 }
+
+/* --- À ajouter dans ton aside.css --- */
+
+@media (min-width: 1060px) {
+    .hero-side {
+        /* 1. Écrase l'alignement du parent : force l'aside à s'étirer */
+        align-self: stretch; 
+        
+        /* 2. LE SECRET : Annule l'impact de la base de données. 
+           Dit à la grille que cet élément a une hauteur de contenu de 0. */
+        height: 0; 
+        
+        /* 3. Force l'aside à remplir uniquement l'espace calculé par le carrousel */
+        min-height: 100%; 
+    }
+}
+
+/* --- Mise à jour de ta classe existante --- */
+.news-feed-window {
+  position: relative;
+  flex-grow: 1;
+  min-height: 0; 
+  /* Ton masque de fondu existant reste ici */
+  mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
+  
+  /* Ajout crucial pour la gestion des données BDD : */
+  overflow-y: auto; /* Permet le scroll interne si tu as 50 fils d'infos */
+  scrollbar-width: none; /* Masque la scrollbar sur Firefox pour l'esthétique */
+}
+
+/* Masque la scrollbar sur Chrome/Safari pour garder ton design épuré */
+.news-feed-window::-webkit-scrollbar {
+    display: none;
+}

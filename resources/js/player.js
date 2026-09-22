@@ -3,56 +3,42 @@ const playBtn = document.getElementById('playBtn');
 const iconPlay = document.getElementById('iconPlay');
 const iconPause = document.getElementById('iconPause');
 const rpTitle = document.getElementById('rpTitle');
-const volSlider = document.getElementById('volSlider');
-const volFill = document.getElementById('volFill');
 
-let isPlaying = false;
+if (audio && playBtn) {
+  let isPlaying = false;
 
-window.togglePlay = function() {
-  if (isPlaying) {
+  const pauseRadio = () => {
     audio.pause();
-    audio.src = ""; 
     iconPlay.style.display = 'block';
     iconPause.style.display = 'none';
     playBtn.classList.remove('playing');
-    rpTitle.textContent = "Webradio en pause";
-  } else {
-    audio.src = "https://securestreams.autopo.st:2584/;"; 
-    audio.play().catch(e => {
-      console.log("Lecture auto bloquée ou erreur réseau", e);
-      rpTitle.textContent = "Erreur de connexion au flux";
-    });
-    iconPlay.style.display = 'none';
-    iconPause.style.display = 'block';
-    playBtn.classList.add('playing');
-    rpTitle.textContent = "SIOKA Webradio - FM 106 Mhz";
-  }
-  isPlaying = !isPlaying;
-};
+    rpTitle.textContent = 'Webradio en pause';
+    isPlaying = false;
+  };
 
-playBtn.addEventListener('click', togglePlay);
+  window.togglePlay = function () {
+    if (isPlaying) {
+      pauseRadio();
+    } else {
+      // Un podcast est peut-être en cours de lecture : on lui demande de se mettre en pause
+      document.dispatchEvent(new CustomEvent('sioka:radio-play'));
 
-let isDraggingVol = false;
+      audio.play().catch(e => {
+        console.log('Lecture auto bloquée ou erreur réseau', e);
+        rpTitle.textContent = 'Erreur de connexion au flux';
+      });
+      iconPlay.style.display = 'none';
+      iconPause.style.display = 'block';
+      playBtn.classList.add('playing');
+      rpTitle.textContent = 'SIOKA Webradio - FM 106 Mhz';
+      isPlaying = true;
+    }
+  };
 
-function setVolume(e) {
-  const rect = volSlider.getBoundingClientRect();
-  let x = e.clientX - rect.left;
-  if (x < 0) x = 0;
-  if (x > rect.width) x = rect.width;
-  const pct = x / rect.width;
-  volFill.style.width = (pct * 100) + '%';
-  audio.volume = pct;
+  playBtn.addEventListener('click', togglePlay);
+
+  // Un podcast vient de démarrer : on met la webradio en pause si elle joue
+  document.addEventListener('sioka:podcast-play', () => {
+    if (isPlaying) pauseRadio();
+  });
 }
-
-volSlider.addEventListener('mousedown', (e) => {
-  isDraggingVol = true;
-  setVolume(e);
-});
-
-document.addEventListener('mousemove', (e) => {
-  if (isDraggingVol) setVolume(e);
-});
-
-document.addEventListener('mouseup', () => {
-  isDraggingVol = false;
-});

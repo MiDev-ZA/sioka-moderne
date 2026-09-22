@@ -8,7 +8,7 @@
 
     @include('sections.news')
 
-    @include('sections.programs')
+    @include('sections.videos')
 
     @include('sections.podcasts')
 

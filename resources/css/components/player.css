@@ -502,4 +502,508 @@
   .radio-player.is-loading .rp-btn-play::after {
     animation: none !important;
   }
+}/* ==========================================================================
+   Lecteur radio persistant SIOKA
+   Barre compacte à hauteur fixe (~64px), pilule flottante à partir de
+   768px, "bottom sheet" arrondi en haut sur mobile. Aucun élément ne
+   dépend d'un popup en position:absolute pour rester compact : tout est
+   dimensionné pour tenir dans la même rangée, donc la barre ne peut pas
+   "exploser" en hauteur même si un style externe entre en conflit.
+
+   NOTE IMPORTANTE : la hauteur réelle du lecteur (--rp-player-h) est
+   mesurée en JS (voir radio-player.blade.php) et exposée sur :root.
+   footer.css l'utilise pour garantir que le pied de page n'est jamais
+   masqué par cette barre fixe.
+   ========================================================================== */
+
+:root {
+  --rp-player-h: 96px; /* valeur de repli tant que le JS n'a pas mesuré */
+}
+
+.radio-player {
+  --rp-radius: 20px;
+  --rp-btn: 38px;      /* boutons secondaires : like, partage, volume */
+  --rp-play: 50px;     /* bouton play principal */
+  --rp-disc: 40px;      /* diamètre du disque vinyle / logo */
+  --rp-slider-w: 18px;  /* largeur FIXE de la piste de volume, jamais modifiée ailleurs */
+
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 500;
+  display: flex;
+  justify-content: center;
+  padding: 0 var(--gap) env(safe-area-inset-bottom, 0px);
+  pointer-events: none; /* seule la coque .rp-shell est cliquable */
+}
+
+@media (min-width: 768px) {
+  .radio-player { padding: 14px var(--gap) calc(14px + env(safe-area-inset-bottom, 0px)); }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Coque                                                                   */
+/* ---------------------------------------------------------------------- */
+
+.rp-shell {
+  pointer-events: auto;
+  width: 100%;
+  max-width: 1040px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 8px 12px;
+  background: var(--glass-2); /* filet de sécurité si backdrop-filter indisponible */
+  border: 1px solid var(--glass-bord);
+  border-bottom: none;
+  border-radius: 18px 18px 0 0;
+  box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.35);
+  transition: box-shadow 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .rp-shell {
+    background: linear-gradient(180deg, var(--glass-2), var(--glass));
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+}
+
+@media (min-width: 768px) {
+  .rp-shell {
+    border: 1px solid var(--glass-bord);
+    border-radius: 999px;
+    padding: 8px 10px 8px 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  }
+}
+
+.radio-player.is-playing .rp-shell {
+  box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.35), 0 0 22px var(--magenta-glow, rgba(233, 30, 140, 0.22));
+}
+@media (min-width: 768px) {
+  .radio-player.is-playing .rp-shell {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), 0 0 22px var(--magenta-glow, rgba(233, 30, 140, 0.22));
+  }
+}
+
+/* état d'erreur de flux : indication discrète, sans alarmer inutilement */
+.radio-player.has-error .rp-shell { border-top-color: rgba(255, 176, 32, 0.5); }
+.radio-player.has-error .rp-live { color: #ffb020; }
+.radio-player.has-error .live-dot { background: #ffb020; }
+.radio-player.has-error .live-dot::after { animation: none; opacity: 0; }
+.radio-player.has-error .rp-title { color: #9CA7B8; }
+
+/* ---------------------------------------------------------------------- */
+/* Disque vinyle + logo — l'ensemble tourne comme un seul objet physique  */
+/* ---------------------------------------------------------------------- */
+
+.rp-info { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
+
+.rp-artwork {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--rp-disc);
+  height: var(--rp-disc);
+  flex-shrink: 0;
+}
+
+/* .rp-disc = le vinyle complet (sillons + galette + logo au centre).
+   C'est CET élément qui tourne : le logo tourne donc directement avec lui,
+   incrusté comme l'étiquette centrale d'un vrai disque. */
+.rp-disc {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 35% 30%, #35353f 0%, #16161e 55%, #0a0a0e 100%);
+  box-shadow:
+    0 3px 10px rgba(0, 0, 0, 0.5),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+  transform: rotate(0deg);
+  will-change: transform;
+}
+
+/* Sillons du vinyle : anneaux concentriques fins, purement décoratifs */
+.rp-disc::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: repeating-radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 255, 255, 0.05) 0px,
+    rgba(255, 255, 255, 0.05) 1px,
+    transparent 1.5px,
+    transparent 3px
+  );
+  pointer-events: none;
+}
+
+/* reflet lumineux subtil, façon plastique brillant */
+.rp-disc::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(115deg, rgba(255, 255, 255, 0.18) 0%, transparent 30%, transparent 70%, rgba(255, 255, 255, 0.06) 100%);
+  pointer-events: none;
+}
+
+/* Étiquette centrale = le logo SIOKA, cerclé, toujours net (contain, pas
+   de recadrage), avec un léger fond clair pour rester lisible sur le noir. */
+.rp-logo {
+  position: relative;
+  z-index: 1;
+  width: 62%;
+  height: 62%;
+  object-fit: contain;
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+  box-sizing: border-box;
+  padding: 3px;
+  display: block;
+}
+
+/* trou central du vinyle */
+.rp-artwork::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #0a0a0e;
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.22);
+  pointer-events: none;
+}
+
+/* Rotation : appliquée directement au disque (donc au logo qui y est
+   incrusté). On repart toujours de l'angle courant grâce à l'animation
+   CSS native (pas de reset visuel au play/pause). */
+.radio-player.is-playing .rp-disc {
+  animation: rp-rotate 5s linear infinite;
+}
+.radio-player.is-loading .rp-disc {
+  animation-play-state: paused;
+}
+
+@keyframes rp-rotate { to { transform: rotate(360deg); } }
+
+.rp-eq {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  z-index: 3;
+  width: 15px;
+  height: 12px;
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  padding: 3px 3px 2px;
+  background: var(--magenta);
+  border-radius: 5px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.radio-player.is-playing .rp-eq { opacity: 1; transform: scale(1); }
+
+.rp-eq i { width: 2px; height: 3px; background: #fff; border-radius: 1px; display: block; }
+.radio-player.is-playing .rp-eq i { animation: rp-bar 0.9s ease-in-out infinite; }
+.rp-eq i:nth-child(1) { animation-delay: 0s; }
+.rp-eq i:nth-child(2) { animation-delay: 0.15s; }
+.rp-eq i:nth-child(3) { animation-delay: 0.3s; }
+.rp-eq i:nth-child(4) { animation-delay: 0.45s; }
+@keyframes rp-bar { 0%, 100% { height: 3px; } 50% { height: 8px; } }
+
+/* ---------------------------------------------------------------------- */
+/* Texte : badge "EN DIRECT" + titre                                      */
+/* ---------------------------------------------------------------------- */
+
+.rp-text { display: flex; flex-direction: column; overflow: hidden; min-width: 0; gap: 2px; }
+
+.rp-live {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--magenta);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.live-dot {
+  position: relative;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--magenta);
+  flex-shrink: 0;
+}
+.live-dot::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid var(--magenta);
+  opacity: 0.2;
+}
+.radio-player.is-playing .live-dot::after { animation: rp-pulse 1.8s ease-out infinite; }
+@keyframes rp-pulse {
+  0% { transform: scale(0.6); opacity: 0.8; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+.rp-title-wrap { overflow: hidden; max-width: 40vw; }
+@media (min-width: 481px) { .rp-title-wrap { max-width: 240px; } }
+@media (min-width: 768px) { .rp-title-wrap { max-width: 300px; } }
+
+.rp-title {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--blanc);
+  white-space: nowrap;
+}
+@media (min-width: 481px) { .rp-title { font-size: 13px; } }
+
+.rp-title.is-marquee { animation: rp-marquee 8s ease-in-out infinite; padding-right: 24px; }
+@keyframes rp-marquee {
+  0%, 12% { transform: translateX(0); }
+  50%, 62% { transform: translateX(calc(-100% + 60px)); }
+  100% { transform: translateX(0); }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Contrôles — tous calibrés sur --rp-btn / --rp-play, jamais plus haut   */
+/* que le bouton play : la rangée ne peut donc jamais gonfler.            */
+/* ---------------------------------------------------------------------- */
+
+.rp-controls { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+
+.rp-btn-like,
+.rp-btn-share,
+.rp-vol-icon {
+  position: relative;
+  width: var(--rp-btn);
+  height: var(--rp-btn);
+  display: none; /* révélés progressivement selon la largeur d'écran */
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #9CA7B8;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+.rp-btn-like:hover,
+.rp-btn-share:hover,
+.rp-vol-icon:hover {
+  color: var(--fixe-clair);
+  background: rgba(255, 255, 255, 0.07);
+}
+.rp-btn-like svg,
+.rp-btn-share svg,
+.rp-vol-icon svg { width: 16px; height: 16px; }
+
+@media (min-width: 481px) {
+  .rp-btn-like, .rp-btn-share { display: inline-flex; }
+}
+
+.rp-btn-like.is-active { color: var(--magenta); animation: rp-pop 0.3s ease; }
+.rp-btn-like.is-active svg { fill: var(--magenta); stroke: var(--magenta); }
+@keyframes rp-pop {
+  0% { transform: scale(1); }
+  45% { transform: scale(1.28); }
+  100% { transform: scale(1); }
+}
+
+.rp-btn-share.is-copied::after {
+  content: 'Lien copié !';
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #16161f;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+  padding: 4px 9px;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.rp-vol-icon.is-muted svg { opacity: 0.45; }
+
+/* ---------------------------------------------------------------------- */
+/* Volume — piste TOUJOURS fine (var(--rp-slider-w)) et constante :       */
+/* largeur verrouillée en flex-basis + box-sizing, jamais dépendante du   */
+/* contenu, du hover, du focus ou du drag. Seule la poignée (::after)     */
+/* peut légèrement déborder visuellement au survol, sans jamais changer   */
+/* la largeur réelle de la boîte.                                        */
+/* ---------------------------------------------------------------------- */
+
+.rp-volume {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  height: var(--rp-btn);
+}
+@media (min-width: 768px) {
+  .rp-volume { display: flex; }
+  .rp-vol-icon { display: inline-flex; }
+}
+
+.rp-slider {
+  position: relative;
+  width: var(--rp-slider-w);
+  flex: 0 0 var(--rp-slider-w);
+  max-width: var(--rp-slider-w);
+  min-width: var(--rp-slider-w);
+  box-sizing: border-box;
+  height: var(--rp-btn);
+  cursor: pointer;
+  touch-action: none;
+}
+.rp-slider::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 3px;
+  bottom: 3px;
+  width: 3px;
+  transform: translateX(-50%);
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.14);
+}
+.rp-slider-fill {
+  position: absolute;
+  left: 50%;
+  bottom: 3px;
+  width: 3px;
+  height: 70%;
+  max-height: calc(100% - 6px);
+  transform: translateX(-50%);
+  border-radius: 2px;
+  background: linear-gradient(0deg, var(--bleu), var(--magenta));
+  transition: height 0.1s ease;
+}
+.rp-slider-fill::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -5px;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  transition: transform 0.15s ease;
+}
+.rp-slider:hover .rp-slider-fill::after,
+.rp-slider:focus-visible .rp-slider-fill::after { transform: translateX(-50%) scale(1.25); }
+
+/* bouton play principal, avec halo pulsé + spinner de chargement */
+.rp-btn-play {
+  position: relative;
+  width: var(--rp-play);
+  height: var(--rp-play);
+  margin-left: 2px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--magenta), var(--bleu));
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px var(--magenta-glow, rgba(233, 30, 140, 0.35));
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.rp-btn-play:hover { transform: scale(1.06); }
+.rp-btn-play:active { transform: scale(0.96); }
+.rp-btn-play svg { position: relative; z-index: 1; width: 19px; height: 19px; margin-left: 2px; }
+.rp-btn-play.playing svg { margin-left: 0; }
+
+.rp-btn-play-halo {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1.5px solid var(--magenta);
+  opacity: 0;
+}
+.radio-player.is-playing .rp-btn-play-halo { animation: rp-halo 2s ease-out infinite; }
+@keyframes rp-halo {
+  0% { opacity: 0.55; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.4); }
+}
+
+.radio-player.is-loading .rp-btn-play svg { opacity: 0; }
+.radio-player.is-loading .rp-btn-play::after {
+  content: '';
+  position: absolute;
+  width: 17px;
+  height: 17px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: rp-spin 0.7s linear infinite;
+}
+@keyframes rp-spin { to { transform: rotate(360deg); } }
+
+/* ---------------------------------------------------------------------- */
+/* Très petits mobiles (≤360px)                                          */
+/* ---------------------------------------------------------------------- */
+
+@media (max-width: 360px) {
+  .rp-shell { gap: 8px; padding: 6px 8px; }
+  .rp-info { gap: 8px; }
+  .radio-player { --rp-disc: 32px; --rp-play: 44px; }
+  .rp-live { font-size: 9px; letter-spacing: 0.5px; }
+  .rp-title { font-size: 11px; }
+  .rp-title-wrap { max-width: 34vw; }
+  .rp-btn-play svg { width: 17px; height: 17px; }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Accessibilité                                                          */
+/* ---------------------------------------------------------------------- */
+
+.rp-btn-play:focus-visible,
+.rp-btn-like:focus-visible,
+.rp-btn-share:focus-visible,
+.rp-vol-icon:focus-visible,
+.rp-slider:focus-visible {
+  outline: 2px solid var(--bleu);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rp-disc,
+  .rp-eq i,
+  .live-dot::after,
+  .rp-btn-play-halo,
+  .rp-title.is-marquee,
+  .radio-player.is-loading .rp-btn-play::after {
+    animation: none !important;
+  }
 }

@@ -11,7 +11,7 @@
         </a>
 
         <nav class="nav-main" aria-label="Navigation principale">
-            <a href="#" class="active-magenta">Accueil</a>
+            <a href="/" class="active-magenta">Accueil</a>
 
             <div class="nav-item" id="navActualites">
                 <button class="nav-link nav-trigger" id="actuTrigger" aria-haspopup="true" aria-expanded="false">
@@ -38,6 +38,7 @@
             <a href="#podcasts">Podcasts</a>
             <a href="#equipe">L'Équipe</a>
             <a href="#contact">Contact</a>
+            <a href="#partners">Partenaires</a>
         </nav>
 
         <div class="header-actions">
@@ -67,14 +68,15 @@
             </button>
 
             @guest
-                <button class="btn-login" id="loginBtn" aria-label="Se connecter" onclick="window.location.href='/'">
+                <a href="{{ route('login') }}" class="btn-login" target="_blank" rel="noopener noreferrer"
+                    aria-label="Se connecter">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
                         <polyline points="10 17 15 12 10 7" />
                         <line x1="15" y1="12" x2="3" y2="12" />
                     </svg>
                     <span class="btn-login-label"></span>
-                </button>
+                </a>
             @endguest
 
             @auth
@@ -93,7 +95,7 @@
                             <div class="um-name">{{ auth()->user()->name }}</div>
                             <div class="um-email">{{ auth()->user()->email }}</div>
                         </div>
-                        <a href="{{ route('profile.edit') }}" role="menuitem">
+                        <a href="#" role="menuitem">
                             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <circle cx="12" cy="7" r="4" />
                                 <path d="M5.5 21a6.5 6.5 0 0 1 13 0" />
@@ -136,8 +138,6 @@
     <nav class="mobile-nav" id="mobileNav" aria-label="Navigation mobile">
         <a href="#" style="color: var(--magenta);">Ecouter FM 106 en Direct </a>
         <a href="#">Accueil</a>
-        <a href="#emissions">Émissions</a>
-        <a href="#podcasts">Podcasts</a>
 
         <div class="mnav-item">
             <button class="mnav-trigger" id="actuTriggerMobile" aria-expanded="false"
@@ -148,22 +148,27 @@
                     <polyline points="6 9 12 15 18 9" />
                 </svg>
             </button>
+
             <div class="mnav-panel" id="actuPanelMobile">
-                <a href="/categories/a-la-une">À la Une</a>
-                <a href="/categories/politique">Politique</a>
-                <a href="/categories/societe">Société</a>
-                <a href="/categories/economie">Économie</a>
-                <a href="/categories/sport">Sport</a>
-                <a href="/categories/culture">Culture</a>
-                <a href="/categories/international">International</a>
+                <div class="mnav-panel-inner">
+                    <a href="/categories/a-la-une">À la Une</a>
+                    <a href="/categories/politique">Politique</a>
+                    <a href="/categories/societe">Société</a>
+                    <a href="/categories/economie">Économie</a>
+                    <a href="/categories/sport">Sport</a>
+                    <a href="/categories/culture">Culture</a>
+                    <a href="/categories/international">International</a>
+                </div>
             </div>
         </div>
 
+        <a href="#emissions">Émissions</a>
+        <a href="#podcasts">Podcasts</a>
         <a href="#contact">Contact</a>
 
         <div class="mobile-nav-utility">
             @guest
-                <button class="btn-login" onclick="window.location.href='/'">
+                <button class="btn-login" onclick="window.location.href=''">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
                         <polyline points="10 17 15 12 10 7" />
@@ -172,7 +177,16 @@
                     <span class="btn-login-label">Connexion</span>
                 </button>
             @else
-                <a href="/" style="flex:1; text-align:center;">Mon compte</a>
+                <button class="btn-login" onclick="window.location.href='{{ route('dashboard') }}'"
+                    style="flex:1; justify-content:center;">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="3" y="3" width="7" height="9" />
+                        <rect x="14" y="3" width="7" height="5" />
+                        <rect x="14" y="12" width="7" height="9" />
+                        <rect x="3" y="16" width="7" height="5" />
+                    </svg>
+                    <span class="btn-login-label">Tableau de bord</span>
+                </button>
             @endguest
 
             <button class="h-btn theme-toggle" id="themeToggleMobile" aria-label="Changer de thème"

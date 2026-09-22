@@ -3,12 +3,17 @@
 /* Import de vos composants personnalisés */
 @import './components/header.css';
 @import './components/hero.css';
-@import './components/programs.css';
+@import './components/videos.css';
 @import './components/news.css';
 @import './components/footer.css';
 @import './components/player.css';
 @import './components/podcasts.css';
 @import './components/aside.css';
+@import './components/dashboard.css';
+@import 'components/article-single.css';
+@import './components/loading-overlay.css';
+@import './components/webtv.css';
+@import './components/video-single.css';
 
 /* Configuration Tailwind v4 */
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -35,6 +40,8 @@
     --bleu:         #0082ca;
     --bleu-glow:    rgba(0, 130, 202, 0.20);
     --or:           #C9A227;
+    --vert:         #2FBF71;
+    --vert-glow:    rgba(47, 191, 113, 0.16);
     --blanc:        #F2F2F5;
     --blanc-fort:   rgba(242, 242, 245, 0.92);
     --blanc-mid:    rgba(242, 242, 245, 0.14);
@@ -63,6 +70,13 @@
     --fixe-sombre:  #0D0D12;
     --fixe-clair:   #F2F2F5;
 
+    /* Ticker — s'adapte au thème actif */
+    --ticker-bg:         var(--magenta);
+    --ticker-border:     transparent;
+    --ticker-label-bg:   var(--fixe-sombre);
+    --ticker-label-text: var(--magenta);
+    --ticker-item-text:  var(--fixe-clair);
+
     color-scheme: dark;
   }
 
@@ -80,6 +94,8 @@
     --bleu:         #0082ca;
     --bleu-glow:    rgba(0, 130, 202, 0.10);
     --or:           #A9821E;
+    --vert:         #1F9D5C;
+    --vert-glow:    rgba(31, 157, 92, 0.10);
     --blanc:        #15151E;
     --blanc-fort:   rgba(21, 21, 30, 0.92);
     --blanc-mid:    rgba(21, 21, 30, 0.08);
@@ -90,11 +106,18 @@
     --glass-2:      rgba(255, 255, 255, 0.85);
     --glass-bord:   rgba(15, 15, 25, 0.08);
 
+    /* Ticker — inversé pour rester lisible sur fond clair */
+    --ticker-bg:         var(--ink-2);
+    --ticker-border:     var(--glass-bord);
+    --ticker-label-bg:   var(--magenta);
+    --ticker-label-text: var(--fixe-clair);
+    --ticker-item-text:  var(--blanc);
+
     color-scheme: light;
   }
 
   /* Transition douce entre les deux thèmes (perf-friendly, propriétés ciblées) */
-  body, .header, .h-btn, .mobile-nav, .nl-inner, .pill-btn, .user-menu-card {
+  body, .header, .h-btn, .mobile-nav, .nl-inner, .pill-btn, .user-menu-card, .ticker, .ticker-label, .ticker-item {
     transition: background-color 0.3s var(--ease), border-color 0.3s var(--ease), color 0.3s var(--ease);
   }
 
@@ -117,15 +140,15 @@
   /* ─────────────────────────────────────────
      TICKER — BANDEAU BREAKING NEWS
   ───────────────────────────────────────── */
-  .ticker { position: relative; z-index: 200; background: var(--magenta); overflow: hidden; }
+  .ticker { position: relative; z-index: 200; background: var(--ticker-bg); border-bottom: 1px solid var(--ticker-border); overflow: hidden; }
   .ticker-inner { display: flex; align-items: stretch; height: 36px; }
-  .ticker-label { flex-shrink: 0; display: flex; align-items: center; gap: 6px; padding: 0 18px 0 14px; background: var(--fixe-sombre); font-size: 10px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; color: var(--magenta); clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%); padding-right: 28px; white-space: nowrap; }
-  .ticker-pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--magenta); animation: blink 1.4s infinite; }
+  .ticker-label { flex-shrink: 0; display: flex; align-items: center; gap: 6px; padding: 0 18px 0 14px; background: var(--ticker-label-bg); font-size: 10px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; color: var(--ticker-label-text); clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%); padding-right: 28px; white-space: nowrap; }
+  .ticker-pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--ticker-label-text); animation: blink 1.4s infinite; }
   @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
   .ticker-scroll { flex: 1; overflow: hidden; display: flex; align-items: center; mask-image: linear-gradient(to right, transparent, black 32px, black calc(100% - 32px), transparent); }
-  .ticker-track { display: flex; gap: 0; white-space: nowrap; animation: scroll-left 40s linear infinite; will-change: transform; }
+  .ticker-track { display: flex; gap: 0; white-space: nowrap; animation-name: scroll-left; animation-duration: 40s; animation-timing-function: linear; animation-iteration-count: infinite; will-change: transform; }
   .ticker-track:hover { animation-play-state: paused; }
-  .ticker-item { font-size: 12px; font-weight: 500; color: #fff; padding: 0 48px 0 0; cursor: pointer; }
+  .ticker-item { font-size: 12px; font-weight: 500; color: var(--ticker-item-text); padding: 0 48px 0 0; cursor: pointer; }
   .ticker-item strong { color: var(--or); }
   .ticker-item::before { content: '◆'; font-size: 7px; margin-right: 12px; color: var(--bleu); opacity: 0.8; }
   @keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }

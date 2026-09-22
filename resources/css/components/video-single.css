@@ -1,0 +1,81 @@
+/* resources/css/components/video-single.css
+   Équivalent WebTV d'article-single.css : même approche, mêmes tokens réels. */
+
+.video-single {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+}
+
+.video-single-player {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: #000;
+  margin-bottom: 1.5rem;
+}
+
+.video-single-player iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.video-single-eyebrow {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--bleu);
+  margin-bottom: .6rem;
+}
+
+.video-single-eyebrow[data-color="vert"]    { color: var(--vert); }
+.video-single-eyebrow[data-color="or"]      { color: var(--or); }
+.video-single-eyebrow[data-color="magenta"] { color: var(--magenta); }
+
+.video-single-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: .01em;
+  color: var(--blanc-fort);
+  margin: 0 0 .8rem;
+}
+
+.video-single-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .8rem;
+  color: var(--plomb);
+  border-bottom: 1px solid var(--glass-bord);
+  padding-bottom: 1.1rem;
+  margin-bottom: 1.1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.video-single-desc {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--blanc);
+}
+
+.video-related {
+  max-width: 1100px;
+  margin: 3rem auto 0;
+  padding: 0 1.5rem 4rem;
+}
+
+.video-related .sec-title {
+  font-size: 1.35rem;
+  margin-bottom: 1.5rem;
+}

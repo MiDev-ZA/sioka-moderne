@@ -1,6 +1,6 @@
-<div class="radio-player" id="radioPlayer" role="region" aria-label="Lecteur Webradio">
+<div class="radio-player" id="radioPlayer" role="region" aria-label="Lecteur Webradio" data-turbo-permanent>
   <audio id="audioStream" preload="none">
-    <source src="https://votre-serveur-icecast.com/stream" type="audio/mpeg">
+    <source src="https://securestreams.autopo.st:2584/;" type="audio/mpeg">
     Votre navigateur ne supporte pas l'élément audio.
   </audio>
 
