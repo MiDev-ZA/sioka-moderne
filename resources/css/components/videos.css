@@ -538,3 +538,308 @@
     font-size: 13px;
     font-weight: 500;
 }
+
+/* ===== WebTV : barre de filtres (Pro) ===== */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.webtv-filterbar {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 14px 16px;
+    margin-bottom: 22px;
+    background: linear-gradient(145deg, var(--ink-3), var(--ink-2));
+    border: 1px solid var(--glass-bord);
+    border-radius: var(--r-lg);
+    box-shadow: 0 10px 24px -18px rgba(0,0,0,0.6);
+}
+
+/* Chips catégories : défilement horizontal sur mobile */
+.webtv-chips {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 2px;
+}
+.webtv-chips::-webkit-scrollbar {
+    display: none;
+}
+@media (min-width: 768px) {
+    .webtv-chips {
+        flex-wrap: wrap;
+        overflow: visible;
+    }
+}
+.webtv-chips .chip {
+    flex: 0 0 auto;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--glass-bord);
+    background: transparent;
+    color: var(--plomb);
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+.webtv-chips .chip:hover {
+    border-color: var(--bleu);
+    color: var(--blanc);
+    transform: translateY(-1px);
+}
+.webtv-chips .chip.is-active {
+    background: color-mix(in srgb, var(--bleu) 20%, transparent);
+    border-color: var(--bleu);
+    color: var(--bleu);
+}
+.webtv-chips .chip:focus-visible,
+.webtv-search-clear:focus-visible,
+.active-tag:focus-visible,
+.webtv-reset:focus-visible {
+    outline: 2px solid var(--bleu);
+    outline-offset: 2px;
+}
+
+/* Ligne recherche + tri */
+.webtv-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.webtv-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1 1 240px;
+    color: var(--plomb);
+}
+.webtv-search > svg {
+    position: absolute;
+    left: 14px;
+    width: 16px;
+    height: 16px;
+    pointer-events: none;
+    transition: color 0.2s;
+}
+.webtv-search:focus-within > svg {
+    color: var(--bleu);
+}
+.webtv-search input[type="search"] {
+    width: 100%;
+    padding: 10px 46px 10px 40px;
+    border-radius: 24px;
+    border: 1px solid var(--glass-bord);
+    background: color-mix(in srgb, var(--ink-1) 60%, transparent);
+    color: var(--blanc);
+    font-size: 13px;
+    font-weight: 500;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.webtv-search input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+}
+.webtv-search input[type="search"]::placeholder {
+    color: var(--plomb);
+}
+.webtv-search input[type="search"]:focus {
+    outline: none;
+    border-color: var(--bleu);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--bleu) 25%, transparent);
+}
+.webtv-search-clear {
+    position: absolute;
+    right: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--blanc-doux);
+    color: var(--plomb);
+    transition: color 0.2s, background 0.2s;
+}
+.webtv-search-clear:hover {
+    color: var(--blanc);
+}
+.webtv-search-clear svg {
+    position: static;
+    width: 12px;
+    height: 12px;
+}
+.webtv-kbd {
+    position: absolute;
+    right: 12px;
+    padding: 1px 7px;
+    border-radius: 4px;
+    border: 1px solid var(--glass-bord);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--plomb);
+    pointer-events: none;
+}
+.webtv-search:focus-within .webtv-kbd {
+    display: none;
+}
+@media (max-width: 767px) {
+    .webtv-kbd {
+        display: none;
+    }
+}
+
+/* Tri : contrôle segmenté */
+.webtv-segment {
+    display: inline-flex;
+    padding: 3px;
+    border-radius: 24px;
+    border: 1px solid var(--glass-bord);
+    background: color-mix(in srgb, var(--ink-1) 60%, transparent);
+}
+.webtv-segment label {
+    position: relative;
+    cursor: pointer;
+}
+.webtv-segment input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    cursor: pointer;
+}
+.webtv-segment span {
+    display: block;
+    padding: 7px 14px;
+    border-radius: 20px;
+    color: var(--plomb);
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+.webtv-segment label:hover span {
+    color: var(--blanc);
+}
+.webtv-segment input:checked + span {
+    background: color-mix(in srgb, var(--bleu) 20%, transparent);
+    color: var(--bleu);
+}
+.webtv-segment input:focus-visible + span {
+    outline: 2px solid var(--bleu);
+    outline-offset: 1px;
+}
+
+/* Résumé des filtres actifs */
+.webtv-active {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--glass-bord);
+}
+.webtv-active-label {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--plomb);
+}
+.active-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px 4px 12px;
+    border-radius: 20px;
+    background: color-mix(in srgb, var(--bleu) 15%, transparent);
+    border: 1px solid color-mix(in srgb, var(--bleu) 40%, transparent);
+    color: var(--blanc);
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color 0.2s, background 0.2s;
+}
+.active-tag svg {
+    width: 12px;
+    height: 12px;
+    color: var(--plomb);
+    transition: color 0.2s;
+}
+.active-tag:hover {
+    border-color: var(--bleu);
+}
+.active-tag:hover svg {
+    color: var(--blanc);
+}
+.webtv-reset {
+    margin-left: auto;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--plomb);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    transition: color 0.2s, text-decoration-color 0.2s;
+}
+.webtv-reset:hover {
+    color: var(--bleu);
+    text-decoration-color: var(--bleu);
+}
+
+/* État vide */
+.webtv-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    padding: 48px 16px;
+    text-align: center;
+    color: var(--plomb);
+    font-size: 13px;
+    font-weight: 500;
+}
+.webtv-empty-state svg {
+    opacity: 0.6;
+}
+.webtv-empty-state .load-more-btn {
+    text-decoration: none;
+}
+
+
+/* ===== WebTV : filtrage en direct (AJAX) ===== */
+.webtv-active-slot {
+    display: contents;
+}
+.webtv-results {
+    transition: opacity 0.15s;
+}
+.webtv-results.is-pending {
+    opacity: 0.55;
+}
+.webtv-search-clear {
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+}
+.webtv-search-clear[hidden] {
+    display: none;
+}
+.webtv-search.has-value .webtv-kbd {
+    display: none;
+}

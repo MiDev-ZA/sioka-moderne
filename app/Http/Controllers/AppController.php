@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 
 class AppController extends Controller
 {
@@ -95,19 +96,67 @@ class AppController extends Controller
             $allVideos = [];
         }
 
+        $filtered = collect($allVideos);
+
+        // Catégories disponibles (calculées avant filtrage pour que les chips restent toutes visibles)
+        $categories = $filtered->pluck('category')->filter()->unique()->sort()->values()->all();
+
+        // Filtre par catégorie
+        $category = (string) $request->query('category', '');
+        if ($category !== '') {
+            $filtered = $filtered->where('category', $category);
+        }
+
+        // Recherche par début de mot (dès la 1re lettre), sans accents ni casse.
+        // 1-2 caractères : titre seul (sinon presque tout correspond) ; 3+ : titre + description.
+        $q = trim((string) $request->query('q', ''));
+        if ($q !== '') {
+            $tokens = preg_split('/[^a-z0-9]+/', Str::lower(Str::ascii($q)), -1, PREG_SPLIT_NO_EMPTY);
+            $titleOnly = mb_strlen($q) < 3;
+
+            $filtered = $filtered->filter(function ($video) use ($tokens, $titleOnly) {
+                $text = ($video['title'] ?? '') . ($titleOnly ? '' : ' ' . ($video['description'] ?? ''));
+                $words = preg_split('/[^a-z0-9]+/', Str::lower(Str::ascii($text)), -1, PREG_SPLIT_NO_EMPTY);
+
+                foreach ($tokens as $token) {
+                    $found = false;
+                    foreach ($words as $word) {
+                        if (str_starts_with($word, $token)) { $found = true; break; }
+                    }
+                    if (!$found) return false;
+                }
+                return true;
+            });
+        }
+
+        // Tri : "popular" = plus vues, sinon plus récentes
+        $filtered = $request->query('sort') === 'popular'
+            ? $filtered->sortByDesc('views')
+            : $filtered->sortByDesc('publishedAt');
+        $filtered = $filtered->values();
+
         $perPage = 12;
         $currentPage = \Illuminate\Pagination\LengthAwarePaginator::resolveCurrentPage();
-        $items = collect($allVideos)->slice(($currentPage - 1) * $perPage, $perPage)->values();
+        $items = $filtered->slice(($currentPage - 1) * $perPage, $perPage)->values();
 
         $videos = new \Illuminate\Pagination\LengthAwarePaginator(
             $items,
-            count($allVideos),
+            $filtered->count(),
             $perPage,
             $currentPage,
             ['path' => $request->url(), 'query' => $request->query()]
         );
 
-        return view('partials/videos-all', compact('videos'));
+        // Requête AJAX (filtrage en direct) : on renvoie uniquement les fragments à remplacer
+        if ($request->wantsJson()) {
+            return response()->json([
+                'count'   => \Illuminate\Support\Number::format($videos->total()) . ' vidéo(s)',
+                'active'  => view('partials.videos-active')->render(),
+                'results' => view('partials.videos-results', compact('videos'))->render(),
+            ])->header('Vary', 'Accept');
+        }
+
+        return response(view('partials/videos-all', compact('videos', 'categories')))->header('Vary', 'Accept');
     }
  
 

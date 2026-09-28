@@ -78,12 +78,12 @@
       @endforeach
     </div>
 
-    <div class="webtv-loadmore">
+    <!-- <div class="webtv-loadmore">
       <a href="{{ route('webtv.index') }}" class="load-more-btn">
         Voir toutes les vidéos
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
       </a>
-    </div>
+    </div> -->
   @elseif(!$webtvIsLive && !$webtvHero)
     <p class="webtv-empty">Aucune vidéo disponible pour le moment.</p>
   @endif
