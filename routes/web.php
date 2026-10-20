@@ -20,6 +20,9 @@ Route::get('/actualites/load-more', [AppController::class, 'loadMoreNews'])->nam
 
 Route::get('/toutes-actualites', [AppController::class, 'newsIndex'])->name('news.index');
 
+// Articles publics d'une catégorie
+Route::get('/categories/{category:slug}', [AppController::class, 'categoryShow'])->name('categories.show');
+
 Route::get('/webtv/toutes-les-videos', [AppController::class, 'webtvIndex'])->name('webtv.index');
 
 // Affichage public d'une vidéo WebTV

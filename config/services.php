@@ -43,4 +43,8 @@ return [
         'channel_id'    => env('YOUTUBE_CHANNEL_ID'),
     ],
 
+    'google_analytics' => [
+        'id' => env('GA_MEASUREMENT_ID'),
+    ],
+
 ];

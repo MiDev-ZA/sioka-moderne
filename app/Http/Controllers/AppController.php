@@ -233,6 +233,23 @@ class AppController extends Controller
         return view('news-index', compact('articles', 'categories'));
     }
 
+    public function categoryShow(Category $category)
+    {
+        $articles = Article::with(['category', 'user'])
+            ->where('is_published', true)
+            ->whereHas('category', fn ($q) => $q->where('slug', $category->slug))
+            ->latest()
+            ->paginate(12);
+
+        $categories = Category::orderBy('name')->get()
+            ->sortBy(function ($cat) {
+                return $cat->slug === 'a-la-une' ? 0 : 1;
+            })
+            ->values();
+
+        return view('news-index', compact('articles', 'categories', 'category'));
+    }
+
     public function login()
     {
         return view('auth.login');

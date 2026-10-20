@@ -33,6 +33,9 @@
   <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('images/icones/web-app-manifest-512x512.png') }}">
   
   @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+  <!-- Pour analytics -->
+  @include('partials.analytics') 
 </head>
 <body>
 

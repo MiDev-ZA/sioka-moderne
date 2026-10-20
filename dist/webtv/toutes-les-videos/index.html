@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SIOKA — Serasera lombonan'ny Olompirenena ho Kalitaon'ny Antontambaovao. FM 106 Mhz.">
+  <title>Toutes les vidéos - WebTV SIOKA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght=0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700&display=swap" rel="stylesheet">
+  <script>
+  (function () {
+    try {
+      var theme = localStorage.getItem('sioka-theme');
+      if (theme === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    } catch (e) {}
+  })();
+</script>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="http://localhost:8000/images/icones/favicon.svg">
+  <link rel="icon" type="image/png" sizes="96x96" href="http://localhost:8000/images/icones/favicon-96x96.png">
+  <link rel="shortcut icon" href="http://localhost:8000/favicon.ico">
+
+  <!-- Apple -->
+  <link rel="apple-touch-icon" sizes="180x180" href="http://localhost:8000/images/icones/apple-touch-icon.png">
+
+  <!-- PWA -->
+  <link rel="manifest" href="http://localhost:8000/images/icones/site.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="http://localhost:8000/images/icones/web-app-manifest-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="http://localhost:8000/images/icones/web-app-manifest-512x512.png">
+  
+  <script type="module" src="http://[::1]:5173/@vite/client"></script><link rel="stylesheet" href="http://[::1]:5173/resources/css/app.css" /><script type="module" src="http://[::1]:5173/resources/js/app.js"></script>
+  <!-- Pour analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-SLJR3F5WM7"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){ dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-SLJR3F5WM7', { send_page_view: false });
+
+        // Turbo : un page_view à chaque affichage de page, y compris le premier chargement
+        document.addEventListener('turbo:load', function () {
+            gtag('event', 'page_view', {
+                page_title: document.title,
+                page_location: window.location.href,
+            });
+        });
+    </script>
+ 
+</head>
+<body>
+
+  <div class="ticker" role="marquee" aria-label="Actualités en direct SIOKA">
+  <div class="ticker-inner">
+    <div class="ticker-label">
+      <span class="ticker-pulse"></span>
+      FLASH
+    </div>
+    <div class="ticker-scroll">
+      <div class="ticker-track" data-ticker-track>
+                  <span class="ticker-item"><strong>Politique</strong> : If you are going to use a passage of Lorem Ipsum, you need to be sure there isn&#039;t anything embarrassing hidden in the middle of text</span>
+                  <span class="ticker-item"><strong>Environnement</strong> : Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc</span>
+                  <span class="ticker-item"><strong>Éducation</strong> : The first line of Lorem Ipsum, &quot;Lorem ipsum dolor sit amet</span>
+                  <span class="ticker-item"><strong>Économie</strong> : This book is a treatise on the theory of ethics, very popular during the Renaissance</span>
+                  <span class="ticker-item"><strong>Culture</strong> : generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.</span>
+        
+        
+                  <span class="ticker-item" aria-hidden="true"><strong>Politique</strong> : If you are going to use a passage of Lorem Ipsum, you need to be sure there isn&#039;t anything embarrassing hidden in the middle of text</span>
+                  <span class="ticker-item" aria-hidden="true"><strong>Environnement</strong> : Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc</span>
+                  <span class="ticker-item" aria-hidden="true"><strong>Éducation</strong> : The first line of Lorem Ipsum, &quot;Lorem ipsum dolor sit amet</span>
+                  <span class="ticker-item" aria-hidden="true"><strong>Économie</strong> : This book is a treatise on the theory of ethics, very popular during the Renaissance</span>
+                  <span class="ticker-item" aria-hidden="true"><strong>Culture</strong> : generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.</span>
+              </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    // Vitesse constante souhaitée, en pixels par seconde. Ajuste cette valeur.
+    var TICKER_SPEED_PX_PER_SEC = 80;
+
+    function setTickerDuration(track) {
+      // scrollWidth = largeur totale (contenu dupliqué inclus).
+      // On divise par 2 car l'animation ne parcourt que -50% (la moitié, non dupliquée).
+      var distance = track.scrollWidth / 2;
+      if (!distance) return;
+      var duration = distance / TICKER_SPEED_PX_PER_SEC;
+      track.style.animationDuration = duration + 's';
+    }
+
+    function initAllTickers() {
+      document.querySelectorAll('[data-ticker-track]').forEach(setTickerDuration);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initAllTickers);
+    } else {
+      initAllTickers();
+    }
+
+    // Recalcule si la fenêtre est redimensionnée (le texte peut changer de ligne / largeur dispo change)
+    var resizeTimeout;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(initAllTickers, 200);
+    });
+
+    // Recalcule aussi si les polices se chargent après coup (largeur du texte peut changer)
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(initAllTickers);
+    }
+  })();
+</script>
+  <header class="header">
+    <div class="header-row">
+        <button class="hbg" id="hbg" aria-label="Ouvrir le menu" aria-expanded="false">
+            <span class="hbg-bar"></span>
+            <span class="hbg-bar"></span>
+            <span class="hbg-bar"></span>
+        </button>
+
+        <a href="/" class="logo" aria-label="SIOKA Web TV & Radio">
+            <img src="http://localhost:8000/images/SIOKA-LogoOfficiel.png" alt="SIOKA" class="logo-image">
+        </a>
+
+        <nav class="nav-main" aria-label="Navigation principale">
+            <a href="/" class="active-magenta">Accueil</a>
+
+            <div class="nav-item" id="navActualites">
+                <button class="nav-link nav-trigger" id="actuTrigger" aria-haspopup="true" aria-expanded="false">
+                    Actualités
+                    <svg class="nav-caret" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                        aria-hidden="true">
+                        <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                </button>
+                <div class="nav-dropdown" id="actuDropdown" role="menu">
+                    <div class="nav-dropdown-inner">
+                        <a href="/categories/a-la-une" role="menuitem">À la Une</a>
+                        <a href="/categories/politique" role="menuitem">Politique</a>
+                        <a href="/categories/societe" role="menuitem">Société</a>
+                        <a href="/categories/economie" role="menuitem">Économie</a>
+                        <a href="/categories/sport" role="menuitem">Sport</a>
+                        <a href="/categories/culture" role="menuitem">Culture</a>
+                        <a href="/categories/international" role="menuitem">International</a>
+                    </div>
+                </div>
+            </div>
+
+            <a href="#emissions">Émissions</a>
+            <a href="#podcasts">Podcasts</a>
+            <a href="#equipe">L'Équipe</a>
+            <a href="#contact">Contact</a>
+            <a href="#partners">Partenaires</a>
+        </nav>
+
+        <div class="header-actions">
+            <button class="btn-live-radio" aria-label="Écouter la radio en direct" onclick="togglePlay()">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <rect x="3" y="7" width="18" height="13" rx="2" />
+                    <line x1="7" y1="3" x2="17" y2="7" />
+                    <circle cx="8" cy="13" r="2" />
+                    <line x1="13" y1="12" x2="18" y2="12" />
+                    <line x1="13" y1="15" x2="18" y2="15" />
+                </svg>
+                LE Direct
+            </button>
+
+            <button class="h-btn theme-toggle" id="themeToggle" aria-label="Changer de thème"
+                title="Mode sombre / clair">
+                <svg class="icon-moon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                    aria-hidden="true">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
+                </svg>
+                <svg class="icon-sun" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                    aria-hidden="true">
+                    <circle cx="12" cy="12" r="4" />
+                    <path
+                        d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+                </svg>
+            </button>
+
+                            <a href="http://localhost:8000/login" class="btn-login" target="_blank" rel="noopener noreferrer"
+                    aria-label="Se connecter">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                        <polyline points="10 17 15 12 10 7" />
+                        <line x1="15" y1="12" x2="3" y2="12" />
+                    </svg>
+                    <span class="btn-login-label"></span>
+                </a>
+            
+            
+            <button class="h-btn" id="searchBtn" aria-label="Rechercher" title="Rechercher">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="m21 21-4.35-4.35" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <nav class="mobile-nav" id="mobileNav" aria-label="Navigation mobile">
+        <a href="#" style="color: var(--magenta);">Ecouter FM 106 en Direct </a>
+        <a href="#">Accueil</a>
+
+        <div class="mnav-item">
+            <button class="mnav-trigger" id="actuTriggerMobile" aria-expanded="false"
+                aria-controls="actuPanelMobile">
+                Actualités
+                <svg class="nav-caret" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                    aria-hidden="true">
+                    <polyline points="6 9 12 15 18 9" />
+                </svg>
+            </button>
+
+            <div class="mnav-panel" id="actuPanelMobile">
+                <div class="mnav-panel-inner">
+                    <a href="/categories/a-la-une">À la Une</a>
+                    <a href="/categories/politique">Politique</a>
+                    <a href="/categories/societe">Société</a>
+                    <a href="/categories/economie">Économie</a>
+                    <a href="/categories/sport">Sport</a>
+                    <a href="/categories/culture">Culture</a>
+                    <a href="/categories/international">International</a>
+                </div>
+            </div>
+        </div>
+
+        <a href="#emissions">Émissions</a>
+        <a href="#podcasts">Podcasts</a>
+        <a href="#contact">Contact</a>
+
+        <div class="mobile-nav-utility">
+                            <button class="btn-login" onclick="window.location.href=''">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                        <polyline points="10 17 15 12 10 7" />
+                        <line x1="15" y1="12" x2="3" y2="12" />
+                    </svg>
+                    <span class="btn-login-label">Connexion</span>
+                </button>
+            
+            <button class="h-btn theme-toggle" id="themeToggleMobile" aria-label="Changer de thème"
+                title="Mode sombre / clair">
+                <svg class="icon-moon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                    aria-hidden="true">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
+                </svg>
+                <svg class="icon-sun" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+                    aria-hidden="true">
+                    <circle cx="12" cy="12" r="4" />
+                    <path
+                        d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+                </svg>
+            </button>
+        </div>
+    </nav>
+</header>
+
+<script>
+    (function() {
+        // ── Theme toggle ──────────────────────────────────────────
+        const root = document.documentElement;
+        const KEY = 'sioka-theme';
+
+        function applyTheme(theme) {
+            if (theme === 'light') {
+                root.setAttribute('data-theme', 'light');
+            } else {
+                root.removeAttribute('data-theme');
+            }
+        }
+
+        function currentTheme() {
+            return root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+        }
+
+        function toggleTheme() {
+            const next = currentTheme() === 'light' ? 'dark' : 'light';
+            applyTheme(next);
+            try {
+                localStorage.setItem(KEY, next);
+            } catch (e) {}
+        }
+
+        document.getElementById('themeToggle')?.addEventListener('click', toggleTheme);
+        document.getElementById('themeToggleMobile')?.addEventListener('click', toggleTheme);
+
+        // ── User dropdown ─────────────────────────────────────────
+        const menuBtn = document.getElementById('userMenuBtn');
+        const menuCard = document.getElementById('userMenuCard');
+
+        if (menuBtn && menuCard) {
+            menuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const open = menuCard.classList.toggle('open');
+                menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!menuCard.contains(e.target) && !menuBtn.contains(e.target)) {
+                    menuCard.classList.remove('open');
+                    menuBtn.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    menuCard.classList.remove('open');
+                    menuBtn.setAttribute('aria-expanded', 'false');
+                    menuBtn.focus();
+                }
+            });
+        }
+
+        // ── Dropdown Actualités (desktop) ──────────────────────────
+        const actuTrigger = document.getElementById('actuTrigger');
+        const actuDropdown = document.getElementById('actuDropdown');
+        const navActu = document.getElementById('navActualites');
+
+        if (actuTrigger && actuDropdown && navActu) {
+            actuTrigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const open = actuDropdown.classList.toggle('open');
+                actuTrigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!navActu.contains(e.target)) {
+                    actuDropdown.classList.remove('open');
+                    actuTrigger.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && actuDropdown.classList.contains('open')) {
+                    actuDropdown.classList.remove('open');
+                    actuTrigger.setAttribute('aria-expanded', 'false');
+                    actuTrigger.focus();
+                }
+            });
+        }
+
+        // ── Accordéon Actualités (mobile) ──────────────────────────
+        const actuTriggerMobile = document.getElementById('actuTriggerMobile');
+        const actuPanelMobile = document.getElementById('actuPanelMobile');
+
+        if (actuTriggerMobile && actuPanelMobile) {
+            actuTriggerMobile.addEventListener('click', () => {
+                const open = actuPanelMobile.classList.toggle('open');
+                actuTriggerMobile.setAttribute('aria-expanded', open ? 'true' : 'false');
+            });
+        }
+    })();
+</script>
+  <div class="search-overlay" id="searchOverlay" role="dialog" aria-modal="true" aria-label="Recherche">
+  <div class="search-box">
+    <input type="search" class="search-input" id="searchInput" placeholder="Rechercher une émission, un podcast, un article..." autocomplete="off">
+    <button class="search-close-btn" id="searchClose" aria-label="Fermer la recherche">
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <p class="search-hint">Appuyez sur <kbd>Échap</kbd> pour fermer</p>
+  </div>
+</div>
+  <main>
+    <section class="sec webtv-sec" id="webtvSec">
+  <div class="sec-head">
+    <h2 class="sec-title">Toutes les vidéos</h2>
+    <span class="webtv-count" aria-live="polite">100 vidéo(s)</span>
+  </div>
+
+  <form method="GET" action="http://localhost:8000/webtv/toutes-les-videos" class="webtv-filterbar" role="search"
+        data-category="actualite">
+    <div class="webtv-chips" role="navigation" aria-label="Catégories">
+      <a href="http://localhost:8000/webtv/toutes-les-videos"
+         class="chip " data-category="">Toutes</a>
+              <a href="http://localhost:8000/webtv/toutes-les-videos?category=actualite"
+           class="chip is-active" data-category="actualite">Actualite</a>
+          </div>
+
+    <div class="webtv-controls">
+      <label class="webtv-search ">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="search" name="q" value="" placeholder="Rechercher une vidéo…" aria-label="Rechercher une vidéo" autocomplete="off">
+        <button type="button" class="webtv-search-clear" aria-label="Effacer la recherche"  hidden >
+          <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+        <kbd class="webtv-kbd" aria-hidden="true">/</kbd>
+      </label>
+
+      <div class="webtv-segment" role="radiogroup" aria-label="Trier par">
+        <label>
+          <input type="radio" name="sort" value="recent" checked>
+          <span>Plus récentes</span>
+        </label>
+        <label>
+          <input type="radio" name="sort" value="popular" >
+          <span>Plus vues</span>
+        </label>
+      </div>
+    </div>
+
+    <div id="webtvActive" class="webtv-active-slot">
+      <div class="webtv-active">
+    <span class="webtv-active-label">Filtres actifs</span>
+          <a href="http://localhost:8000/webtv/toutes-les-videos" class="active-tag" data-ajax>
+        Actualite
+        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        <span class="sr-only">Retirer la catégorie</span>
+      </a>
+                <a href="http://localhost:8000/webtv/toutes-les-videos" class="webtv-reset" data-ajax>Tout effacer</a>
+  </div>
+    </div>
+  </form>
+
+  <div id="webtvResults" class="webtv-results">
+    <div class="video-grid">
+          <a href="http://localhost:8000/webtv/zMTN80OSPqQ" class="video-card-link" data-page-loading="Chargement de la vidéo…">
+  <article class="video-card is-featured">
+    <span class="cat-stripe" data-color="bleu" aria-hidden="true"></span>
+    <div class="video-thumb">
+      <img src="https://i.ytimg.com/vi/zMTN80OSPqQ/maxresdefault.jpg" alt="𝟏𝟔 𝐨𝐤𝐭𝐨𝐛𝐫𝐚 𝟐𝟎𝟐𝟔, 𝐍𝐨𝐯𝐨𝐭𝐞𝐥 𝐀𝐥𝐚𝐫𝐨𝐛𝐢𝐚" loading="lazy" decoding="async">
+      <span class="media-scrim" aria-hidden="true"></span>
+              <span class="video-new">Nouveau</span>
+            <span class="mini-play"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+      <span class="timecode">2:40</span>
+    </div>
+    <div class="video-body">
+      <span class="tag" data-color="bleu">Actualite</span>
+      <h3 class="video-title"><span>𝟏𝟔 𝐨𝐤𝐭𝐨𝐛𝐫𝐚 𝟐𝟎𝟐𝟔, 𝐍𝐨𝐯𝐨𝐭𝐞𝐥 𝐀𝐥𝐚𝐫𝐨𝐛𝐢𝐚</span></h3>
+              <p class="video-desc">𝟏𝟔 𝐨𝐤𝐭𝐨𝐛𝐫𝐚 𝟐𝟎𝟐𝟔, 𝐍𝐨𝐯𝐨𝐭𝐞𝐥 𝐀𝐥𝐚𝐫𝐨𝐛𝐢𝐚 
+♦️ Naseho tao amin’ny Digital Africa Summit ity fitaova...</p>
+            <div class="video-meta">
+        <span class="video-date">20 Oct 2026</span>
+        <span class="video-views">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          0.0
+        </span>
+      </div>
+    </div>
+  </article>
+</a>          <a href="http://localhost:8000/webtv/56bjzGn0Be4" class="video-card-link" data-page-loading="Chargement de la vidéo…">
+  <article class="video-card ">
+    <span class="cat-stripe" data-color="bleu" aria-hidden="true"></span>
+    <div class="video-thumb">
+      <img src="https://i.ytimg.com/vi/56bjzGn0Be4/maxresdefault.jpg" alt="𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐀𝐋𝐀𝐓𝐒𝐈𝐍𝐀𝐈𝐍𝐘 𝟏𝟗 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔" loading="lazy" decoding="async">
+      <span class="media-scrim" aria-hidden="true"></span>
+              <span class="video-new">Nouveau</span>
+            <span class="mini-play"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+      <span class="timecode">4:20</span>
+    </div>
+    <div class="video-body">
+      <span class="tag" data-color="bleu">Actualite</span>
+      <h3 class="video-title"><span>𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐀𝐋𝐀𝐓𝐒𝐈𝐍𝐀𝐈𝐍𝐘 𝟏𝟗 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔</span></h3>
+              <p class="video-desc">𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐀𝐋𝐀𝐓𝐒𝐈𝐍𝐀𝐈𝐍𝐘 𝟏𝟗 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔
+🔴 Minisitry ny Fitsarana Fanirisoa ERNAIVO :...</p>
+            <div class="video-meta">
+        <span class="video-date">20 Oct 2026</span>
+        <span class="video-views">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          7.0
+        </span>
+      </div>
+    </div>
+  </article>
+</a>          <a href="http://localhost:8000/webtv/YnaYJuV96cI" class="video-card-link" data-page-loading="Chargement de la vidéo…">
+  <article class="video-card ">
+    <span class="cat-stripe" data-color="bleu" aria-hidden="true"></span>
+    <div class="video-thumb">
+      <img src="https://i.ytimg.com/vi/YnaYJuV96cI/maxresdefault.jpg" alt="𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐙𝐎𝐌𝐀 𝟏𝟔 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔" loading="lazy" decoding="async">
+      <span class="media-scrim" aria-hidden="true"></span>
+              <span class="video-new">Nouveau</span>
+            <span class="mini-play"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+      <span class="timecode">3:33</span>
+    </div>
+    <div class="video-body">
+      <span class="tag" data-color="bleu">Actualite</span>
+      <h3 class="video-title"><span>𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐙𝐎𝐌𝐀 𝟏𝟔 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔</span></h3>
+              <p class="video-desc">𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐙𝐎𝐌𝐀 𝟏𝟔 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔
+🔴 CENI : 7 163 714 no olompirenena voasoratra anaran...</p>
+            <div class="video-meta">
+        <span class="video-date">19 Oct 2026</span>
+        <span class="video-views">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          1.0
+        </span>
+      </div>
+    </div>
+  </article>
+</a>          <a href="http://localhost:8000/webtv/xY_OjZJn7IU" class="video-card-link" data-page-loading="Chargement de la vidéo…">
+  <article class="video-card ">
+    <span class="cat-stripe" data-color="bleu" aria-hidden="true"></span>
+    <div class="video-thumb">
+      <img src="https://i.ytimg.com/vi/xY_OjZJn7IU/maxresdefault.jpg" alt="𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐀𝐋𝐀𝐊𝐀𝐌𝐈𝐒𝐘 𝟏𝟓 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔" loading="lazy" decoding="async">
+      <span class="media-scrim" aria-hidden="true"></span>
+            <span class="mini-play"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+      <span class="timecode">3:50</span>
+    </div>
+    <div class="video-body">
+      <span class="tag" data-color="bleu">Actualite</span>
+      <h3 class="video-title"><span>𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐀𝐋𝐀𝐊𝐀𝐌𝐈𝐒𝐘 𝟏𝟓 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔</span></h3>
+              <p class="video-desc">𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐀𝐋𝐀𝐊𝐀𝐌𝐈𝐒𝐘 𝟏𝟓 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔
+♦️ Mila mampiroborobo ny fanondranana vokatra ef...</p>
+            <div class="video-meta">
+        <span class="video-date">16 Oct 2026</span>
+        <span class="video-views">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          4.0
+        </span>
+      </div>
+    </div>
+  </article>
+</a>          <a href="http://localhost:8000/webtv/L5p4era5MJY" class="video-card-link" data-page-loading="Chargement de la vidéo…">
+  <article class="video-card ">
+    <span class="cat-stripe" data-color="bleu" aria-hidden="true"></span>
+    <div class="video-thumb">
+      <img src="https://i.ytimg.com/vi/L5p4era5MJY/maxresdefault.jpg" alt="𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐀𝐋𝐀𝐑𝐎𝐁𝐈𝐀 𝟏𝟒 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔" loading="lazy" decoding="async">
+      <span class="media-scrim" aria-hidden="true"></span>
+            <span class="mini-play"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+      <span class="timecode">4:56</span>
+    </div>
+    <div class="video-body">
+      <span class="tag" data-color="bleu">Actualite</span>
+      <h3 class="video-title"><span>𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐀𝐋𝐀𝐑𝐎𝐁𝐈𝐀 𝟏𝟒 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔</span></h3>
+              <p class="video-desc">𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐀𝐋𝐀𝐑𝐎𝐁𝐈𝐀 𝟏𝟒 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔
+
+🔴Tsy fahandriampahalemana : olona roa no maty v...</p>
+            <div class="video-meta">
+        <span class="video-date">14 Oct 2026</span>
+        <span class="video-views">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          4.0
+        </span>
+      </div>
+    </div>
+  </article>
+</a>          <a href="http://localhost:8000/webtv/FA4nXpQ-SLA" class="video-card-link" data-page-loading="Chargement de la vidéo…">
+  <article class="video-card ">
+    <span class="cat-stripe" data-color="bleu" aria-hidden="true"></span>
+    <div class="video-thumb">
+      <img src="https://i.ytimg.com/vi/FA4nXpQ-SLA/maxresdefault.jpg" alt="𝐂𝐎𝐔𝐏𝐄 𝐃𝐄𝐒 𝐂𝐋𝐔𝐁𝐒 𝐂𝐇𝐀𝐌𝐏𝐈𝐎𝐍𝐒 𝐇𝐀𝐍𝐃𝐈𝐒𝐏𝐎𝐑𝐓𝐒 𝐃𝐄 𝐋&#039;𝐎𝐂𝐄𝐀𝐍 𝐈𝐍𝐃𝐈𝐄𝐍" loading="lazy" decoding="async">
+      <span class="media-scrim" aria-hidden="true"></span>
+            <span class="mini-play"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+      <span class="timecode">4:47</span>
+    </div>
+    <div class="video-body">
+      <span class="tag" data-color="bleu">Actualite</span>
+      <h3 class="video-title"><span>𝐂𝐎𝐔𝐏𝐄 𝐃𝐄𝐒 𝐂𝐋𝐔𝐁𝐒 𝐂𝐇𝐀𝐌𝐏𝐈𝐎𝐍𝐒 𝐇𝐀𝐍𝐃𝐈𝐒𝐏𝐎𝐑𝐓𝐒 𝐃𝐄 𝐋&#039;𝐎𝐂𝐄𝐀𝐍 𝐈𝐍𝐃𝐈𝐄𝐍</span></h3>
+              <p class="video-desc">𝐂𝐎𝐔𝐏𝐄 𝐃𝐄𝐒 𝐂𝐋𝐔𝐁𝐒 𝐂𝐇𝐀𝐌𝐏𝐈𝐎𝐍𝐒 𝐇𝐀𝐍𝐃𝐈𝐒𝐏𝐎𝐑𝐓𝐒 𝐃𝐄 𝐋&#039;𝐎𝐂𝐄𝐀𝐍 𝐈𝐍𝐃𝐈𝐄𝐍
+
+✅Manana atleta matanjaka sy maha...</p>
+            <div class="video-meta">
+        <span class="video-date">14 Oct 2026</span>
+        <span class="video-views">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          3.0
+        </span>
+      </div>
+    </div>
+  </article>
+</a>          <a href="http://localhost:8000/webtv/MNLVZ3ZqLXY" class="video-card-link" data-page-loading="Chargement de la vidéo…">
+  <article class="video-card ">
+    <span class="cat-stripe" data-color="bleu" aria-hidden="true"></span>
+    <div class="video-thumb">
+      <img src="https://i.ytimg.com/vi/MNLVZ3ZqLXY/maxresdefault.jpg" alt="𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐓𝐀𝐋𝐀𝐓𝐀 𝟏𝟑 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔" loading="lazy" decoding="async">
+      <span class="media-scrim" aria-hidden="true"></span>
+            <span class="mini-play"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+      <span class="timecode">3:59</span>
+    </div>
+    <div class="video-body">
+      <span class="tag" data-color="bleu">Actualite</span>
+      <h3 class="video-title"><span>𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐓𝐀𝐋𝐀𝐓𝐀 𝟏𝟑 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔</span></h3>
+              <p class="video-desc">𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐓𝐀𝐋𝐀𝐓𝐀 𝟏𝟑 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔
+🟦Fampianarana: Tokony ho laza adina iray ihany no...</p>
+            <div class="video-meta">
+        <span class="video-date">14 Oct 2026</span>
+        <span class="video-views">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          9.0
+        </span>
+      </div>
+    </div>
+  </article>
+</a>          <a href="http://localhost:8000/webtv/-kE6hATcRPM" class="video-card-link" data-page-loading="Chargement de la vidéo…">
+  <article class="video-card ">
+    <span class="cat-stripe" data-color="bleu" aria-hidden="true"></span>
+    <div class="video-thumb">
+      <img src="https://i.ytimg.com/vi/-kE6hATcRPM/maxresdefault.jpg" alt="𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐀𝐋𝐀𝐓𝐒𝐈𝐍𝐀𝐈𝐍𝐘 𝟏𝟐 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔" loading="lazy" decoding="async">
+      <span class="media-scrim" aria-hidden="true"></span>
+            <span class="mini-play"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+      <span class="timecode">5:02</span>
+    </div>
+    <div class="video-body">
+      <span class="tag" data-color="bleu">Actualite</span>
+      <h3 class="video-title"><span>𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐀𝐋𝐀𝐓𝐒𝐈𝐍𝐀𝐈𝐍𝐘 𝟏𝟐 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔</span></h3>
+              <p class="video-desc">𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐀𝐋𝐀𝐓𝐒𝐈𝐍𝐀𝐈𝐍𝐘 𝟏𝟐 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔
+• LAICP : Mitohy ny fandresena lahatra ireo so...</p>
+            <div class="video-meta">
+        <span class="video-date">13 Oct 2026</span>
+        <span class="video-views">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          6.0
+        </span>
+      </div>
+    </div>
+  </article>
+</a>          <a href="http://localhost:8000/webtv/JWKnW8rfoMA" class="video-card-link" data-page-loading="Chargement de la vidéo…">
+  <article class="video-card ">
+    <span class="cat-stripe" data-color="bleu" aria-hidden="true"></span>
+    <div class="video-thumb">
+      <img src="https://i.ytimg.com/vi/JWKnW8rfoMA/maxresdefault.jpg" alt="𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐙𝐎𝐌𝐀 𝟎𝟗 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔" loading="lazy" decoding="async">
+      <span class="media-scrim" aria-hidden="true"></span>
+            <span class="mini-play"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+      <span class="timecode">5:15</span>
+    </div>
+    <div class="video-body">
+      <span class="tag" data-color="bleu">Actualite</span>
+      <h3 class="video-title"><span>𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐙𝐎𝐌𝐀 𝟎𝟗 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔</span></h3>
+              <p class="video-desc">𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐙𝐎𝐌𝐀 𝟎𝟗 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔
+🔴MEF – OSC : nanatanteraka fifanaovan-tsonia fiaraha...</p>
+            <div class="video-meta">
+        <span class="video-date">12 Oct 2026</span>
+        <span class="video-views">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          4.0
+        </span>
+      </div>
+    </div>
+  </article>
+</a>          <a href="http://localhost:8000/webtv/g3OjL1kWIGM" class="video-card-link" data-page-loading="Chargement de la vidéo…">
+  <article class="video-card ">
+    <span class="cat-stripe" data-color="bleu" aria-hidden="true"></span>
+    <div class="video-thumb">
+      <img src="https://i.ytimg.com/vi/g3OjL1kWIGM/maxresdefault.jpg" alt="𝐒𝐈𝐎𝐊𝐀𝐍&#039;𝐍𝐘 𝐓𝐀𝐍𝐀𝐍𝐀" loading="lazy" decoding="async">
+      <span class="media-scrim" aria-hidden="true"></span>
+            <span class="mini-play"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+      <span class="timecode">1:54:26</span>
+    </div>
+    <div class="video-body">
+      <span class="tag" data-color="bleu">Actualite</span>
+      <h3 class="video-title"><span>𝐒𝐈𝐎𝐊𝐀𝐍&#039;𝐍𝐘 𝐓𝐀𝐍𝐀𝐍𝐀</span></h3>
+              <p class="video-desc">𝐒𝐈𝐎𝐊𝐀𝐍&#039;𝐍𝐘 𝐓𝐀𝐍𝐀𝐍𝐀
+
+𝐅𝐚𝐡𝐚𝐝𝐢𝐨𝐯𝐚𝐧𝐚 𝐬𝐲 𝐟𝐚𝐧𝐚𝐝𝐢𝐨𝐯𝐚𝐧𝐚 𝐚𝐨 𝐚𝐦𝐢𝐧&#039;𝐧𝐲 𝐟𝐨𝐤𝐨𝐧𝐭𝐚𝐧𝐲 𝐀𝐧𝐨𝐬𝐢𝐛𝐞 𝐎𝐮𝐞𝐬𝐭 𝐈𝐈 : 𝐟𝐢𝐟𝐚𝐧...</p>
+            <div class="video-meta">
+        <span class="video-date">09 Oct 2026</span>
+        <span class="video-views">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          9.0
+        </span>
+      </div>
+    </div>
+  </article>
+</a>          <a href="http://localhost:8000/webtv/ZdjPVy7rj1s" class="video-card-link" data-page-loading="Chargement de la vidéo…">
+  <article class="video-card ">
+    <span class="cat-stripe" data-color="bleu" aria-hidden="true"></span>
+    <div class="video-thumb">
+      <img src="https://i.ytimg.com/vi/ZdjPVy7rj1s/maxresdefault.jpg" alt="𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐀𝐋𝐀𝐊𝐀𝐌𝐈𝐒𝐘 𝟎𝟖 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔" loading="lazy" decoding="async">
+      <span class="media-scrim" aria-hidden="true"></span>
+            <span class="mini-play"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+      <span class="timecode">4:56</span>
+    </div>
+    <div class="video-body">
+      <span class="tag" data-color="bleu">Actualite</span>
+      <h3 class="video-title"><span>𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐀𝐋𝐀𝐊𝐀𝐌𝐈𝐒𝐘 𝟎𝟖 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔</span></h3>
+              <p class="video-desc">𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐀𝐋𝐀𝐊𝐀𝐌𝐈𝐒𝐘 𝟎𝟖 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔
+♦️Lalana tsotra ahafahan’i Madagasikara mamerina...</p>
+            <div class="video-meta">
+        <span class="video-date">09 Oct 2026</span>
+        <span class="video-views">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          1.0
+        </span>
+      </div>
+    </div>
+  </article>
+</a>          <a href="http://localhost:8000/webtv/rhNror-Pwvg" class="video-card-link" data-page-loading="Chargement de la vidéo…">
+  <article class="video-card ">
+    <span class="cat-stripe" data-color="bleu" aria-hidden="true"></span>
+    <div class="video-thumb">
+      <img src="https://i.ytimg.com/vi/rhNror-Pwvg/maxresdefault.jpg" alt="𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐀𝐋𝐀𝐑𝐎𝐁𝐈𝐀 𝟎𝟕 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔" loading="lazy" decoding="async">
+      <span class="media-scrim" aria-hidden="true"></span>
+            <span class="mini-play"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
+      <span class="timecode">4:43</span>
+    </div>
+    <div class="video-body">
+      <span class="tag" data-color="bleu">Actualite</span>
+      <h3 class="video-title"><span>𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐀𝐋𝐀𝐑𝐎𝐁𝐈𝐀 𝟎𝟕 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔</span></h3>
+              <p class="video-desc">𝐒𝐎𝐍𝐆𝐀𝐃𝐈𝐌-𝐁𝐀𝐎𝐕𝐀𝐎 𝐀𝐋𝐀𝐑𝐎𝐁𝐈𝐀 𝟎𝟕 𝐎𝐊𝐓𝐎𝐁𝐑𝐀 𝟐𝟎𝟐𝟔
+🔴Amin&#039;ny 26 Oktobra 2026 indray ny fotoam-pitsar...</p>
+            <div class="video-meta">
+        <span class="video-date">07 Oct 2026</span>
+        <span class="video-views">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+          9.0
+        </span>
+      </div>
+    </div>
+  </article>
+</a>      </div>
+
+  <div class="pagination-wrap"><nav role="navigation" aria-label="Pagination Navigation">
+
+        <div class="flex gap-2 items-center justify-between sm:hidden">
+
+                            <span class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 cursor-not-allowed leading-5 rounded-md dark:text-gray-300 dark:bg-gray-700 dark:border-gray-600">
+                    &laquo; Previous
+                </span>
+            
+                            <a href="http://localhost:8000/webtv/toutes-les-videos?category=actualite&amp;page=2" rel="next" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-800 bg-white border border-gray-300 leading-5 rounded-md hover:text-gray-700 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-800 transition ease-in-out duration-150 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 dark:focus:border-blue-700 dark:active:bg-gray-700 dark:active:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-900 dark:hover:text-gray-200">
+                    Next &raquo;
+                </a>
+            
+        </div>
+
+        <div class="hidden sm:flex-1 sm:flex sm:gap-2 sm:items-center sm:justify-between">
+
+            <div>
+                <p class="text-sm text-gray-700 leading-5 dark:text-gray-600">
+                    Showing
+                                            <span class="font-medium">1</span>
+                        to
+                        <span class="font-medium">12</span>
+                                        of
+                    <span class="font-medium">100</span>
+                    results
+                </p>
+            </div>
+
+            <div>
+                <span class="inline-flex rtl:flex-row-reverse shadow-sm rounded-md">
+
+                    
+                                            <span aria-disabled="true" aria-label="&amp;laquo; Previous">
+                            <span class="inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 cursor-not-allowed rounded-l-md leading-5 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400" aria-hidden="true">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                </svg>
+                            </span>
+                        </span>
+                    
+                    
+                                            
+                        
+                        
+                                                                                                                        <span aria-current="page">
+                                        <span class="inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-gray-200 border border-gray-300 cursor-default leading-5 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300">1</span>
+                                    </span>
+                                                                                                                                <a href="http://localhost:8000/webtv/toutes-les-videos?category=actualite&amp;page=2" class="inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:text-gray-700 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:text-gray-300 dark:active:bg-gray-700 dark:focus:border-blue-800 hover:bg-gray-100 dark:hover:bg-gray-900" aria-label="Go to page 2">
+                                        2
+                                    </a>
+                                                                                                                                <a href="http://localhost:8000/webtv/toutes-les-videos?category=actualite&amp;page=3" class="inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:text-gray-700 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:text-gray-300 dark:active:bg-gray-700 dark:focus:border-blue-800 hover:bg-gray-100 dark:hover:bg-gray-900" aria-label="Go to page 3">
+                                        3
+                                    </a>
+                                                                                                                                <a href="http://localhost:8000/webtv/toutes-les-videos?category=actualite&amp;page=4" class="inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:text-gray-700 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:text-gray-300 dark:active:bg-gray-700 dark:focus:border-blue-800 hover:bg-gray-100 dark:hover:bg-gray-900" aria-label="Go to page 4">
+                                        4
+                                    </a>
+                                                                                                                                <a href="http://localhost:8000/webtv/toutes-les-videos?category=actualite&amp;page=5" class="inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:text-gray-700 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:text-gray-300 dark:active:bg-gray-700 dark:focus:border-blue-800 hover:bg-gray-100 dark:hover:bg-gray-900" aria-label="Go to page 5">
+                                        5
+                                    </a>
+                                                                                                                                <a href="http://localhost:8000/webtv/toutes-les-videos?category=actualite&amp;page=6" class="inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:text-gray-700 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:text-gray-300 dark:active:bg-gray-700 dark:focus:border-blue-800 hover:bg-gray-100 dark:hover:bg-gray-900" aria-label="Go to page 6">
+                                        6
+                                    </a>
+                                                                                                                                <a href="http://localhost:8000/webtv/toutes-les-videos?category=actualite&amp;page=7" class="inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:text-gray-700 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:text-gray-300 dark:active:bg-gray-700 dark:focus:border-blue-800 hover:bg-gray-100 dark:hover:bg-gray-900" aria-label="Go to page 7">
+                                        7
+                                    </a>
+                                                                                                                                <a href="http://localhost:8000/webtv/toutes-les-videos?category=actualite&amp;page=8" class="inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:text-gray-700 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:text-gray-300 dark:active:bg-gray-700 dark:focus:border-blue-800 hover:bg-gray-100 dark:hover:bg-gray-900" aria-label="Go to page 8">
+                                        8
+                                    </a>
+                                                                                                                                <a href="http://localhost:8000/webtv/toutes-les-videos?category=actualite&amp;page=9" class="inline-flex items-center px-4 py-2 -ml-px text-sm font-medium text-gray-700 bg-white border border-gray-300 leading-5 hover:text-gray-700 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:text-gray-300 dark:active:bg-gray-700 dark:focus:border-blue-800 hover:bg-gray-100 dark:hover:bg-gray-900" aria-label="Go to page 9">
+                                        9
+                                    </a>
+                                                                                                        
+                    
+                                            <a href="http://localhost:8000/webtv/toutes-les-videos?category=actualite&amp;page=2" rel="next" class="inline-flex items-center px-2 py-2 -ml-px text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md leading-5 hover:text-gray-400 focus:outline-none focus:ring ring-gray-300 focus:border-blue-300 active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150 dark:bg-gray-800 dark:border-gray-600 dark:active:bg-gray-700 dark:focus:border-blue-800 dark:text-gray-300 dark:hover:bg-gray-900 dark:hover:text-gray-300" aria-label="Next &amp;raquo;">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+                                    </span>
+            </div>
+        </div>
+    </nav>
+</div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var root = document.getElementById('webtvSec');
+  if (!root) return;
+
+  var form       = root.querySelector('.webtv-filterbar');
+  var input      = form.querySelector('input[name="q"]');
+  var searchWrap = form.querySelector('.webtv-search');
+  var clearBtn   = form.querySelector('.webtv-search-clear');
+  var chips      = form.querySelectorAll('.chip');
+  var results    = document.getElementById('webtvResults');
+  var activeBox  = document.getElementById('webtvActive');
+  var countEl    = root.querySelector('.webtv-count');
+  var base       = form.getAttribute('action');
+
+  var category   = form.dataset.category || '';
+  var cache      = new Map();
+  var CACHE_MS   = 60000;
+  var controller = null;
+  var timer      = null;
+
+  function getSort() {
+    var r = form.querySelector('input[name="sort"]:checked');
+    return r ? r.value : 'recent';
+  }
+
+  function buildUrl() {
+    var p = new URLSearchParams();
+    var q = input.value.trim();
+    if (q) p.set('q', q);
+    if (category) p.set('category', category);
+    if (getSort() !== 'recent') p.set('sort', getSort());
+    var s = p.toString();
+    return base + (s ? '?' + s : '');
+  }
+
+  function syncUI() {
+    var has = input.value.length > 0;
+    searchWrap.classList.toggle('has-value', has);
+    clearBtn.hidden = !has;
+    chips.forEach(function (c) {
+      var on = (c.dataset.category || '') === category;
+      c.classList.toggle('is-active', on);
+      if (on) c.setAttribute('aria-current', 'true'); else c.removeAttribute('aria-current');
+    });
+  }
+
+  function syncFromUrl(u) {
+    var p = u.searchParams;
+    input.value = p.get('q') || '';
+    category = p.get('category') || '';
+    var sort = p.get('sort') === 'popular' ? 'popular' : 'recent';
+    var radio = form.querySelector('input[name="sort"][value="' + sort + '"]');
+    if (radio) radio.checked = true;
+    syncUI();
+  }
+
+  function apply(data) {
+    results.innerHTML = data.results;
+    activeBox.innerHTML = data.active;
+    countEl.textContent = data.count;
+    results.classList.remove('is-pending');
+  }
+
+  function fetchResults(url) {
+    if (controller) controller.abort();
+    var hit = cache.get(url);
+    if (hit && Date.now() - hit.t < CACHE_MS) { apply(hit.data); return; }
+
+    controller = new AbortController();
+    results.classList.add('is-pending');
+
+    fetch(url, {
+      headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+      credentials: 'same-origin',
+      signal: controller.signal
+    })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (data) { cache.set(url, { t: Date.now(), data: data }); apply(data); })
+      .catch(function (err) {
+        if (err.name === 'AbortError') return;
+        window.location.href = url; // repli : navigation classique
+      });
+  }
+
+  function go() {
+    var url = buildUrl();
+    history.replaceState(history.state, '', url);
+    syncUI();
+    fetchResults(url);
+  }
+
+  // Recherche en direct : dès la première lettre
+  input.addEventListener('input', function () {
+    syncUI();
+    clearTimeout(timer);
+    timer = setTimeout(go, 100);
+  });
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && input.value) { input.value = ''; go(); }
+  });
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    clearTimeout(timer);
+    go();
+  });
+
+  form.addEventListener('change', function (e) {
+    if (e.target.name === 'sort') go();
+  });
+
+  root.addEventListener('click', function (e) {
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+    if (e.target.closest('.webtv-search-clear')) {
+      input.value = '';
+      go();
+      input.focus();
+      return;
+    }
+
+    var a = e.target.closest('a');
+    if (!a) return;
+
+    if (a.classList.contains('chip')) {
+      e.preventDefault();
+      category = a.dataset.category || '';
+      go();
+      return;
+    }
+
+    var isPager = !!a.closest('.pagination-wrap');
+    if (isPager || a.hasAttribute('data-ajax')) {
+      e.preventDefault();
+      var u = new URL(a.href, window.location.origin);
+      syncFromUrl(u);
+      history.replaceState(history.state, '', u.pathname + u.search);
+      fetchResults(u.pathname + u.search);
+      if (isPager) results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+
+  // Raccourci "/" : focus dans la recherche (enregistré une seule fois)
+  if (!window.__webtvSlash) {
+    window.__webtvSlash = true;
+    document.addEventListener('keydown', function (e) {
+      var tag = (e.target.tagName || '').toLowerCase();
+      if (e.key === '/' && tag !== 'input' && tag !== 'textarea' && tag !== 'select' && !e.target.isContentEditable) {
+        var i = document.querySelector('.webtv-search input');
+        if (i) { e.preventDefault(); i.focus(); i.select(); }
+      }
+    });
+  }
+})();
+</script>
+  </main>
+
+  <section id="partners" class="partners" iaria-labelledby="partners-heading">
+    <div class="partners-inner">
+
+        
+        <div class="partners-tier">
+            <p class="partners-heading">Projet initié par</p>
+            <div class="partners-grid">
+                <a href="#" target="_blank" rel="noopener noreferrer"
+                   class="partner-card" aria-label="ROHY (nouvel onglet)">
+                    <span class="partner-card-logo partner-card-logo--featured">
+                        <img src="http://localhost:8000/images/partners/logo-rohy.jpg"
+                             alt="ROHY" loading="lazy" width="320" height="140">
+                    </span>
+                </a>
+            </div>
+        </div>
+
+        <div class="partners-divider" role="separator" aria-hidden="true"></div>
+
+        
+        <div class="partners-tier partners-tier--network">
+            <p class="partners-heading">Mis en œuvre par</p>
+            <div class="partners-grid partners-grid--network">
+                <a href="https://internews.org" target="_blank" rel="noopener noreferrer"
+                   class="partner-card" aria-label="Internews (nouvel onglet)">
+                    <span class="partner-card-logo">
+                        <img src="http://localhost:8000/images/partners/internews.jpg"
+                             alt="Internews — Local voices. Global change."
+                             loading="lazy" width="200" height="140">
+                    </span>
+                </a>
+                <a href="https://manehoa.mg" target="_blank" rel="noopener noreferrer"
+                   class="partner-card" aria-label="#MANEHOA — Liberté d'expression Madagascar (nouvel onglet)">
+                    <span class="partner-card-logo">
+                        <img src="http://localhost:8000/images/partners/logo-manehoa.png"
+                             alt="#MANEHOA — Liberté d'expression Madagascar"
+                             loading="lazy" width="277" height="117">
+                    </span>
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer"
+                   class="partner-card" aria-label="MSIS Tatao (nouvel onglet)">
+                    <span class="partner-card-logo">
+                        <img src="http://localhost:8000/images/partners/logo-msis-Tatao.png"
+                             alt="MSIS Tatao" loading="lazy" width="320" height="140">
+                    </span>
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer"
+                   class="partner-card" aria-label="Alliance Voahary Gasy (nouvel onglet)">
+                    <span class="partner-card-logo">
+                        <img src="http://localhost:8000/images/partners/logo-avg.png"
+                             alt="Alliance Voahary Gasy" loading="lazy" width="320" height="140">
+                    </span>
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer"
+                   class="partner-card" aria-label="PFNOSCM (nouvel onglet)">
+                    <span class="partner-card-logo">
+                        <img src="http://localhost:8000/images/partners/logo-pfnoscm.jpg"
+                             alt="PFNOSCM" loading="lazy" width="320" height="140">
+                    </span>
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer"
+                   class="partner-card" aria-label="ONG Ravintsara (nouvel onglet)">
+                    <span class="partner-card-logo">
+                        <img src="http://localhost:8000/images/partners/logo-ong-ravintsara.jpg"
+                             alt="ONG Ravintsara" loading="lazy" width="320" height="140">
+                    </span>
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer"
+                   class="partner-card" aria-label="CCOC (nouvel onglet)">
+                    <span class="partner-card-logo">
+                        <img src="http://localhost:8000/images/partners/logo-ccoc.png"
+                             alt="CCOC" loading="lazy" width="320" height="140">
+                    </span>
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer"
+                   class="partner-card" aria-label="SIF (nouvel onglet)">
+                    <span class="partner-card-logo">
+                        <img src="http://localhost:8000/images/partners/logotypeSIF.png"
+                             alt="SIF" loading="lazy" width="320" height="140">
+                    </span>
+                </a>
+            </div>
+        </div>
+
+        <div class="partners-divider" role="separator" aria-hidden="true"></div>
+
+        
+        <div class="partners-tier">
+            <p class="partners-heading">Financé par</p>
+            <div class="partners-grid">
+                <a href="https://european-union.europa.eu" target="_blank" rel="noopener noreferrer"
+                   class="partner-card" aria-label="Union européenne — Unis pour un meilleur avenir (nouvel onglet)">
+                    <span class="partner-card-logo partner-card-logo--featured">
+                        <img src="http://localhost:8000/images/partners/Logo HD_UE-Mada-01.png"
+                             alt="Union européenne — Unis pour un meilleur avenir"
+                             loading="lazy" width="229" height="74">
+                    </span>
+                </a>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<footer>
+    <div class="footer-main">
+
+        
+        <div class="footer-brand">
+            <div class="logo">
+                <div class="logo-main"><span class="logo-s">S</span><span class="logo-ioka">IOKA</span></div>
+            </div>
+            <p>
+                Serasera lombonan'ny Olompirenena ho Kalitaon'ny Antontambaovao.<br>
+                Presse indépendante de la société civile, une nouvelle signature dans le paysage médiatique malagasy.
+            </p>
+            <ul class="socials" aria-label="Réseaux sociaux SIOKA">
+                <li>
+                    <a href="#" class="social-btn" aria-label="Suivre SIOKA sur Facebook" target="_blank" rel="noopener noreferrer">
+                        <svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                        </svg>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="social-btn" aria-label="Suivre SIOKA sur Twitter" target="_blank" rel="noopener noreferrer">
+                        <svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>
+                        </svg>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="social-btn" aria-label="S'abonner à la chaîne YouTube SIOKA" target="_blank" rel="noopener noreferrer">
+                        <svg fill="currentColor" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                            <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"/>
+                            <polygon fill="var(--ink)" points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/>
+                        </svg>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        
+        <nav class="footer-col" aria-labelledby="footer-heading-emissions">
+            <h4 id="footer-heading-emissions">Émissions SIOKA</h4>
+            <ul>
+                <li><a href="#">Safidy</a></li>
+                <li><a href="#">Ekonomia</a></li>
+                <li><a href="#">Ny Vaovao</a></li>
+                <li><a href="#">Tontolo Iainana</a></li>
+                <li><a href="#">Aiza ny pro ?</a></li>
+                <li><a href="#">Siokan'Ampela</a></li>
+            </ul>
+        </nav>
+
+        <nav class="footer-col" aria-labelledby="footer-heading-plateforme">
+            <h4 id="footer-heading-plateforme">Plateforme</h4>
+            <ul>
+                <li><a href="#">Live Web TV</a></li>
+                <li><a href="#">Live Webradio</a></li>
+                <li><a href="#">Grille des programmes</a></li>
+                <li><a href="#">Podcasts</a></li>
+                <li><a href="#">L'Équipe</a></li>
+            </ul>
+        </nav>
+
+        <div class="footer-col" aria-labelledby="footer-heading-contact">
+            <h4 id="footer-heading-contact">Contact & Mentions</h4>
+            <ul>
+                <li><a href="mailto:contact@sioka.org">contact@sioka.org</a></li>
+                <li><a href="https://sioka.org">www.sioka.org</a></li>
+                <li>
+                    <address>
+                        VB6 Rue Samuel Rahamefy (ex-CITE)<br>
+                        Ambatonakanga, Antananarivo 101
+                    </address>
+                </li>
+                <li><a href="#">Mentions Légales</a></li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        <span>Mis en œuvre par la société civile Malagasy. <strong>© 2026 SIOKA</strong> — Tous droits réservés.</span>
+    </div>
+</footer>  <div class="radio-player" id="radioPlayer" role="region" aria-label="Lecteur Webradio" data-turbo-permanent>
+  <audio id="audioStream" preload="none">
+    <source src="https://securestreams.autopo.st:2584/;" type="audio/mpeg">
+    Votre navigateur ne supporte pas l'élément audio.
+  </audio>
+
+  <div class="rp-shell">
+
+    <div class="rp-info">
+      <div class="rp-artwork">
+        <div class="rp-disc" id="rpDisc">
+          <img
+              src="http://localhost:8000/images/SIOKA-LogoOfficiel.png"
+              alt="SIOKA"
+              class="rp-logo"
+          >
+        </div>
+        <span class="rp-eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      </div>
+
+      <div class="rp-text">
+        <span class="rp-live">
+          <span class="live-dot"></span> EN DIRECT
+        </span>
+        <div class="rp-title-wrap">
+          <span class="rp-title" id="rpTitle">SIOKA - FM 106 Mhz</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rp-controls">
+
+      <button class="rp-btn-like" id="likeBtn" type="button" aria-label="Ajouter aux favoris" aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 21s-6.7-4.35-9.3-8.28C1.02 10.1 1.5 6.5 4.6 5.02 7 3.9 9.5 4.9 12 7.5c2.5-2.6 5-3.6 7.4-2.48 3.1 1.48 3.58 5.08 1.9 7.7C18.7 16.65 12 21 12 21z"/>
+        </svg>
+      </button>
+
+      <div class="rp-volume">
+        <button class="rp-vol-icon" id="volIcon" type="button" aria-label="Couper / rétablir le son">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+        </button>
+        <div class="rp-slider" id="volSlider" aria-label="Contrôle du volume" role="slider" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="70" tabindex="0">
+          <div class="rp-slider-fill" id="volFill" style="height: 70%;"></div>
+        </div>
+      </div>
+
+      <button class="rp-btn-play" id="playBtn" type="button" aria-label="Lecture Webradio">
+        <span class="rp-btn-play-halo" aria-hidden="true"></span>
+        <svg id="iconPlay" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="iconPause" style="display:none;" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+      </button>
+
+      <button class="rp-btn-share" id="shareBtn" type="button" aria-label="Partager">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </svg>
+      </button>
+
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var player   = document.getElementById('radioPlayer');
+  var audio    = document.getElementById('audioStream');
+  var title    = document.getElementById('rpTitle');
+  var likeBtn  = document.getElementById('likeBtn');
+  var shareBtn = document.getElementById('shareBtn');
+  var volIcon  = document.getElementById('volIcon');
+  var volFill  = document.getElementById('volFill');
+  var volSlider = document.getElementById('volSlider');
+  var shell    = player ? player.querySelector('.rp-shell') : null;
+
+  if (!player || !audio) return;
+
+  ['play', 'playing'].forEach(function (evt) {
+    audio.addEventListener(evt, function () {
+      player.classList.add('is-playing');
+      player.classList.remove('is-loading', 'has-error');
+    });
+  });
+  audio.addEventListener('pause', function () { player.classList.remove('is-playing'); });
+  audio.addEventListener('waiting', function () { player.classList.add('is-loading'); });
+  audio.addEventListener('stalled', function () { player.classList.add('is-loading'); });
+  audio.addEventListener('error', function () {
+    player.classList.remove('is-loading', 'is-playing');
+    player.classList.add('has-error');
+  });
+
+  // Défilement du titre s'il déborde réellement de son cadre.
+  function checkMarquee() {
+    if (!title) return;
+    var wrap = title.parentElement;
+    title.classList.toggle('is-marquee', title.scrollWidth > wrap.clientWidth + 4);
+  }
+  checkMarquee();
+  window.addEventListener('resize', checkMarquee);
+  if (window.MutationObserver && title) {
+    new MutationObserver(checkMarquee).observe(title, { childList: true, characterData: true, subtree: true });
+  }
+
+  // Favori (visuel) 
+  if (likeBtn) {
+    likeBtn.addEventListener('click', function () {
+      var active = likeBtn.classList.toggle('is-active');
+      likeBtn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+  }
+
+  // Partage natif si disponible, sinon copie du lien dans le presse-papiers.
+  if (shareBtn) {
+    shareBtn.addEventListener('click', async function () {
+      var shareData = {
+        title: 'SIOKA - FM 106 Mhz',
+        text: title ? title.textContent : 'SIOKA - FM 106 Mhz',
+        url: window.location.href
+      };
+      if (navigator.share) {
+        try { await navigator.share(shareData); } catch (e) {}
+      } else {
+        try {
+          await navigator.clipboard.writeText(window.location.href);
+          shareBtn.classList.add('is-copied');
+          setTimeout(function () { shareBtn.classList.remove('is-copied'); }, 1500);
+        } catch (e) {}
+      }
+    });
+  }
+
+
+  function syncVolumeIcon() {
+    if (!volIcon) return;
+    volIcon.classList.toggle('is-muted', audio.muted || audio.volume === 0);
+  }
+
+  function applyVolume(ratio) {
+    ratio = Math.min(1, Math.max(0, ratio));
+    var pct = Math.round(ratio * 100);
+    if (volFill) volFill.style.height = pct + '%';
+    if (volSlider) volSlider.setAttribute('aria-valuenow', pct);
+    audio.volume = ratio;
+    if (ratio > 0 && audio.muted) audio.muted = false;
+    syncVolumeIcon();
+  }
+
+  if (volSlider) {
+    var dragging = false;
+
+    var ratioFromClientY = function (clientY) {
+      var rect = volSlider.getBoundingClientRect();
+      return (rect.bottom - clientY) / rect.height;
+    };
+
+    var startDrag = function (e) {
+      dragging = true;
+      var y = e.touches ? e.touches[0].clientY : e.clientY;
+      applyVolume(ratioFromClientY(y));
+      e.preventDefault();
+    };
+    var moveDrag = function (e) {
+      if (!dragging) return;
+      var y = e.touches ? e.touches[0].clientY : e.clientY;
+      applyVolume(ratioFromClientY(y));
+    };
+    var endDrag = function () { dragging = false; };
+
+    volSlider.addEventListener('mousedown', startDrag);
+    volSlider.addEventListener('touchstart', startDrag, { passive: false });
+    window.addEventListener('mousemove', moveDrag);
+    window.addEventListener('touchmove', moveDrag, { passive: false });
+    window.addEventListener('mouseup', endDrag);
+    window.addEventListener('touchend', endDrag);
+
+    volSlider.addEventListener('keydown', function (e) {
+      var current = parseInt(volSlider.getAttribute('aria-valuenow'), 10) || 0;
+      if (e.key === 'ArrowUp' || e.key === 'ArrowRight') { applyVolume((current + 5) / 100); e.preventDefault(); }
+      else if (e.key === 'ArrowDown' || e.key === 'ArrowLeft') { applyVolume((current - 5) / 100); e.preventDefault(); }
+      else if (e.key === 'Home') { applyVolume(0); e.preventDefault(); }
+      else if (e.key === 'End') { applyVolume(1); e.preventDefault(); }
+    });
+  }
+
+  if (volIcon) {
+    volIcon.addEventListener('click', function () {
+      audio.muted = !audio.muted;
+      syncVolumeIcon();
+    });
+  }
+
+  syncVolumeIcon();
+
+  // ------------------------------------------------------------------
+  // Anti-éclipse du footer : le lecteur est en position:fixed, donc il
+  // recouvre en permanence le bas du viewport. On mesure sa hauteur RÉELLE
+  // (variable selon le breakpoint, la marge desktop, la safe-area iOS...)
+  // et on l'expose via --rp-player-h sur :root. footer.css s'en sert pour
+  // ajouter une marge de sécurité et garantir que le contenu du footer
+  // reste toujours entièrement visible au scroll, jamais masqué.
+  // ------------------------------------------------------------------
+  function setPlayerOffset() {
+    if (!shell) return;
+    var rect = shell.getBoundingClientRect();
+    var playerStyles = getComputedStyle(player);
+    var paddingBottom = parseFloat(playerStyles.paddingBottom) || 0;
+    var comfortMargin = 16; // marge visuelle supplémentaire
+    var total = Math.ceil(rect.height + paddingBottom + comfortMargin);
+    document.documentElement.style.setProperty('--rp-player-h', total + 'px');
+  }
+
+  setPlayerOffset();
+  window.addEventListener('resize', setPlayerOffset);
+  window.addEventListener('orientationchange', setPlayerOffset);
+  if (window.ResizeObserver) {
+    new ResizeObserver(setPlayerOffset).observe(player);
+  }
+})();
+</script>
+  <div class="auth-loading-overlay" id="authLoadingOverlay">
+  <div class="auth-loading-logo">
+    <div class="auth-loading-pulse"></div>
+    <div class="auth-loading-pulse"></div>
+    <div class="auth-loading-ring"></div>
+    <div class="auth-loading-badge">
+      <img src="http://localhost:8000/images/icones/favicon-96x96.png" alt="SIOKA" class="auth-loading-badge-img">
+    </div>
+  </div>
+
+  <div class="auth-loading-text">
+    <span id="authLoadingText">Connexion en cours</span>
+    <span class="auth-loading-dots"><span>.</span><span>.</span><span>.</span></span>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const overlay = document.getElementById('authLoadingOverlay');
+    const overlayText = document.getElementById('authLoadingText');
+    if (!overlay) return;
+
+    const MIN_VISIBLE_MS = 350;
+    let shownAt = 0;
+
+    function showOverlay(label) {
+      overlayText.textContent = label || 'Chargement';
+      overlay.classList.add('show');
+      shownAt = Date.now();
+    }
+
+    function hideOverlay() {
+      if (!overlay.classList.contains('show')) return;
+      const elapsed = Date.now() - shownAt;
+      const wait = Math.max(0, MIN_VISIBLE_MS - elapsed);
+      setTimeout(function () {
+        overlay.classList.remove('show');
+      }, wait);
+    }
+
+    // ---------- Formulaires (connexion, déconnexion, etc.) ----------
+    // Délégation : fonctionne même si le formulaire est recréé par Turbo.
+    document.addEventListener('submit', function (e) {
+      const form = e.target.closest('form[data-auth-loading]');
+      if (!form) return;
+
+      showOverlay(form.dataset.authLoading);
+
+      const btn = form.querySelector('button[type="submit"]');
+      if (btn) btn.disabled = true;
+    });
+
+    // ---------- Liens de navigation (ex: menu Actualités) ----------
+    // Délégation sur document : reste valide après chaque swap Turbo du sidebar.
+    document.addEventListener('click', function (e) {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+
+      const link = e.target.closest('a[data-page-loading]');
+      if (!link || link.target === '_blank') return;
+
+      showOverlay(link.dataset.pageLoading);
+    });
+
+    // ---------- Turbo : purger l'overlay avant qu'il ne soit figé dans un snapshot ----------
+    document.addEventListener('turbo:before-cache', function () {
+      overlay.classList.remove('show');
+    });
+
+    // ---------- Turbo : masquer une fois la nouvelle page rendue (avec durée minimale) ----------
+    document.addEventListener('turbo:load', hideOverlay);
+
+    // ---------- Sécurité : cache arrière natif du navigateur (bfcache) ----------
+    window.addEventListener('pageshow', function (e) {
+      if (e.persisted) overlay.classList.remove('show');
+    });
+  })();
+</script>
+  
+</body>
+</html>

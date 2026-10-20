@@ -76,10 +76,6 @@
 
   if (!player || !audio) return;
 
-  // Couche purement visuelle : ne remplace pas votre logique play/pause
-  // existante, elle écoute juste les évènements natifs de <audio> pour
-  // piloter le disque vinyle (qui tourne avec le logo), l'équaliseur,
-  // le halo, le point "EN DIRECT" et l'état d'erreur.
   ['play', 'playing'].forEach(function (evt) {
     audio.addEventListener(evt, function () {
       player.classList.add('is-playing');
@@ -94,7 +90,7 @@
     player.classList.add('has-error');
   });
 
-  // Défilement du titre uniquement s'il déborde réellement de son cadre.
+  // Défilement du titre s'il déborde réellement de son cadre.
   function checkMarquee() {
     if (!title) return;
     var wrap = title.parentElement;
@@ -106,7 +102,7 @@
     new MutationObserver(checkMarquee).observe(title, { childList: true, characterData: true, subtree: true });
   }
 
-  // Favori (visuel) — à brancher sur votre API si vous stockez les favoris.
+  // Favori (visuel) 
   if (likeBtn) {
     likeBtn.addEventListener('click', function () {
       var active = likeBtn.classList.toggle('is-active');
@@ -134,10 +130,7 @@
     });
   }
 
-  // Volume vertical, toujours en place (pas de popup) : glisser sur la
-  // mini-piste, cliquer dessus, ou flèches haut/bas au clavier. La piste
-  // (var(--rp-slider-w) dans player.css) ne change jamais de largeur,
-  // seule sa hauteur de remplissage varie.
+
   function syncVolumeIcon() {
     if (!volIcon) return;
     volIcon.classList.toggle('is-muted', audio.muted || audio.volume === 0);

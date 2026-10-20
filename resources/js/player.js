@@ -30,7 +30,7 @@ if (audio && playBtn) {
       iconPlay.style.display = 'none';
       iconPause.style.display = 'block';
       playBtn.classList.add('playing');
-      rpTitle.textContent = 'SIOKA Webradio - FM 106 Mhz';
+      rpTitle.textContent = 'SIOKA - FM 106 Mhz';
       isPlaying = true;
     }
   };
