@@ -1,5 +1,6 @@
 /* resources/css/components/video-single.css
-   Équivalent WebTV d'article-single.css : même approche, mêmes tokens réels. */
+   Équivalent WebTV d'article-single.css : même approche, mêmes tokens réels.
+   Police : Poppins (var(--font-main), définie dans app.css). */
 
 .video-single {
   max-width: 900px;
@@ -27,10 +28,10 @@
 
 .video-single-eyebrow {
   display: inline-block;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-main);
   font-size: .75rem;
   font-weight: 700;
-  letter-spacing: .1em;
+  letter-spacing: .08em;
   text-transform: uppercase;
   color: var(--bleu);
   margin-bottom: .6rem;
@@ -41,11 +42,11 @@
 .video-single-eyebrow[data-color="magenta"] { color: var(--magenta); }
 
 .video-single-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(1.9rem, 4vw, 2.6rem);
-  font-weight: 400;
-  line-height: 1.12;
-  letter-spacing: .01em;
+  font-family: var(--font-main);
+  font-size: clamp(1.5rem, 3.4vw, 2.1rem);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -.01em;
   color: var(--blanc-fort);
   margin: 0 0 .8rem;
 }
@@ -54,7 +55,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 14px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-main);
   font-size: .8rem;
   color: var(--plomb);
   border-bottom: 1px solid var(--glass-bord);
@@ -64,9 +65,13 @@
 }
 
 .video-single-desc {
+  font-family: var(--font-main);
   font-size: 1rem;
+  font-weight: 400;
   line-height: 1.75;
   color: var(--blanc);
+  white-space: pre-line;      /* conserve les retours à la ligne des descriptions YouTube */
+  overflow-wrap: anywhere;
 }
 
 .video-related {

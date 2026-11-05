@@ -534,3 +534,64 @@
   transition: color 0.15s, background 0.15s;
 }
 .mnav-panel a:hover { color: var(--blanc); background: var(--blanc-doux); }
+
+/* ── WebTV : lien animé pour attirer le clic ───────────────── */
+.nav-webtv {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+/* Point "live" avec onde qui se propage */
+.webtv-dot {
+  position: relative;
+  flex-shrink: 0;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--magenta);
+}
+.webtv-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--magenta);
+  animation: webtv-ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes webtv-ping {
+  0%       { transform: scale(1); opacity: 0.7; }
+  75%,100% { transform: scale(3); opacity: 0; }
+}
+
+/* Halo qui respire (desktop) */
+.nav-main > a.nav-webtv {
+  animation: webtv-glow 2.4s ease-in-out infinite;
+}
+
+@keyframes webtv-glow {
+  0%, 100% { background: transparent; box-shadow: 0 0 0 0 transparent; }
+  50%      { background: var(--magenta-glow); box-shadow: 0 0 14px var(--magenta-glow); }
+}
+
+/* Au survol : on coupe l'animation, le hover habituel reprend */
+.nav-main > a.nav-webtv:hover {
+  animation: none;
+  color: var(--blanc);
+  background: var(--blanc-doux);
+  box-shadow: none;
+}
+
+/* Mobile : le lien garde sa mise en page pleine largeur */
+.mobile-nav a.nav-webtv {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Accessibilité : pas d'animation si l'utilisateur la désactive */
+@media (prefers-reduced-motion: reduce) {
+  .webtv-dot::after,
+  .nav-main > a.nav-webtv { animation: none; }
+}

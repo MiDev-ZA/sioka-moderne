@@ -27,16 +27,16 @@
       <span class="timecode">{{ $video['duration'] }}</span>
     </div>
     <div class="video-body">
-      <span class="tag" data-color="{{ $catColor($video['category']) }}">{{ ucfirst($video['category']) }}</span>
+      <span class="tag" data-color="{{ $catColor($video['category']) }}">{{ \App\Support\Fr::category($video['category']) }}</span>
       <h3 class="video-title"><span>{{ $video['title'] }}</span></h3>
       @if($withDesc ?? false)
         <p class="video-desc">{{ \Illuminate\Support\Str::limit($video['description'] ?? '', 90) }}</p>
       @endif
       <div class="video-meta">
-        <span class="video-date">{{ \Carbon\Carbon::parse($video['publishedAt'])->translatedFormat('d M Y') }}</span>
+        <span class="video-date">{{ \App\Support\Fr::date($video['publishedAt'], 'd M Y') }}</span>
         <span class="video-views">
           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-          {{ \Illuminate\Support\Number::abbreviate($video['views'] ?? 0, precision: 1) }}
+          {{ \App\Support\Fr::views($video['views'] ?? 0) }}
         </span>
       </div>
     </div>

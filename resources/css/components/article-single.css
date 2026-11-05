@@ -36,10 +36,63 @@
   font-size: 1.05rem;
   line-height: 1.8;
   color: light-dark(#1f2937, #e5e7eb);
+  overflow-wrap: break-word;
 }
 
+/* Même rendu que l'éditeur : 1 Entrée = 1 ligne, une ligne vide = 1 ligne vide.
+   (Avant : margin-bottom: 1.25rem, qui s'ajoutait aux lignes vides.) */
 .art-single-content p {
-  margin-bottom: 1.25rem;
+  margin: 0;
+}
+
+/* ===== Mise en forme produite par l'éditeur façon Word ===== */
+.art-single-content h1,
+.art-single-content h2,
+.art-single-content h3,
+.art-single-content h4 {
+  margin: 1.2em 0 0.5em;
+  line-height: 1.25;
+}
+
+.art-single-content ul,
+.art-single-content ol {
+  padding-left: 1.5em;
+  margin: 0 0 1em;
+  list-style: revert;
+}
+
+.art-single-content blockquote {
+  border-left: 3px solid light-dark(#9ca3af, #4b5563);
+  margin: 1em 0;
+  padding-left: 1em;
+}
+
+.art-single-content a {
+  text-decoration: underline;
+}
+
+/* Retraits (classes générées par l'éditeur) */
+.art-single-content .ql-indent-1 { padding-left: 3em; }
+.art-single-content .ql-indent-2 { padding-left: 6em; }
+.art-single-content .ql-indent-3 { padding-left: 9em; }
+.art-single-content .ql-indent-4 { padding-left: 12em; }
+.art-single-content .ql-indent-5 { padding-left: 15em; }
+.art-single-content .ql-indent-6 { padding-left: 18em; }
+.art-single-content .ql-indent-7 { padding-left: 21em; }
+.art-single-content .ql-indent-8 { padding-left: 24em; }
+
+/* Tableaux */
+.art-single-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+  table-layout: fixed;
+}
+
+.art-single-content td {
+  border: 1px solid light-dark(#9ca3af, #4b5563);
+  padding: 6px 8px;
+  vertical-align: top;
 }
 
 .art-related {

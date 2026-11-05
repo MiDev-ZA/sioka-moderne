@@ -8,10 +8,6 @@
     </div>
   </div>
 
-  @php
-    $fmt = fn ($n) => \Illuminate\Support\Number::abbreviate($n ?? 0, precision: 1);
-  @endphp
-
   @if($webtvIsLive)
     {{-- ===== Hero : direct en cours — mène vers la page de la vidéo ===== --}}
     <a href="{{ route('webtv.show', $webtvLive['id']) }}" class="live-card-link">
@@ -27,7 +23,7 @@
           @if($webtvLive['viewers'])
             <span class="viewers">
               <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-              {{ $fmt($webtvLive['viewers']) }} spectateurs
+              {{ \App\Support\Fr::compact($webtvLive['viewers']) }} {{ (int) $webtvLive['viewers'] > 1 ? 'spectateurs' : 'spectateur' }}
             </span>
           @endif
           <span class="play xl"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
@@ -52,15 +48,15 @@
           </span>
           <span class="viewers">
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-            {{ $fmt($webtvHero['views']) }} vues
+            {{ \App\Support\Fr::views($webtvHero['views'] ?? 0) }}
           </span>
           <span class="play xl"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
         </div>
         <div class="hero-info">
-          <span class="eyebrow">{{ ucfirst($webtvHero['category']) }}</span>
+          <span class="eyebrow">{{ \App\Support\Fr::category($webtvHero['category'] ?? '') }}</span>
           <h3 class="hero-title">{{ $webtvHero['title'] }}</h3>
-          <p class="hero-desc">{{ \Illuminate\Support\Str::limit($webtvHero['description'], 140) }}</p>
-          <span class="bulletin-meta">{{ \Carbon\Carbon::parse($webtvHero['publishedAt'])->translatedFormat('d F Y') }} · {{ $webtvHero['duration'] }}</span>
+          <p class="hero-desc">{{ \Illuminate\Support\Str::limit($webtvHero['description'] ?? '', 140) }}</p>
+          <span class="bulletin-meta">{{ \App\Support\Fr::date($webtvHero['publishedAt']) }} · {{ \App\Support\Fr::duration($webtvHero['duration'] ?? '') }}</span>
         </div>
       </article>
     </a>

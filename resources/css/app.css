@@ -207,3 +207,63 @@
   /* Accessibilité */
   .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 }
+
+
+
+
+/* ==========================================================================
+   Poppins sur le hero et les cartes WebTV
+   À AJOUTER À LA TOUTE FIN de resources/css/app.css (après le bloc @layer base).
+   Utilise la variable existante --font-main (déjà définie dans app.css).
+   ========================================================================== */
+
+/* Les champs de formulaire n'héritent pas de la police par défaut */
+input, button, select, textarea, kbd { font-family: inherit; }
+
+/* Éléments du hero et des cartes qui étaient en serif / monospace
+   (leurs règles sont dans hero.css : celles-ci passent en dernier et l'emportent) */
+.live-card,
+.hero-title,
+.hero-desc,
+.eyebrow,
+.onair-label,
+.onair-clock,
+.viewers,
+.bulletin-meta,
+.webtv-divider-label,
+.webtv-count,
+.webtv-kbd,
+.video-title,
+.video-desc,
+.video-date,
+.video-views,
+.timecode,
+.video-new,
+.tag,
+.chip {
+  font-family: var(--font-main);
+}
+
+/* Le titre du hero était en grandes capitales serif : on l'adapte à Poppins */
+.hero-title {
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -.01em;
+  text-transform: none;
+}
+
+/* Petits labels en capitales : Poppins est plus large, on resserre un peu */
+.eyebrow,
+.onair-label,
+.webtv-divider-label {
+  letter-spacing: .08em;
+}
+
+/* Chiffres alignés (durées, vues, dates) */
+.timecode,
+.viewers,
+.bulletin-meta,
+.video-date,
+.video-views {
+  font-variant-numeric: tabular-nums;
+}

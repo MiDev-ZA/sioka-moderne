@@ -25,7 +25,8 @@
     </div>
 
     <div class="art-single-content">
-      {!! $article->content !!}
+      {{-- str_replace : répare aussi les anciens articles dont les espaces ont été enregistrées en &nbsp; --}}
+      {!! str_replace('&nbsp;', ' ', $article->content) !!}
     </div>
   </div>
 </article>

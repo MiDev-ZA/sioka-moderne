@@ -150,6 +150,91 @@ class YoutubeService
     }
 
     /**
+     * Crée une session d'upload résumable côté YouTube et renvoie son URL.
+     * Le navigateur envoie ensuite la vidéo DIRECTEMENT à cette URL : le
+     * fichier ne transite jamais par le serveur (aucune limite PHP).
+     * $origin doit être l'origine du site (ex: https://sioka.mg) : YouTube
+     * s'en sert pour autoriser les requêtes du navigateur (CORS).
+     */
+    public function createUploadSession(
+        string $title,
+        string $description,
+        string $privacyStatus,
+        int $fileSize,
+        string $mimeType,
+        string $origin,
+        string $category = 'actualite'
+    ): string {
+        $this->authenticatedYoutube();
+
+        $response = $this->client->authorize()->post(
+            'https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status',
+            [
+                'headers' => [
+                    'Content-Type'            => 'application/json; charset=UTF-8',
+                    'X-Upload-Content-Length' => $fileSize,
+                    'X-Upload-Content-Type'   => $mimeType,
+                    'Origin'                  => $origin,
+                ],
+                'body' => json_encode([
+                    'snippet' => [
+                        'title'       => $title,
+                        'description' => $description,
+                        'categoryId'  => '22',
+                        'tags'        => ['cat:' . $category],
+                    ],
+                    'status' => [
+                        'privacyStatus' => $privacyStatus,
+                    ],
+                ], JSON_UNESCAPED_UNICODE),
+            ]
+        );
+
+        $uploadUrl = $response->getHeaderLine('Location');
+
+        if ($uploadUrl === '') {
+            throw new Exception("YouTube n'a pas renvoyé d'URL d'upload.");
+        }
+
+        return $uploadUrl;
+    }
+
+    /**
+     * Définit la miniature personnalisée d'une vidéo (JPEG/PNG, 2 Mo max).
+     * Nécessite que la chaîne YouTube soit vérifiée (par téléphone).
+     */
+    public function setThumbnail(string $videoId, string $imagePath, string $mimeType = 'image/jpeg'): void
+    {
+        $youtube = $this->authenticatedYoutube();
+        $this->client->setDefer(true);
+
+        try {
+            $request = $youtube->thumbnails->set($videoId);
+
+            $chunkSizeBytes = 1 * 1024 * 1024;
+            $media = new \Google\Http\MediaFileUpload(
+                $this->client,
+                $request,
+                $mimeType,
+                null,
+                true,
+                $chunkSizeBytes
+            );
+            $media->setFileSize(filesize($imagePath));
+
+            $status = false;
+            $handle = fopen($imagePath, 'rb');
+            while (!$status && !feof($handle)) {
+                $chunk = fread($handle, $chunkSizeBytes);
+                $status = $media->nextChunk($chunk);
+            }
+            fclose($handle);
+        } finally {
+            $this->client->setDefer(false);
+        }
+    }
+
+    /**
      * Récupère UNE page de résultats (jeton YouTube brut).
      */
     public function list(int $maxResults = 10, ?string $pageToken = null): array
@@ -200,7 +285,24 @@ class YoutubeService
 
         } while ($pageToken && count($all) < $hardLimit);
 
-        return $all;
+        // Après une suppression, YouTube peut garder une entrée fantôme
+        // ("Deleted video") dans la playlist des uploads. On ne conserve donc
+        // que les vidéos qui existent encore (videos.list : 1 unité de quota
+        // par lot de 50 identifiants).
+        $existing = [];
+        $ids = array_map(fn($item) => $item['contentDetails']['videoId'], $all);
+
+        foreach (array_chunk($ids, 50) as $chunk) {
+            $response = $youtube->videos->listVideos('id', ['id' => implode(',', $chunk)]);
+            foreach ($response['items'] as $video) {
+                $existing[$video->getId()] = true;
+            }
+        }
+
+        return array_values(array_filter(
+            $all,
+            fn($item) => isset($existing[$item['contentDetails']['videoId']])
+        ));
     }
 
     /**
@@ -275,7 +377,7 @@ class YoutubeService
                 'description' => $video->getSnippet()->getDescription(),
                 'thumbnail'   => $thumbnailUrl,
                 'publishedAt' => $video->getSnippet()->getPublishedAt(),
-                'duration'    => $this->formatDuration($video->getContentDetails()->getDuration()),
+                'duration'    => $this->formatDuration($video->getContentDetails()?->getDuration()),
                 'views'       => (int) $video->getStatistics()->getViewCount(),
                 'category'    => $category,
             ];
@@ -353,8 +455,13 @@ class YoutubeService
     /**
      * Convertit une durée ISO 8601 (ex: PT24M10S) en format lisible (ex: 24:10)
      */
-    protected function formatDuration(string $iso8601): string
+    protected function formatDuration(?string $iso8601): string
     {
+        // Lives en cours / premières programmées : YouTube ne fournit pas de durée
+        if (empty($iso8601)) {
+            return '';
+        }
+
         $interval = new \DateInterval($iso8601);
         $h = $interval->h + ($interval->days ?? 0) * 24;
         $m = $interval->i;

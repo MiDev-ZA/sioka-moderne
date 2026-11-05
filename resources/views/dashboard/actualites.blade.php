@@ -376,7 +376,6 @@
     /* ==================== Éditeur de contenu enrichi (Quill) ==================== */
     .quill-wrap {
         border-radius: 12px;
-        overflow: hidden;
         transition: box-shadow .15s ease;
     }
     .quill-wrap:focus-within {
@@ -440,6 +439,45 @@
     .ql-toolbar.ql-snow button.ql-active .ql-stroke {
         stroke: var(--bleu);
     }
+
+    /* ==================== Éditeur façon Word : compléments ==================== */
+    .quill-wrap .ql-toolbar.ql-snow {
+        display: flex; flex-wrap: wrap; align-items: center; gap: 4px 0;
+    }
+    .quill-wrap .ql-toolbar.ql-snow .ql-formats {
+        display: inline-flex; align-items: center; margin-right: 10px;
+    }
+    .quill-wrap .ql-snow .ql-picker.ql-header { width: 100px; }
+    .quill-wrap .ql-snow .ql-picker.ql-font { width: 130px; }
+    .quill-wrap .ql-snow .ql-picker.ql-size { width: 62px; }
+    .quill-wrap .ql-snow .ql-picker.ql-lineheight { width: 66px; }
+    .quill-wrap .ql-snow .ql-picker.ql-font .ql-picker-options,
+    .quill-wrap .ql-snow .ql-picker.ql-size .ql-picker-options {
+        max-height: 260px; overflow-y: auto;
+    }
+    .quill-wrap .ql-toolbar.ql-snow { position: relative; z-index: 3; }
+
+    .ql-editor table { border-collapse: collapse; width: 100%; table-layout: fixed; margin: 8px 0; }
+    .ql-editor td { border: 1px solid var(--plomb); padding: 6px 8px; vertical-align: top; }
+
+    .table-bar {
+        display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+        margin-top: 8px; padding: 8px 10px;
+        border: 1px solid var(--glass-bord); border-radius: 10px;
+        background: var(--blanc-doux);
+        font-size: 12px;
+    }
+    .table-bar[hidden] { display: none; }
+    .table-bar__label { font-weight: 700; color: var(--plomb); margin-right: 4px; }
+    .table-bar button {
+        border: 1px solid var(--glass-bord); background: transparent; color: inherit;
+        border-radius: 8px; padding: 4px 9px; font-size: 12px; cursor: pointer;
+        transition: border-color .15s ease, color .15s ease;
+    }
+    .table-bar button:hover { border-color: var(--bleu); color: var(--bleu); }
+    .table-bar button.is-danger:hover { border-color: var(--magenta); color: var(--magenta); }
+
+    .editor-status { margin-top: 8px; font-size: 11.5px; color: var(--plomb); text-align: right; }
 </style>
 
 {{-- Styles de la librairie d'édition riche (Quill) --}}
@@ -589,7 +627,7 @@
             </div>
 
             <div class="modal-card__body">
-                <form action="{{ route('articles.store') }}" method="POST" enctype="multipart/form-data" id="articleForm" class="article-form" novalidate>
+                <form action="{{ route('articles.store') }}" method="POST" enctype="multipart/form-data" id="articleForm" class="article-form" novalidate data-turbo="false">
                     @csrf
                     <input type="hidden" name="_method" id="methodInput" value="{{ old('_method') }}">
                     <input type="hidden" name="id" id="articleIdInput" value="{{ old('id') }}">
@@ -657,6 +695,18 @@
                                     <div class="quill-wrap {{ $errors->has('content') ? 'has-error' : '' }}" id="quillWrap">
                                         <div id="contentEditor">{!! old('content') !!}</div>
                                     </div>
+                                    {{-- Outils de tableau (visibles uniquement quand le curseur est dans un tableau) --}}
+                                    <div class="table-bar" id="tableBar" hidden>
+                                        <span class="table-bar__label">Tableau</span>
+                                        <button type="button" data-table-act="insertRowAbove">Ligne au-dessus</button>
+                                        <button type="button" data-table-act="insertRowBelow">Ligne en dessous</button>
+                                        <button type="button" data-table-act="insertColumnLeft">Colonne à gauche</button>
+                                        <button type="button" data-table-act="insertColumnRight">Colonne à droite</button>
+                                        <button type="button" data-table-act="deleteRow">Supprimer la ligne</button>
+                                        <button type="button" data-table-act="deleteColumn">Supprimer la colonne</button>
+                                        <button type="button" class="is-danger" data-table-act="deleteTable">Supprimer le tableau</button>
+                                    </div>
+                                    <div class="editor-status" id="editorStatus">Mots : 0 · Caractères : 0</div>
                                     {{-- Champ réellement soumis : synchronisé en JS avec l'éditeur --}}
                                     <textarea name="content" id="content" style="display:none;">{{ old('content') }}</textarea>
                                     @error('content')<p class="field-error">{{ $message }}</p>@enderror
@@ -809,7 +859,7 @@
                 <p style="font-size:14px; line-height:1.6; color: var(--plomb); margin: 0 0 20px;">
                     Supprimer définitivement l'article « <strong id="deleteArticleTitle" style="color: inherit;"></strong> » ? Cette action est irréversible.
                 </p>
-                <form action="" method="POST" id="articleDeleteForm" style="display:flex; gap:10px;">
+                <form action="" method="POST" id="articleDeleteForm" data-turbo="false" style="display:flex; gap:10px;">
                     @csrf
                     @method('DELETE')
                     <button type="button" class="btn btn--ghost" id="cancelDeleteBtn" style="flex:1; justify-content:center; border: 1px solid var(--glass-bord);">
@@ -827,13 +877,102 @@
 @endsection
 
 @push('scripts')
-{{-- ── Librairie d'édition riche (Quill), chargée avant le script du formulaire ──────────── --}}
-<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 {{-- ── Script : liste, modale (ouverture/fermeture) + formulaire de création/modification ──────────── --}}
 <script>
-    (function () {
+    // Configuration de l'éditeur façon Word (var : le script est ré-exécuté à chaque visite Turbo)
+    var WORD_EDITOR = {
+        fonts: ['Arial', 'Calibri', 'Georgia', 'Verdana', 'Tahoma', '"Times New Roman"', '"Courier New"', '"Trebuchet MS"', '"Comic Sans MS"'],
+        sizes: ['8pt', '9pt', '10pt', '11pt', '12pt', '14pt', '16pt', '18pt', '20pt', '22pt', '24pt', '26pt', '28pt', '36pt', '48pt', '72pt'],
+        lineHeights: ['1', '1.15', '1.5', '2', '2.5', '3'],
+        palette: [
+            '#000000', '#434343', '#7f7f7f', '#bfbfbf', '#ffffff',
+            '#c00000', '#ff0000', '#ffc000', '#ffff00', '#92d050',
+            '#00b050', '#00b0f0', '#0070c0', '#002060', '#7030a0',
+            '#f4cccc', '#fce5cd', '#fff2cc', '#d9ead3', '#d0e0e3', '#cfe2f3', '#d9d2e9'
+        ]
+    };
+
+    // Enregistre les formats en styles inline (le HTML enregistré n'a pas besoin du CSS de Quill)
+    function registerWordFormats() {
+        if (!Quill.__wordFormats) {
+            Quill.__wordFormats = true;
+
+            const Font = Quill.import('attributors/style/font');
+            Font.whitelist = WORD_EDITOR.fonts;
+            const Size = Quill.import('attributors/style/size');
+            Size.whitelist = WORD_EDITOR.sizes;
+            const Align = Quill.import('attributors/style/align');
+
+            const Parchment = Quill.import('parchment');
+            const LineHeight = new Parchment.StyleAttributor('lineheight', 'line-height', {
+                scope: Parchment.Scope.BLOCK,
+                whitelist: WORD_EDITOR.lineHeights
+            });
+
+            Quill.register(Font, true);
+            Quill.register(Size, true);
+            Quill.register(Align, true);
+            Quill.register(LineHeight, true);
+        }
+        injectPickerLabels();
+    }
+
+    // Libellés français + valeurs affichées dans les listes déroulantes de la barre d'outils
+    function injectPickerLabels() {
+        if (document.getElementById('quillPickerLabels')) return;
+        const base = '.quill-wrap .ql-snow .ql-picker.';
+        const sel = function (cls, v) {
+            const e = String(v).replace(/"/g, '\\"');
+            return base + cls + ' .ql-picker-label[data-value="' + e + '"]::before,' +
+                   base + cls + ' .ql-picker-item[data-value="' + e + '"]::before';
+        };
+        const def = function (cls, text) {
+            return base + cls + ' .ql-picker-label::before,' + base + cls + ' .ql-picker-item::before { content: "' + text + '"; }';
+        };
+
+        let css = def('ql-font', 'Police') + def('ql-size', 'Taille') + def('ql-lineheight', '\\2195') + def('ql-header', 'Normal');
+        WORD_EDITOR.fonts.forEach(function (f) {
+            css += sel('ql-font', f) + ' { content: "' + f.replace(/"/g, '') + '"; font-family: ' + f + '; }';
+        });
+        WORD_EDITOR.sizes.forEach(function (s) {
+            css += sel('ql-size', s) + ' { content: "' + parseFloat(s) + '"; }';
+        });
+        WORD_EDITOR.lineHeights.forEach(function (l) {
+            css += sel('ql-lineheight', l) + ' { content: "\\2195 ' + l + '"; }';
+        });
+        for (let i = 1; i <= 4; i++) {
+            css += sel('ql-header', String(i)) + ' { content: "Titre ' + i + '"; }';
+        }
+
+        const st = document.createElement('style');
+        st.id = 'quillPickerLabels';
+        st.textContent = css;
+        document.head.appendChild(st);
+    }
+
+    // Charge Quill une seule fois, puis appelle le callback quand il est prêt
+    function loadQuill(cb) {
+        if (window.Quill) return cb();
+        let s = document.querySelector('script[data-quill-loader]');
+        if (!s) {
+            s = document.createElement('script');
+            s.src = 'https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js';
+            s.dataset.quillLoader = '1';
+            document.head.appendChild(s);
+        }
+        s.addEventListener('load', cb, { once: true });
+    }
+
+    function initArticlesPage() {
         const form = document.getElementById('articleForm');
         if (!form) return;
+        if (form.dataset.bound) return;
+
+        if (typeof Quill === 'undefined') {
+            loadQuill(initArticlesPage);
+            return;
+        }
+        form.dataset.bound = '1';
 
         const storeUrl = @json(route('articles.store'));
         const updateUrlTemplate = @json(route('articles.update', ['article' => '__ID__']));
@@ -849,37 +988,156 @@
         // ---------- Éditeur de contenu enrichi (Quill) ----------
         const contentInput = document.getElementById('content');
         const quillWrap = document.getElementById('quillWrap');
+        registerWordFormats();
+
         const quill = new Quill('#contentEditor', {
             theme: 'snow',
             placeholder: 'Racontez votre histoire…',
             modules: {
-                toolbar: [
-                    [{ header: [2, 3, false] }],
-                    ['bold', 'italic', 'underline', 'strike'],
-                    [{ list: 'ordered' }, { list: 'bullet' }],
-                    ['blockquote', 'link'],
-                    ['clean']
-                ]
+                toolbar: {
+                    container: [
+                        ['undo', 'redo'],
+                        [{ header: [false, 1, 2, 3, 4] }],
+                        [{ font: [false].concat(WORD_EDITOR.fonts) }, { size: [false].concat(WORD_EDITOR.sizes) }],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ script: 'sub' }, { script: 'super' }],
+                        [{ color: WORD_EDITOR.palette }, { background: WORD_EDITOR.palette }],
+                        [{ align: [] }, { lineheight: [false].concat(WORD_EDITOR.lineHeights) }],
+                        [{ list: 'ordered' }, { list: 'bullet' }],
+                        [{ indent: '-1' }, { indent: '+1' }],
+                        ['blockquote', 'link', 'table'],
+                        ['clean']
+                    ],
+                    handlers: {
+                        undo: function () { this.quill.history.undo(); },
+                        redo: function () { this.quill.history.redo(); },
+                        table: function () {
+                            this.quill.focus();
+                            this.quill.getModule('table').insertTable(3, 3);
+                        }
+                    }
+                },
+                table: true,
+                history: { delay: 1000, maxStack: 200, userOnly: true },
+                clipboard: { matchVisual: false },
+                keyboard: {
+                    bindings: {
+                        alignLeft:    { key: 'L', shortKey: true, handler: function () { this.quill.format('align', false); } },
+                        alignCenter:  { key: 'E', shortKey: true, handler: function () { this.quill.format('align', 'center'); } },
+                        alignRight:   { key: 'R', shortKey: true, handler: function () { this.quill.format('align', 'right'); } },
+                        alignJustify: { key: 'J', shortKey: true, handler: function () { this.quill.format('align', 'justify'); } }
+                    }
+                }
             }
         });
 
+        // Icônes manquantes (annuler / rétablir / tableau) + infobulles en français
+        const toolbarEl = quill.getModule('toolbar').container;
+        const extraIcons = {
+            undo: '<svg viewBox="0 0 18 18"><path class="ql-stroke" fill="none" stroke-width="1.5" d="M5 7h6a3.5 3.5 0 0 1 0 7H8M5 7l3-3M5 7l3 3"/></svg>',
+            redo: '<svg viewBox="0 0 18 18"><path class="ql-stroke" fill="none" stroke-width="1.5" d="M13 7H7a3.5 3.5 0 0 0 0 7h3M13 7l-3-3M13 7l-3 3"/></svg>',
+            table: '<svg viewBox="0 0 18 18"><rect class="ql-stroke" fill="none" x="2.5" y="3.5" width="13" height="11" stroke-width="1.5"/><path class="ql-stroke" fill="none" stroke-width="1.5" d="M2.5 8h13M2.5 11h13M7 3.5v11"/></svg>'
+        };
+        Object.keys(extraIcons).forEach(function (name) {
+            const b = toolbarEl.querySelector('button.ql-' + name);
+            if (b && !b.innerHTML.trim()) b.innerHTML = extraIcons[name];
+        });
+        const toolbarTitles = {
+            'button.ql-undo': 'Annuler (Ctrl+Z)',
+            'button.ql-redo': 'Rétablir (Ctrl+Y)',
+            'button.ql-bold': 'Gras (Ctrl+B)',
+            'button.ql-italic': 'Italique (Ctrl+I)',
+            'button.ql-underline': 'Souligné (Ctrl+U)',
+            'button.ql-strike': 'Barré',
+            'button.ql-script[value="sub"]': 'Indice',
+            'button.ql-script[value="super"]': 'Exposant',
+            'button.ql-list[value="ordered"]': 'Liste numérotée',
+            'button.ql-list[value="bullet"]': 'Liste à puces',
+            'button.ql-indent[value="-1"]': 'Diminuer le retrait',
+            'button.ql-indent[value="+1"]': 'Augmenter le retrait',
+            'button.ql-blockquote': 'Citation',
+            'button.ql-link': 'Lien',
+            'button.ql-table': 'Insérer un tableau',
+            'button.ql-clean': 'Effacer la mise en forme',
+            '.ql-picker.ql-header': 'Style de paragraphe',
+            '.ql-picker.ql-font': 'Police',
+            '.ql-picker.ql-size': 'Taille de police (pt)',
+            '.ql-picker.ql-color': 'Couleur de police',
+            '.ql-picker.ql-background': 'Surlignage',
+            '.ql-picker.ql-align': 'Alignement (Ctrl+L / E / R / J)',
+            '.ql-picker.ql-lineheight': 'Interligne'
+        };
+        Object.keys(toolbarTitles).forEach(function (selector) {
+            const el = toolbarEl.querySelector(selector);
+            if (el) el.title = toolbarTitles[selector];
+        });
+
         function isQuillEmpty() {
-            return quill.getText().trim().length === 0;
+            return quill.getText().trim().length === 0 && !quill.root.querySelector('table');
+        }
+
+        // HTML sémantique (<ul>/<ol>, styles inline) : s'affiche correctement sans le CSS de Quill
+        function getCleanHTML() {
+            return quill.getSemanticHTML()
+                // Quill 2 remplace TOUTES les espaces par &nbsp; : le texte ne passe plus à la ligne
+                .replace(/&nbsp;/g, ' ')
+                // on garde les espaces multiples voulues (une espace normale + des insécables)
+                .replace(/ {2,}/g, function (m) { return ' ' + '\u00a0'.repeat(m.length - 1); })
+                .replace(/<p><\/p>/g, '<p><br></p>');
         }
 
         function syncContentToTextarea() {
-            contentInput.value = isQuillEmpty() ? '' : quill.root.innerHTML;
+            contentInput.value = isQuillEmpty() ? '' : getCleanHTML();
         }
+
+        // ---------- Barre d'état (mots / caractères) ----------
+        const editorStatus = document.getElementById('editorStatus');
+        function updateStatus() {
+            const text = quill.getText().trim();
+            const words = text ? text.split(/\s+/).length : 0;
+            editorStatus.textContent = 'Mots : ' + words + ' \u00b7 Caract\u00e8res : ' + text.length;
+        }
+
+        // ---------- Outils de tableau ----------
+        const tableBar = document.getElementById('tableBar');
+        function updateTableBar() {
+            const range = quill.getSelection();
+            let inTable = false;
+            if (range) {
+                const t = quill.getModule('table').getTable(range);
+                inTable = !!(t && t[0]);
+            }
+            tableBar.hidden = !inTable;
+        }
+        tableBar.addEventListener('mousedown', function (e) { e.preventDefault(); });
+        tableBar.addEventListener('click', function (e) {
+            const btn = e.target.closest('[data-table-act]');
+            if (!btn) return;
+            quill.getModule('table')[btn.dataset.tableAct]();
+            updateTableBar();
+        });
+        quill.on('selection-change', updateTableBar);
 
         quill.on('text-change', function () {
             syncContentToTextarea();
+            updateStatus();
+            updateTableBar();
             if (!isQuillEmpty()) quillWrap.classList.remove('has-error');
         });
 
         function setQuillContent(html) {
-            quill.root.innerHTML = html && html.trim().length ? html : '<p><br></p>';
+            if (html && html.trim().length) {
+                quill.setContents(quill.clipboard.convert({ html: html }), 'silent');
+            } else {
+                quill.setText('', 'silent');
+            }
+            quill.history.clear();
             syncContentToTextarea();
+            updateStatus();
         }
+
+        syncContentToTextarea();
+        updateStatus();
 
         function lockScroll(lock) {
             document.body.classList.toggle('modal-lock', lock);
@@ -1168,6 +1426,26 @@
                 openModal();
             })();
         @endif
-    })();
+    }
+
+    // Évite l'empilement des écouteurs à chaque visite de la page
+    document.removeEventListener('turbo:load', window.__articlesInit);
+    window.__articlesInit = initArticlesPage;
+    document.addEventListener('turbo:load', initArticlesPage);
+
+    // ---------- Nettoyage avant la mise en cache Turbo (retour arrière) ----------
+    if (!window.__actualitesCacheBound) {
+        window.__actualitesCacheBound = true;
+        document.addEventListener('turbo:before-cache', function () {
+            document.body.classList.remove('modal-lock');
+            document.querySelectorAll('.modal-overlay.is-open').forEach(function (o) { o.classList.remove('is-open'); });
+            document.querySelectorAll('.ql-toolbar').forEach(function (el) { el.remove(); });
+
+            const f = document.getElementById('articleForm');
+            if (f) f.removeAttribute('data-bound');
+            const ed = document.getElementById('contentEditor');
+            if (ed) { ed.className = ''; ed.innerHTML = ''; }
+        });
+    }
 </script>
 @endpush

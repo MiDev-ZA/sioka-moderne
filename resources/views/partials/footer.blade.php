@@ -1,25 +1,25 @@
 {{-- ==========================================================
      PARTENAIRES DU PROJET — 3 niveaux :
-     1. Initié par (ROHY) — badge agrandi (--featured)
-     2. Mis en œuvre par (8 orgs, taille standard)
-     3. Financé par (UE) — badge agrandi (--featured)
+     1. Logo (SIOKA) — badge agrandi (--featured)
+     2. Membres du CA (organisations, taille standard)
+     3. PTF : UE, MANEHOA, Internews (taille standard)
      Tous les logos sont des liens au comportement identique
-     (nouvel onglet, rel sécurisé). 6 logos sont des PLACEHOLDERS,
-     à remplacer dans public/images/partners/ dès réception des
-     vrais fichiers.
+     (nouvel onglet, rel sécurisé). Plusieurs logos sont des
+     PLACEHOLDERS, à remplacer dans public/images/partners/
+     dès réception des vrais fichiers (dont logo-sioka.png).
      ========================================================== --}}
-<section id="partners" class="partners" iaria-labelledby="partners-heading">
+<section id="partners" class="partners" aria-labelledby="partners-heading">
     <div class="partners-inner">
 
-        {{-- Niveau 1 : initiateur du projet — mis en évidence --}}
+        {{-- Niveau 1 : logo SIOKA — mis en évidence --}}
         <div class="partners-tier">
-            <p class="partners-heading">Projet initié par</p>
+            <p class="partners-heading">SIOKA</p>
             <div class="partners-grid">
-                <a href="#" target="_blank" rel="noopener noreferrer"
-                   class="partner-card" aria-label="ROHY (nouvel onglet)">
+                <a href="https://sioka.org" target="_blank" rel="noopener noreferrer"
+                   class="partner-card" aria-label="SIOKA (nouvel onglet)">
                     <span class="partner-card-logo partner-card-logo--featured">
-                        <img src="{{ asset('images/partners/logo-rohy.jpg') }}"
-                             alt="ROHY" loading="lazy" width="320" height="140">
+                        <img src="{{ asset('images/SIOKA-LogoOfficiel_2.png') }}"
+                             alt="SIOKA" loading="lazy" width="320" height="140">
                     </span>
                 </a>
             </div>
@@ -27,26 +27,10 @@
 
         <div class="partners-divider" role="separator" aria-hidden="true"></div>
 
-        {{-- Niveau 2 : tous les porteurs de mise en œuvre — taille standard --}}
+        {{-- Niveau 2 : membres du CA — taille standard --}}
         <div class="partners-tier partners-tier--network">
-            <p class="partners-heading">Mis en œuvre par</p>
+            <p class="partners-heading">Conseil d'Administration</p>
             <div class="partners-grid partners-grid--network">
-                <a href="https://internews.org" target="_blank" rel="noopener noreferrer"
-                   class="partner-card" aria-label="Internews (nouvel onglet)">
-                    <span class="partner-card-logo">
-                        <img src="{{ asset('images/partners/internews.jpg') }}"
-                             alt="Internews — Local voices. Global change."
-                             loading="lazy" width="200" height="140">
-                    </span>
-                </a>
-                <a href="https://manehoa.mg" target="_blank" rel="noopener noreferrer"
-                   class="partner-card" aria-label="#MANEHOA — Liberté d'expression Madagascar (nouvel onglet)">
-                    <span class="partner-card-logo">
-                        <img src="{{ asset('images/partners/logo-manehoa.png') }}"
-                             alt="#MANEHOA — Liberté d'expression Madagascar"
-                             loading="lazy" width="277" height="117">
-                    </span>
-                </a>
                 <a href="#" target="_blank" rel="noopener noreferrer"
                    class="partner-card" aria-label="MSIS Tatao (nouvel onglet)">
                     <span class="partner-card-logo">
@@ -94,16 +78,29 @@
 
         <div class="partners-divider" role="separator" aria-hidden="true"></div>
 
-        {{-- Niveau 3 : financeur — mis en évidence --}}
-        <div class="partners-tier">
-            <p class="partners-heading">Financé par</p>
-            <div class="partners-grid">
+        {{-- Niveau 3 : partenaires techniques et financiers --}}
+        <div class="partners-tier partners-tier--network">
+            <p class="partners-heading">Partenaires</p>
+            <div class="partners-grid partners-grid--network">
                 <a href="https://european-union.europa.eu" target="_blank" rel="noopener noreferrer"
                    class="partner-card" aria-label="Union européenne — Unis pour un meilleur avenir (nouvel onglet)">
-                    <span class="partner-card-logo partner-card-logo--featured">
+                    <span class="partner-card-logo">
                         <img src="{{ asset('images/partners/Logo HD_UE-Mada-01.png') }}"
-                             alt="Union européenne — Unis pour un meilleur avenir"
-                             loading="lazy" width="229" height="74">
+                             alt="Union européenne — Unis pour un meilleur avenir" loading="lazy" width="229" height="74">
+                    </span>
+                </a>
+                <a href="https://manehoa.mg" target="_blank" rel="noopener noreferrer"
+                   class="partner-card" aria-label="#MANEHOA — Liberté d'expression Madagascar (nouvel onglet)">
+                    <span class="partner-card-logo">
+                        <img src="{{ asset('images/partners/logo-manehoa.png') }}"
+                             alt="#MANEHOA — Liberté d'expression Madagascar" loading="lazy" width="277" height="117">
+                    </span>
+                </a>
+                <a href="https://internews.org" target="_blank" rel="noopener noreferrer"
+                   class="partner-card" aria-label="Internews (nouvel onglet)">
+                    <span class="partner-card-logo">
+                        <img src="{{ asset('images/partners/internews.jpg') }}"
+                             alt="Internews — Local voices. Global change." loading="lazy" width="200" height="140">
                     </span>
                 </a>
             </div>
@@ -179,6 +176,7 @@
             <ul>
                 <li><a href="mailto:contact@sioka.org">contact@sioka.org</a></li>
                 <li><a href="https://sioka.org">www.sioka.org</a></li>
+                <li><a href="tel:+261343164692">+261 34 31 646 92</a></li>
                 <li>
                     <address>
                         VB6 Rue Samuel Rahamefy (ex-CITE)<br>

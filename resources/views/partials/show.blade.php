@@ -15,7 +15,7 @@
 <article class="video-single">
   <div class="video-single-player">
     <iframe
-      src="https://www.youtube.com/embed/{{ $video['id'] }}?autoplay=1&rel=0"
+      src="https://www.youtube.com/embed/{{ $video['id'] }}?autoplay=1&rel=0&hl=fr"
       title="{{ $video['title'] }}"
       frameborder="0"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
@@ -23,12 +23,12 @@
   </div>
 
   <div class="video-single-info">
-    <span class="video-single-eyebrow" data-color="{{ $catColor }}">{{ ucfirst($video['category']) }}</span>
+    <span class="video-single-eyebrow" data-color="{{ $catColor }}">{{ \App\Support\Fr::category($video['category']) }}</span>
     <h1 class="video-single-title">{{ $video['title'] }}</h1>
     <div class="video-single-meta">
-      <span>{{ \Carbon\Carbon::parse($video['publishedAt'])->translatedFormat('d F Y') }}</span>
-      <span>{{ \Illuminate\Support\Number::abbreviate($video['views'] ?? 0, precision: 1) }} vues</span>
-      <span>{{ $video['duration'] }}</span>
+      <span>{{ \App\Support\Fr::date($video['publishedAt']) }}</span>
+      <span>{{ \App\Support\Fr::views($video['views'] ?? 0) }}</span>
+      <span>{{ \App\Support\Fr::duration($video['duration'] ?? '') }}</span>
     </div>
     @if(!empty($video['description']))
       <p class="video-single-desc">{{ $video['description'] }}</p>

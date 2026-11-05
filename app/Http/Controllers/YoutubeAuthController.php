@@ -2,48 +2,60 @@
 
 namespace App\Http\Controllers;
 
-use Google\Client;
 use Google\Service\YouTube;
 use App\Models\YoutubeToken;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Two\AbstractProvider;
+use Laravel\Socialite\Two\GoogleProvider;
 
 class YoutubeAuthController extends Controller
 {
-    protected function client(): Client
+    protected function provider(): AbstractProvider
     {
-        $client = new Client();
-        $client->setClientId(config('services.youtube.client_id'));
-        $client->setClientSecret(config('services.youtube.client_secret'));
-        $client->setRedirectUri(config('services.youtube.redirect_uri'));
-        $client->addScope(YouTube::YOUTUBE);
-        $client->setAccessType('offline');
-        $client->setPrompt('consent');
-        return $client;
+        return Socialite::buildProvider(GoogleProvider::class, [
+            'client_id'     => config('services.youtube.client_id'),
+            'client_secret' => config('services.youtube.client_secret'),
+            'redirect'      => config('services.youtube.redirect_uri'),
+        ])->enablePKCE();
     }
 
     public function redirect()
     {
-        return redirect($this->client()->createAuthUrl());
+        return $this->provider()
+            ->scopes([YouTube::YOUTUBE])
+            ->with([
+                'access_type'            => 'offline',
+                'prompt'                 => 'consent',
+                'include_granted_scopes' => 'true',
+            ])
+            ->redirect();
     }
 
     public function callback(Request $request)
     {
-        $client = $this->client();
-        $token = $client->fetchAccessTokenWithAuthCode($request->get('code'));
+        if ($request->has('error')) {
+            return redirect()
+                ->route('webtv')
+                ->with('error', 'Connexion YouTube annulée ou refusée.');
+        }
 
-        if (isset($token['error'])) {
-            \Illuminate\Support\Facades\Log::error('YouTube OAuth callback error', $token);
+        try {
+            $google = $this->provider()->user();
+        } catch (\Throwable $e) {
+            Log::error('YouTube OAuth callback error', ['message' => $e->getMessage()]);
 
             return redirect()
                 ->route('webtv')
-                ->with('error', 'Erreur de connexion YouTube : ' . ($token['error_description'] ?? $token['error']));
+                ->with('error', 'Erreur de connexion YouTube : ' . $e->getMessage());
         }
 
         YoutubeToken::query()->delete();
         YoutubeToken::create([
-            'access_token'  => $token['access_token'],
-            'refresh_token' => $token['refresh_token'] ?? null,
-            'expires_at'    => now()->addSeconds($token['expires_in']),
+            'access_token'  => $google->token,
+            'refresh_token' => $google->refreshToken,
+            'expires_at'    => now()->addSeconds($google->expiresIn),
         ]);
 
         return redirect()->route('webtv')->with('success', 'Connexion YouTube réussie !');

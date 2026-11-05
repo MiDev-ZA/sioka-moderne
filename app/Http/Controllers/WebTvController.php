@@ -39,6 +39,10 @@ class WebTvController extends Controller
         return view('dashboard.webtv', compact('videos'));
     }
 
+    /**
+     * Ancien upload via le serveur (limité par la config PHP).
+     * Conservé en secours ; le formulaire utilise désormais uploadSession().
+     */
     public function store(Request $request, YoutubeService $youtube)
     {
         $request->validate([
@@ -66,6 +70,84 @@ class WebTvController extends Controller
         Cache::forget(self::CACHE_KEY);
 
         return redirect()->route('webtv')->with('success', 'Vidéo publiée sur YouTube.');
+    }
+
+    /**
+     * Étape 1 de l'upload direct : crée la session YouTube et renvoie son URL.
+     * Seules les métadonnées passent par le serveur, jamais le fichier vidéo.
+     */
+    public function uploadSession(Request $request, YoutubeService $youtube)
+    {
+        $data = $request->validate([
+            'title'         => 'required|string|max:100',
+            'description'   => 'nullable|string|max:5000',
+            'privacyStatus' => 'required|in:public,unlisted,private',
+            'size'          => 'required|integer|min:1',
+            'type'          => 'required|in:video/mp4,video/quicktime',
+        ]);
+
+        try {
+            $uploadUrl = $youtube->createUploadSession(
+                $data['title'],
+                $data['description'] ?? '',
+                $data['privacyStatus'],
+                (int) $data['size'],
+                $data['type'],
+                $request->header('Origin') ?: $request->getSchemeAndHttpHost()
+            );
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['uploadUrl' => $uploadUrl]);
+    }
+
+    /**
+     * Étape 3 de l'upload direct : appelée quand le navigateur a fini l'envoi.
+     * Vide le cache de la liste admin pour que la nouvelle vidéo apparaisse.
+     */
+    public function uploadComplete(Request $request)
+    {
+        $request->validate(['warning' => 'nullable|string|max:500']);
+
+        Cache::forget(self::CACHE_KEY);
+
+        if ($request->filled('warning')) {
+            session()->flash('error', "Vidéo publiée, mais la miniature n'a pas pu être envoyée : " . $request->input('warning'));
+        } else {
+            session()->flash('success', 'Vidéo publiée sur YouTube.');
+        }
+
+        return response()->json(['redirect' => route('webtv')]);
+    }
+
+    /**
+     * Définit la miniature personnalisée d'une vidéo déjà publiée.
+     * L'image est redimensionnée en 1280x720 JPEG côté navigateur (donc légère).
+     */
+    public function setThumbnail(Request $request, string $videoId, YoutubeService $youtube)
+    {
+        $request->validate([
+            'thumbnail' => 'required|file|mimetypes:image/jpeg,image/png|max:2048',
+        ]);
+
+        $file = $request->file('thumbnail');
+
+        try {
+            $youtube->setThumbnail($videoId, $file->getRealPath(), $file->getMimeType());
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+
+            if (str_contains($message, 'custom video thumbnails') || str_contains($message, '403')) {
+                $message = 'YouTube refuse les miniatures personnalisées : la chaîne doit être vérifiée (par téléphone) dans YouTube Studio.';
+            }
+
+            return response()->json(['message' => $message], 422);
+        }
+
+        Cache::forget(self::CACHE_KEY);
+
+        return response()->json(['ok' => true]);
     }
 
     public function update(Request $request, string $videoId, YoutubeService $youtube)

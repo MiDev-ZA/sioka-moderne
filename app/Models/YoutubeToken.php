@@ -13,6 +13,8 @@ class YoutubeToken extends Model
     ];
 
     protected $casts = [
-        'expires_at' => 'datetime',
+        'access_token'  => 'encrypted',
+        'refresh_token' => 'encrypted',
+        'expires_at'    => 'datetime',
     ];
 }

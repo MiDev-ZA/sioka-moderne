@@ -1,8 +1,9 @@
 /* ==========================================================
-   PARTENAIRES — 3 niveaux : Initié par / Mis en œuvre par /
-   Financé par. ROHY et l'UE utilisent le modificateur
-   --featured pour un badge plus grand (mise en évidence),
-   les 8 porteurs de "Mis en œuvre par" restent en taille standard.
+   PARTENAIRES — 3 niveaux : Logo SIOKA / Membres du CA /
+   PTF (UE, MANEHOA, Internews). Le logo SIOKA utilise le
+   modificateur --featured pour un badge plus grand ; les membres
+   du CA et les PTF restent en taille standard, alignés sur une
+   même ligne en desktop.
    ========================================================== */
 .partners {
     padding: 50px var(--gap) 60px;
@@ -52,19 +53,37 @@
     gap: 20px;
 }
 
-/* Grille dédiée aux 8 porteurs de "Mis en œuvre par" : responsive,
-   4 colonnes max en desktop pour garder chaque logo lisible. */
+/* Grille des membres du CA et des PTF : tous les badges ont la même
+   taille et sont alignés. Mobile : 2 par ligne ; tablette : 4 par
+   ligne ; desktop (>= 900px) : une seule ligne, centrée. */
 .partners-grid--network {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
     gap: 16px;
     width: 100%;
-    max-width: 900px;
+    max-width: 1240px;
+}
+
+.partners-grid--network .partner-card {
+    flex: 0 0 calc(50% - 8px);
 }
 
 @media (min-width: 560px) {
+    .partners-grid--network .partner-card {
+        flex: 0 0 calc(25% - 12px);
+    }
+}
+
+@media (min-width: 900px) {
     .partners-grid--network {
-        grid-template-columns: repeat(4, 1fr);
+        flex-wrap: nowrap;
+    }
+    .partners-grid--network .partner-card {
+        flex: 1 1 0;
+        min-width: 0;
+        max-width: 210px;
     }
 }
 
@@ -99,9 +118,27 @@
     display: block;
 }
 
-/* Badge agrandi : ROHY (initiateur) et UE (financeur), les deux
-   entités singulières du footer, se démarquent visuellement des
-   8 logos du niveau "Mis en œuvre par". */
+/* Logos du CA / PTF : badge plus grand ; les images le remplissent,
+   centrées, sans déformation */
+.partners-grid--network .partner-card-logo {
+    height: 88px;
+    padding: 10px 14px;
+}
+
+.partners-grid--network .partner-card-logo img {
+    width: 100%;
+    height: 100%;
+}
+
+@media (max-width: 480px) {
+    .partners-grid--network .partner-card-logo {
+        height: 72px;
+        padding: 8px 12px;
+    }
+}
+
+/* Badge agrandi : logo SIOKA, se démarque visuellement des
+   logos des niveaux "Membres du CA" et "PTF". */
 .partner-card-logo--featured {
     height: 92px;
     padding: 16px 28px;

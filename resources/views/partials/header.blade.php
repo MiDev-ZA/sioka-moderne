@@ -34,6 +34,7 @@
                 </div>
             </div>
 
+            <a href="#webtv" class="nav-webtv"><span class="webtv-dot" aria-hidden="true"></span>WebTV</a>
             <a href="#emissions">Émissions</a>
             <a href="#podcasts">Podcasts</a>
             <a href="#equipe">L'Équipe</a>
@@ -161,7 +162,8 @@
                 </div>
             </div>
         </div>
-
+        
+        <a href="#webtv" class="nav-webtv"><span class="webtv-dot" aria-hidden="true"></span>WebTV</a>
         <a href="#emissions">Émissions</a>
         <a href="#podcasts">Podcasts</a>
         <a href="#contact">Contact</a>
@@ -174,7 +176,8 @@
                         <polyline points="10 17 15 12 10 7" />
                         <line x1="15" y1="12" x2="3" y2="12" />
                     </svg>
-                    <span class="btn-login-label">Connexion</span>
+                    <!-- <span class="btn-login-label">Connexion</span> -->
+                    <a href="{{ route('login') }}" class="btn-login-label">Connexion</a>
                 </button>
             @else
                 <button class="btn-login" onclick="window.location.href='{{ route('dashboard') }}'"

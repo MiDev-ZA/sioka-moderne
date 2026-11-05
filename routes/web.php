@@ -82,6 +82,9 @@ Route::middleware('auth')->group(function () {
     // WebTV — gestion des vidéos YouTube (admin)
     Route::get('/dashboard/webtv', [WebTvController::class, 'index'])->name('webtv');
     Route::post('/dashboard/webtv', [WebTvController::class, 'store'])->name('webtv.store');
+    Route::post('/dashboard/webtv/upload-session', [WebTvController::class, 'uploadSession'])->name('webtv.upload-session');
+    Route::post('/dashboard/webtv/upload-complete', [WebTvController::class, 'uploadComplete'])->name('webtv.upload-complete');
+    Route::post('/dashboard/webtv/{videoId}/thumbnail', [WebTvController::class, 'setThumbnail'])->name('webtv.thumbnail');
     Route::put('/dashboard/webtv/{videoId}', [WebTvController::class, 'update'])->name('webtv.update');
     Route::delete('/dashboard/webtv/{videoId}', [WebTvController::class, 'destroy'])->name('webtv.destroy');
 });

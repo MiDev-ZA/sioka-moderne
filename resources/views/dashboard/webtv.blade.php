@@ -583,11 +583,26 @@
                                         </label>
                                         <div class="video-drop__meta">
                                             <strong id="videoFileName">Choisir un fichier</strong>
-                                            <span>MP4, MOV — 500 Mo max</span>
+                                            <span>MP4, MOV</span>
                                             <button type="button" class="video-drop__remove" id="videoRemoveBtn">Retirer</button>
                                         </div>
                                     </div>
                                     @error('video')<p class="field-error">{{ $message }}</p>@enderror
+
+                                    <div class="field" style="margin-top: 18px;">
+                                        <label for="thumbnail">Miniature <span class="field-hint" style="margin: 0;">(facultatif)</span></label>
+                                        <div class="video-drop" id="thumbDrop">
+                                            <label class="video-drop__box" id="thumbBox">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path stroke-linecap="round" stroke-linejoin="round" d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>
+                                                <input type="file" id="thumbnail" accept="image/jpeg,image/png">
+                                            </label>
+                                            <div class="video-drop__meta">
+                                                <strong id="thumbFileName">Choisir une image</strong>
+                                                <span>JPG, PNG — recadrée en 16:9 (1280×720)</span>
+                                                <button type="button" class="video-drop__remove" id="thumbRemoveBtn">Retirer</button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </section>
 
@@ -843,12 +858,198 @@
         videoInput.addEventListener('change', () => showFile(videoInput.files && videoInput.files[0]));
         videoRemoveBtn.addEventListener('click', clearFile);
 
-        // ---------- Envoi : désactive le bouton pendant l'upload (peut être long) ----------
+        // ---------- Miniature (facultative) ----------
+        const thumbInput = document.getElementById('thumbnail');
+        const thumbBox = document.getElementById('thumbBox');
+        const thumbDrop = document.getElementById('thumbDrop');
+        const thumbFileName = document.getElementById('thumbFileName');
+        const thumbRemoveBtn = document.getElementById('thumbRemoveBtn');
+        const thumbnailUrlTemplate = @json(route('webtv.thumbnail', ['videoId' => '__ID__']));
+
+        thumbInput.addEventListener('change', function () {
+            const file = thumbInput.files && thumbInput.files[0];
+            if (!file) return;
+            thumbFileName.textContent = file.name;
+            thumbBox.classList.add('has-file');
+            thumbDrop.classList.add('has-file');
+        });
+        thumbRemoveBtn.addEventListener('click', function () {
+            thumbInput.value = '';
+            thumbFileName.textContent = 'Choisir une image';
+            thumbBox.classList.remove('has-file');
+            thumbDrop.classList.remove('has-file');
+        });
+
+        // Recadre en 16:9 et redimensionne à 1280x720 en JPEG (reste bien sous 2 Mo)
+        async function prepareThumbnail(file) {
+            const bitmap = await createImageBitmap(file);
+            const W = 1280, H = 720;
+            const canvas = document.createElement('canvas');
+            canvas.width = W;
+            canvas.height = H;
+            const ctx = canvas.getContext('2d');
+            const scale = Math.max(W / bitmap.width, H / bitmap.height);
+            const w = bitmap.width * scale;
+            const h = bitmap.height * scale;
+            ctx.drawImage(bitmap, (W - w) / 2, (H - h) / 2, w, h);
+            return new Promise(function (resolve, reject) {
+                canvas.toBlob(function (blob) {
+                    blob ? resolve(blob) : reject(new Error("image illisible"));
+                }, 'image/jpeg', 0.9);
+            });
+        }
+
+        // ---------- Envoi direct vers YouTube (le fichier ne passe pas par le serveur) ----------
         const submitBtn = document.getElementById('submitUploadBtn');
         const submitText = document.getElementById('submitUploadText');
-        form.addEventListener('submit', function () {
+        const sessionUrl = @json(route('webtv.upload-session'));
+        const completeUrl = @json(route('webtv.upload-complete'));
+        const csrfToken = form.querySelector('input[name="_token"]').value;
+        const CHUNK_SIZE = 8 * 1024 * 1024; // multiple de 256 Ko, exigé par YouTube
+        const MAX_RETRIES = 5;
+        let uploading = false;
+
+        window.addEventListener('beforeunload', function (e) {
+            if (uploading) { e.preventDefault(); e.returnValue = ''; }
+        });
+
+        function showUploadError(message) {
+            let el = document.getElementById('uploadError');
+            if (!el) {
+                el = document.createElement('p');
+                el.id = 'uploadError';
+                el.className = 'field-error';
+                videoDrop.insertAdjacentElement('afterend', el);
+            }
+            el.textContent = message;
+        }
+
+        function clearUploadError() {
+            const el = document.getElementById('uploadError');
+            if (el) el.remove();
+        }
+
+        function postJson(url, payload) {
+            return fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                },
+                body: JSON.stringify(payload || {}),
+            }).then(async function (res) {
+                const data = await res.json().catch(function () { return {}; });
+                if (!res.ok) {
+                    const firstError = data.errors ? Object.values(data.errors)[0][0] : null;
+                    throw new Error(firstError || data.message || 'Erreur serveur (' + res.status + ')');
+                }
+                return data;
+            });
+        }
+
+        function sendChunk(uploadUrl, file, start, onProgress) {
+            return new Promise(function (resolve, reject) {
+                const end = Math.min(start + CHUNK_SIZE, file.size);
+                const xhr = new XMLHttpRequest();
+                xhr.open('PUT', uploadUrl);
+                xhr.setRequestHeader('Content-Range', 'bytes ' + start + '-' + (end - 1) + '/' + file.size);
+                xhr.upload.onprogress = function (e) {
+                    if (e.lengthComputable) onProgress(start + e.loaded);
+                };
+                xhr.onload = function () {
+                    if (xhr.status === 308) return resolve({ done: false, next: end });
+                    if (xhr.status === 200 || xhr.status === 201) {
+                        let videoId = null;
+                        try { videoId = JSON.parse(xhr.responseText).id || null; } catch (e) {}
+                        return resolve({ done: true, videoId: videoId });
+                    }
+                    reject(new Error('YouTube a répondu ' + xhr.status));
+                };
+                xhr.onerror = function () { reject(new Error('Connexion interrompue')); };
+                xhr.send(file.slice(start, end));
+            });
+        }
+
+        async function sendChunkWithRetry(uploadUrl, file, start, onProgress) {
+            for (let attempt = 1; ; attempt++) {
+                try {
+                    return await sendChunk(uploadUrl, file, start, onProgress);
+                } catch (err) {
+                    if (attempt >= MAX_RETRIES) throw err;
+                    await new Promise(function (r) { setTimeout(r, 2000 * attempt); });
+                }
+            }
+        }
+
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            clearUploadError();
+
+            const file = videoInput.files && videoInput.files[0];
+            const title = document.getElementById('title').value.trim();
+
+            if (!title) { showUploadError('Le titre est obligatoire.'); return; }
+            if (!file) { showUploadError('Choisissez un fichier vidéo.'); return; }
+
             submitBtn.disabled = true;
-            submitText.textContent = 'Publication en cours…';
+            submitText.textContent = 'Préparation…';
+            uploading = true;
+
+            try {
+                const session = await postJson(sessionUrl, {
+                    title: title,
+                    description: document.getElementById('description').value,
+                    privacyStatus: document.getElementById('privacyStatus').value,
+                    size: file.size,
+                    type: file.type || 'video/mp4',
+                });
+
+                let start = 0;
+                let videoId = null;
+                while (true) {
+                    const result = await sendChunkWithRetry(session.uploadUrl, file, start, function (sent) {
+                        submitText.textContent = 'Envoi… ' + Math.round((sent / file.size) * 100) + ' %';
+                    });
+                    if (result.done) { videoId = result.videoId; break; }
+                    start = result.next;
+                }
+
+                let warning = null;
+                if (thumbInput.files && thumbInput.files[0]) {
+                    submitText.textContent = 'Miniature…';
+                    try {
+                        if (!videoId) throw new Error("identifiant de la vidéo illisible");
+                        const blob = await prepareThumbnail(thumbInput.files[0]);
+                        const fd = new FormData();
+                        fd.append('thumbnail', blob, 'thumbnail.jpg');
+                        const res = await fetch(thumbnailUrlTemplate.replace('__ID__', videoId), {
+                            method: 'POST',
+                            headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+                            body: fd,
+                        });
+                        const data = await res.json().catch(function () { return {}; });
+                        if (!res.ok) throw new Error(data.message || ('Erreur serveur (' + res.status + ')'));
+                    } catch (err) {
+                        warning = err.message;
+                    }
+                }
+
+                submitText.textContent = 'Finalisation…';
+                const done = await postJson(completeUrl, { warning: warning });
+                uploading = false;
+
+                if (window.Turbo && typeof window.Turbo.visit === 'function') {
+                    window.Turbo.visit(done.redirect);
+                } else {
+                    window.location.href = done.redirect;
+                }
+            } catch (err) {
+                uploading = false;
+                submitBtn.disabled = false;
+                submitText.textContent = 'Publier sur YouTube';
+                showUploadError('Échec de la publication : ' + err.message);
+            }
         });
 
         // ---------- Toasts de notification (auto-disparition) ----------
