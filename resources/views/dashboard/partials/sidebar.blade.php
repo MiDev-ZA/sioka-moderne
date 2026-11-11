@@ -92,6 +92,17 @@
                 </svg>
                 L'équipe
             </a>
+            @if(auth()->user()->role === 'admin')
+            <a href="{{ route('users.index') }}" class="{{ request()->routeIs('users.*') ? 'active' : '' }}"
+                data-page-loading="Chargement des utilisateurs…">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M19 8v6M22 11h-6" />
+                </svg>
+                Utilisateurs
+            </a>
+            @endif
             <div class="nav-sep"></div>
             <div class="nav-label">Compte</div>
             <a href="{{ route('profil') }}" class="{{ request()->routeIs('profil') ? 'active' : '' }}"

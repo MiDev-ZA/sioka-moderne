@@ -7,6 +7,7 @@ use App\Http\Controllers\FlashInfoController;
 use App\Http\Controllers\PodcastController;
 use App\Http\Controllers\WebTvController;
 use App\Http\Controllers\YoutubeAuthController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 // Page d'accueil (publique)
@@ -87,4 +88,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/dashboard/webtv/{videoId}/thumbnail', [WebTvController::class, 'setThumbnail'])->name('webtv.thumbnail');
     Route::put('/dashboard/webtv/{videoId}', [WebTvController::class, 'update'])->name('webtv.update');
     Route::delete('/dashboard/webtv/{videoId}', [WebTvController::class, 'destroy'])->name('webtv.destroy');
+
+    // Creation utilisateurs
+    Route::middleware(['auth', 'admin'])->group(function () {
+    Route::resource('users', UserController::class)->except(['create', 'show', 'edit']);
+});
 });

@@ -76,6 +76,7 @@
     --ticker-label-bg:   var(--fixe-sombre);
     --ticker-label-text: var(--magenta);
     --ticker-item-text:  var(--fixe-clair);
+    --ticker-strong:     var(--or);
 
     color-scheme: dark;
   }
@@ -106,12 +107,13 @@
     --glass-2:      rgba(255, 255, 255, 0.85);
     --glass-bord:   rgba(15, 15, 25, 0.08);
 
-    /* Ticker — inversé pour rester lisible sur fond clair */
-    --ticker-bg:         var(--ink-2);
-    --ticker-border:     var(--glass-bord);
+    /* Ticker — fond gris ardoise, label FLASH inchangé (magenta) */
+    --ticker-bg:         #4B5563;
+    --ticker-border:     transparent;
     --ticker-label-bg:   var(--magenta);
     --ticker-label-text: var(--fixe-clair);
-    --ticker-item-text:  var(--blanc);
+    --ticker-item-text:  var(--fixe-clair);
+    --ticker-strong:     #E6C25A;
 
     color-scheme: light;
   }
@@ -149,7 +151,7 @@
   .ticker-track { display: flex; gap: 0; white-space: nowrap; animation-name: scroll-left; animation-duration: 40s; animation-timing-function: linear; animation-iteration-count: infinite; will-change: transform; }
   .ticker-track:hover { animation-play-state: paused; }
   .ticker-item { font-size: 12px; font-weight: 500; color: var(--ticker-item-text); padding: 0 48px 0 0; cursor: pointer; }
-  .ticker-item strong { color: var(--or); }
+  .ticker-item strong { color: var(--ticker-strong); }
   .ticker-item::before { content: '◆'; font-size: 7px; margin-right: 12px; color: var(--bleu); opacity: 0.8; }
   @keyframes scroll-left { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
