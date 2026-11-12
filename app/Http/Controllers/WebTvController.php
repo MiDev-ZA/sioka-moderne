@@ -12,10 +12,32 @@ class WebTvController extends Controller
 {
     protected const CACHE_KEY = 'youtube_videos_all';
 
+    /**
+     * Durée du cache de la liste admin (secondes). Volontairement courte :
+     * YouTube met un peu de temps à ajouter une vidéo fraîchement envoyée à la
+     * playlist des uploads, et un cache long figerait une liste sans elle.
+     */
+    protected const CACHE_TTL = 60;
+
+    /**
+     * Clés de cache qui alimentent le site public.
+     * À vider en même temps que la liste admin à chaque ajout, modification ou suppression.
+     */
+    protected const PUBLIC_CACHE_KEYS = [
+        'youtube_public_videos',       // page d'accueil (AppController::home) et webtvSection()
+        'youtube_public_videos_full',  // page vidéo et vidéos associées (getPublicVideos)
+        'youtube_all_public_videos',   // archive WebTV (AppController::webtvIndex)
+    ];
+
     public function index(Request $request)
     {
+        // ?refresh=1 force le rechargement de la liste depuis YouTube.
+        if ($request->boolean('refresh')) {
+            $this->clearVideoCaches();
+        }
+
         try {
-            $allVideos = Cache::remember(self::CACHE_KEY, 300, function () {
+            $allVideos = Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function () {
                 return app(YoutubeService::class)->listAll();
             });
         } catch (\Exception $e) {
@@ -67,7 +89,7 @@ class WebTvController extends Controller
         }
 
         Storage::delete($path);
-        Cache::forget(self::CACHE_KEY);
+        $this->clearVideoCaches();
 
         return redirect()->route('webtv')->with('success', 'Vidéo publiée sur YouTube.');
     }
@@ -104,13 +126,13 @@ class WebTvController extends Controller
 
     /**
      * Étape 3 de l'upload direct : appelée quand le navigateur a fini l'envoi.
-     * Vide le cache de la liste admin pour que la nouvelle vidéo apparaisse.
+     * Vide les caches (liste admin et site public) pour que la nouvelle vidéo apparaisse.
      */
     public function uploadComplete(Request $request)
     {
         $request->validate(['warning' => 'nullable|string|max:500']);
 
-        Cache::forget(self::CACHE_KEY);
+        $this->clearVideoCaches();
 
         if ($request->filled('warning')) {
             session()->flash('error', "Vidéo publiée, mais la miniature n'a pas pu être envoyée : " . $request->input('warning'));
@@ -145,7 +167,7 @@ class WebTvController extends Controller
             return response()->json(['message' => $message], 422);
         }
 
-        Cache::forget(self::CACHE_KEY);
+        $this->clearVideoCaches();
 
         return response()->json(['ok' => true]);
     }
@@ -163,7 +185,7 @@ class WebTvController extends Controller
             return back()->with('error', 'Échec de la modification : ' . $e->getMessage());
         }
 
-        Cache::forget(self::CACHE_KEY);
+        $this->clearVideoCaches();
 
         return back()->with('success', 'Vidéo modifiée.');
     }
@@ -176,9 +198,21 @@ class WebTvController extends Controller
             return back()->with('error', 'Échec de la suppression : ' . $e->getMessage());
         }
 
-        Cache::forget(self::CACHE_KEY);
+        $this->clearVideoCaches();
 
         return back()->with('success', 'Vidéo supprimée.');
+    }
+
+    /**
+     * Vide la liste admin ET les listes du site public (accueil, archive, page vidéo).
+     */
+    protected function clearVideoCaches(): void
+    {
+        Cache::forget(self::CACHE_KEY);
+
+        foreach (self::PUBLIC_CACHE_KEYS as $key) {
+            Cache::forget($key);
+        }
     }
 
     protected function webtvSection(): array

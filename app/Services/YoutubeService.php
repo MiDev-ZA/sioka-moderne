@@ -473,10 +473,26 @@ class YoutubeService
             throw new Exception('Vidéo introuvable.');
         }
 
-        $video = $response['items'][0];
-        $snippet = $video->getSnippet();
+        $current = $response['items'][0]->getSnippet();
+
+        // On envoie un snippet propre (champs modifiables uniquement) plutôt que
+        // l'objet brut reçu de YouTube, qui contient des champs en lecture seule.
+        // categoryId est obligatoire pour modifier le snippet : on garde celui de
+        // la vidéo, ou la catégorie 22 utilisée à l'upload s'il est absent.
+        $snippet = new VideoSnippet();
         $snippet->setTitle($title);
         $snippet->setDescription($description);
+        $snippet->setCategoryId($current->getCategoryId() ?: '22');
+
+        if (!empty($current->getTags())) {
+            $snippet->setTags($current->getTags());
+        }
+        if ($current->getDefaultLanguage()) {
+            $snippet->setDefaultLanguage($current->getDefaultLanguage());
+        }
+
+        $video = new Video();
+        $video->setId($videoId);
         $video->setSnippet($snippet);
 
         $youtube->videos->update('snippet', $video);
