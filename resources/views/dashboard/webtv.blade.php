@@ -367,6 +367,19 @@
     </div>
 </div>
 
+{{-- ===================== Bandeau : mode lecture si YouTube n'est pas connecté ===================== --}}
+@inject('youtubeService', 'App\Services\YoutubeService')
+@if(auth()->user()->role === 'admin' && ! $youtubeService->isConnected())
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:18px; padding:14px 18px; border:1px solid var(--glass-bord); border-radius:14px; background:var(--blanc-doux);">
+        <p style="margin:0; font-size:13.5px; line-height:1.5; color:var(--plomb); flex:1; min-width:240px;">
+            <strong style="color:var(--blanc);">Mode lecture.</strong>
+            Les vidéos publiques de la chaîne s'affichent directement. Pour publier, modifier ou supprimer une vidéo,
+            connectez une fois le compte YouTube propriétaire de la chaîne (valable pour tous les administrateurs).
+        </p>
+        <a href="{{ url('/auth/youtube') }}" class="btn btn--primary" data-turbo="false">Connecter YouTube</a>
+    </div>
+@endif
+
 {{-- ===================== Liste des vidéos ===================== --}}
 <section class="panel">
     <div class="panel-pad">

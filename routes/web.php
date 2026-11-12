@@ -37,60 +37,70 @@ Route::middleware('guest')->group(function () {
 
 // Routes accessibles uniquement aux utilisateurs connectés
 Route::middleware('auth')->group(function () {
+
+    // ---- Communes à tous les comptes connectés ----
     Route::get('/dashboard', [AppController::class, 'dashboard'])->name('dashboard');
-    Route::get('/actualites', [AppController::class, 'actualites'])->name('actualites');
-
-    // Route Dashboard
-    Route::get('/flash-infos', [AppController::class, 'flash_infos'])->name('flash-infos');
-    Route::get('/fil-infos', [AppController::class, 'fil_infos'])->name('fil-infos');
-    Route::get('/emissions', [AppController::class, 'emissions'])->name('emissions');
-    Route::get('/podcasts', [AppController::class, 'podcasts'])->name('podcasts');
-
-    Route::get('/podcasts/bibliotheque', [AppController::class, 'podcastsLibrary'])->name('podcasts.library');
-
-    Route::get('/abonnees-newsletter', [AppController::class, 'abonnees_newsletter'])->name('abonnees-newsletter');
     Route::get('/lequipe', [AppController::class, 'lequipe'])->name('lequipe');
     Route::get('/profil', [AppController::class, 'profil'])->name('profil');
-
     Route::post('/logout', [AppController::class, 'logout'])->name('logout');
 
-    // articles actions
-    Route::post('/articles', [ArticleController::class, 'store'])->name('articles.store');
-    Route::put('/articles/{article}', [ArticleController::class, 'update'])->name('articles.update');
-    Route::delete('/articles/{article}', [ArticleController::class, 'destroy'])->name('articles.destroy');
+    // ---- Actualités, flash infos, fil d'infos : admin, editor, journalist ----
+    Route::middleware('role:editor,journalist')->group(function () {
+        Route::get('/actualites', [AppController::class, 'actualites'])->name('actualites');
+        Route::get('/flash-infos', [AppController::class, 'flash_infos'])->name('flash-infos');
+        Route::get('/fil-infos', [AppController::class, 'fil_infos'])->name('fil-infos');
 
-    // Flash-infos actions
-    Route::post('/flash-infos', [FlashInfoController::class, 'store'])->name('flash-infos.store');
-    Route::put('/flash-infos/{flashInfo}', [FlashInfoController::class, 'update'])->name('flash-infos.update');
-    Route::patch('/flash-infos/{flashInfo}/toggle', [FlashInfoController::class, 'toggle'])->name('flash-infos.toggle');
-    Route::delete('/flash-infos/{flashInfo}', [FlashInfoController::class, 'destroy'])->name('flash-infos.destroy');
+        // articles actions
+        Route::post('/articles', [ArticleController::class, 'store'])->name('articles.store');
+        Route::put('/articles/{article}', [ArticleController::class, 'update'])->name('articles.update');
+        Route::delete('/articles/{article}', [ArticleController::class, 'destroy'])->name('articles.destroy');
 
-    // Fil-infos actions
-    Route::post('/fil-en-continu', [FilController::class, 'store'])->name('fil-en-continu.store');
-    Route::put('/fil-en-continu/{fil}', [FilController::class, 'update'])->name('fil-en-continu.update');
-    Route::delete('/fil-en-continu/{fil}', [FilController::class, 'destroy'])->name('fil-en-continu.destroy');
-    Route::patch('/fil-en-continu/{fil}/toggle', [FilController::class, 'toggle'])->name('fil-en-continu.toggle');
+        // Flash-infos actions
+        Route::post('/flash-infos', [FlashInfoController::class, 'store'])->name('flash-infos.store');
+        Route::put('/flash-infos/{flashInfo}', [FlashInfoController::class, 'update'])->name('flash-infos.update');
+        Route::patch('/flash-infos/{flashInfo}/toggle', [FlashInfoController::class, 'toggle'])->name('flash-infos.toggle');
+        Route::delete('/flash-infos/{flashInfo}', [FlashInfoController::class, 'destroy'])->name('flash-infos.destroy');
 
-    // Podcasts actions
-    Route::post('/podcasts', [PodcastController::class, 'store'])->name('podcasts.store');
-    Route::put('/podcasts/{podcast}', [PodcastController::class, 'update'])->name('podcasts.update');
-    Route::delete('/podcasts/{podcast}', [PodcastController::class, 'destroy'])->name('podcasts.destroy');
+        // Fil-infos actions
+        Route::post('/fil-en-continu', [FilController::class, 'store'])->name('fil-en-continu.store');
+        Route::put('/fil-en-continu/{fil}', [FilController::class, 'update'])->name('fil-en-continu.update');
+        Route::delete('/fil-en-continu/{fil}', [FilController::class, 'destroy'])->name('fil-en-continu.destroy');
+        Route::patch('/fil-en-continu/{fil}/toggle', [FilController::class, 'toggle'])->name('fil-en-continu.toggle');
+    });
 
-    // Authentification YouTube
-    Route::get('/auth/youtube', [YoutubeAuthController::class, 'redirect'])->name('youtube.auth');
-    Route::get('/auth/youtube/callback', [YoutubeAuthController::class, 'callback'])->name('youtube.callback');
+    // ---- Émissions, podcasts : admin, editor, producer ----
+    Route::middleware('role:editor,producer')->group(function () {
+        Route::get('/emissions', [AppController::class, 'emissions'])->name('emissions');
+        Route::get('/podcasts', [AppController::class, 'podcasts'])->name('podcasts');
+        Route::get('/podcasts/bibliotheque', [AppController::class, 'podcastsLibrary'])->name('podcasts.library');
 
-    // WebTV — gestion des vidéos YouTube (admin)
-    Route::get('/dashboard/webtv', [WebTvController::class, 'index'])->name('webtv');
-    Route::post('/dashboard/webtv', [WebTvController::class, 'store'])->name('webtv.store');
-    Route::post('/dashboard/webtv/upload-session', [WebTvController::class, 'uploadSession'])->name('webtv.upload-session');
-    Route::post('/dashboard/webtv/upload-complete', [WebTvController::class, 'uploadComplete'])->name('webtv.upload-complete');
-    Route::post('/dashboard/webtv/{videoId}/thumbnail', [WebTvController::class, 'setThumbnail'])->name('webtv.thumbnail');
-    Route::put('/dashboard/webtv/{videoId}', [WebTvController::class, 'update'])->name('webtv.update');
-    Route::delete('/dashboard/webtv/{videoId}', [WebTvController::class, 'destroy'])->name('webtv.destroy');
+        // Podcasts actions
+        Route::post('/podcasts', [PodcastController::class, 'store'])->name('podcasts.store');
+        Route::put('/podcasts/{podcast}', [PodcastController::class, 'update'])->name('podcasts.update');
+        Route::delete('/podcasts/{podcast}', [PodcastController::class, 'destroy'])->name('podcasts.destroy');
+    });
 
-    // Creation utilisateurs
-    Route::middleware(['auth', 'admin'])->group(function () {
-    Route::resource('users', UserController::class)->except(['create', 'show', 'edit']);
-});
+    // ---- WebTV : admin et integrator uniquement ----
+    Route::middleware('role:integrator')->group(function () {
+        Route::get('/dashboard/webtv', [WebTvController::class, 'index'])->name('webtv');
+        Route::post('/dashboard/webtv', [WebTvController::class, 'store'])->name('webtv.store');
+        Route::post('/dashboard/webtv/upload-session', [WebTvController::class, 'uploadSession'])->name('webtv.upload-session');
+        Route::post('/dashboard/webtv/upload-complete', [WebTvController::class, 'uploadComplete'])->name('webtv.upload-complete');
+        Route::post('/dashboard/webtv/{videoId}/thumbnail', [WebTvController::class, 'setThumbnail'])->name('webtv.thumbnail');
+        Route::put('/dashboard/webtv/{videoId}', [WebTvController::class, 'update'])->name('webtv.update');
+        Route::delete('/dashboard/webtv/{videoId}', [WebTvController::class, 'destroy'])->name('webtv.destroy');
+    });
+
+    // ---- Newsletter : admin, editor ----
+    Route::middleware('role:editor')->group(function () {
+        Route::get('/abonnees-newsletter', [AppController::class, 'abonnees_newsletter'])->name('abonnees-newsletter');
+    });
+
+    // ---- Admin uniquement : connexion YouTube + utilisateurs ----
+    Route::middleware('admin')->group(function () {
+        Route::get('/auth/youtube', [YoutubeAuthController::class, 'redirect'])->name('youtube.auth');
+        Route::get('/auth/youtube/callback', [YoutubeAuthController::class, 'callback'])->name('youtube.callback');
+
+        Route::resource('users', UserController::class)->except(['create', 'show', 'edit']);
+    });
 });

@@ -6,12 +6,13 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
-    private const ROLES = ['user', 'author', 'admin'];
+    private const ROLES = ['admin', 'editor', 'journalist', 'producer', 'integrator', 'user'];
 
     public function index()
     {
@@ -27,6 +28,7 @@ class UserController extends Controller
             'email'    => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'role'     => ['required', Rule::in(self::ROLES)],
             'password' => ['required', 'confirmed', Password::min(8)],
+            'avatar'   => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ]);
 
         $user = new User();
@@ -35,6 +37,11 @@ class UserController extends Controller
         $user->role = $data['role'];
         $user->password = Hash::make($data['password']);
         $user->email_verified_at = now();
+
+        if ($request->hasFile('avatar')) {
+            $user->avatar = $request->file('avatar')->store('avatars', 'public');
+        }
+
         $user->save();
 
         return redirect()->route('users.index')->with('success', 'Utilisateur créé avec succès.');
@@ -47,6 +54,7 @@ class UserController extends Controller
             'email'    => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
             'role'     => ['required', Rule::in(self::ROLES)],
             'password' => ['nullable', 'confirmed', Password::min(8)],
+            'avatar'   => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ]);
 
         // Un admin ne peut pas se retirer lui-même le rôle admin
@@ -62,6 +70,14 @@ class UserController extends Controller
             $user->password = Hash::make($data['password']);
         }
 
+        if ($request->hasFile('avatar')) {
+            $this->deleteAvatar($user);
+            $user->avatar = $request->file('avatar')->store('avatars', 'public');
+        } elseif ($request->boolean('remove_avatar')) {
+            $this->deleteAvatar($user);
+            $user->avatar = null;
+        }
+
         $user->save();
 
         return redirect()->route('users.index')->with('success', 'Utilisateur mis à jour.');
@@ -73,8 +89,16 @@ class UserController extends Controller
             return redirect()->route('users.index');
         }
 
+        $this->deleteAvatar($user);
         $user->delete();
 
         return redirect()->route('users.index')->with('success', 'Utilisateur supprimé.');
+    }
+
+    private function deleteAvatar(User $user): void
+    {
+        if ($user->avatar) {
+            Storage::disk('public')->delete($user->avatar);
+        }
     }
 }

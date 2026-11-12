@@ -2,7 +2,12 @@
     <div class="side-card">
         <div class="side-user">
             <div class="side-avatar">
-                <span>{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                @if(auth()->user()->avatar)
+                    <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="{{ auth()->user()->name }}"
+                        style="width:100%; height:100%; object-fit:cover; border-radius:inherit; display:block;">
+                @else
+                    <span>{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                @endif
             </div>
             <div>
                 <h3>{{ auth()->user()->name }}</h3>

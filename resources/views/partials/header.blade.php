@@ -85,7 +85,7 @@
                     <button class="user-avatar-btn" id="userMenuBtn" aria-haspopup="true" aria-expanded="false"
                         aria-label="Menu du compte">
                         @if (auth()->user()->avatar ?? false)
-                            <img src="{{ auth()->user()->avatar }}" alt="">
+                            <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="{{ auth()->user()->name }}">
                         @else
                             <span class="avatar-fallback">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
                         @endif

@@ -8,6 +8,7 @@ use Google\Service\YouTube\Video;
 use Google\Service\YouTube\VideoSnippet;
 use Google\Service\YouTube\VideoStatus;
 use App\Models\YoutubeToken;
+use Illuminate\Support\Facades\Log;
 use Exception;
 
 class YoutubeService
@@ -15,6 +16,9 @@ class YoutubeService
     protected ?Client $client = null;
     protected ?YouTube $youtube = null;
     protected ?YouTube $publicYoutube = null;
+
+    /** Vrai si la dernière liste admin a été chargée via OAuth (privées/non répertoriées incluses). */
+    protected bool $listedViaOAuth = false;
 
     public function __construct()
     {
@@ -46,6 +50,24 @@ class YoutubeService
         $this->authenticate();
 
         return $this->youtube = new YouTube($this->client);
+    }
+
+    /**
+     * Un token OAuth est-il enregistré ? (simple lecture en base, aucun appel YouTube)
+     * Sert à savoir si publier / modifier / supprimer est possible.
+     */
+    public function isConnected(): bool
+    {
+        return YoutubeToken::query()->exists();
+    }
+
+    /**
+     * La dernière liste chargée par listAll() venait-elle d'OAuth ?
+     * Faux = mode lecture (vidéos publiques uniquement).
+     */
+    public function listedViaOAuth(): bool
+    {
+        return $this->listedViaOAuth;
     }
 
     /**
@@ -266,8 +288,24 @@ class YoutubeService
      */
     public function listAll(int $maxPerPage = 50, int $hardLimit = 500): array
     {
-        $youtube = $this->authenticatedYoutube();
-        $channelsResponse = $youtube->channels->listChannels('contentDetails', ['mine' => true]);
+        // 1) On essaie d'abord le token OAuth déjà enregistré (une seule connexion
+        //    pour tous les admins) : il donne accès aussi aux vidéos privées/non répertoriées.
+        // 2) S'il n'existe pas ou n'est plus valide, on ne bloque plus l'admin :
+        //    on charge les vidéos publiques de la chaîne avec la clé API (sans OAuth).
+        try {
+            $youtube = $this->authenticatedYoutube();
+            $channelsResponse = $youtube->channels->listChannels('contentDetails', ['mine' => true]);
+            $this->listedViaOAuth = true;
+        } catch (\Throwable $e) {
+            Log::info('YouTube : liste admin sans OAuth (clé API)', ['reason' => $e->getMessage()]);
+
+            $youtube = $this->publicYoutube();
+            $channelsResponse = $youtube->channels->listChannels('contentDetails', [
+                'id' => config('services.youtube.channel_id'),
+            ]);
+            $this->listedViaOAuth = false;
+        }
+
         $uploadsPlaylistId = $channelsResponse['items'][0]['contentDetails']['relatedPlaylists']['uploads'];
 
         $all = [];

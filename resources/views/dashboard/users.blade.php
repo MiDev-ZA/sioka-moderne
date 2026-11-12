@@ -7,9 +7,22 @@
 @php
     // Libellés des rôles (valeurs stockées dans users.role)
     $roles = [
-        'user'   => 'Utilisateur',
-        'author' => 'Auteur',
-        'admin'  => 'Administrateur',
+        'admin'      => 'Administrateur',
+        'editor'     => 'Rédacteur en chef',
+        'journalist' => 'Journaliste',
+        'producer'   => 'Producteur / Animateur',
+        'integrator' => 'Intégrateur vidéos & contenus',
+        'user'       => 'Membre',
+    ];
+
+    // Description affichée sous le menu des rôles
+    $roleDescriptions = [
+        'admin'      => 'Accès complet : utilisateurs, connexion YouTube et tous les contenus.',
+        'editor'     => 'Supervise et publie tous les contenus : actualités, flash infos, émissions, podcasts, newsletter.',
+        'journalist' => "Rédige les actualités, les flash infos et le fil d'infos.",
+        'producer'   => 'Gère les émissions et les podcasts.',
+        'integrator' => 'Gère la WebTV : intègre et publie les vidéos et contenus.',
+        'user'       => "Compte public : aucun accès aux outils de la rédaction.",
     ];
 
     // Vrai si la dernière soumission en erreur venait de la modale de modification
@@ -116,7 +129,27 @@
         background: linear-gradient(135deg, var(--magenta), var(--bleu));
         text-transform: uppercase;
     }
+    .user-avatar { overflow: hidden; }
+    .user-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .user-name { font-weight: 600; line-height: 1.3; }
+
+    /* Champ photo de profil */
+    .avatar-field { display: flex; align-items: center; gap: 14px; }
+    .avatar-field__input { flex: 1; min-width: 0; }
+    .avatar-preview {
+        width: 64px; height: 64px; flex-shrink: 0;
+        border-radius: 50%; overflow: hidden;
+        display: inline-flex; align-items: center; justify-content: center;
+        font-size: 24px; font-weight: 700; color: #fff; text-transform: uppercase;
+        background: linear-gradient(135deg, var(--magenta), var(--bleu));
+    }
+    .avatar-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .user-form input[type="file"] { padding: 8px 12px; font-size: 13px; }
+    .user-form .check-line {
+        display: flex; align-items: center; gap: 8px;
+        margin: 8px 0 0; font-size: 12.5px; font-weight: 500; color: var(--plomb); cursor: pointer;
+    }
+    .user-form input[type="checkbox"] { width: auto; padding: 0; accent-color: var(--magenta); }
     .user-you { font-size: 11px; font-weight: 600; color: var(--plomb); margin-left: 6px; }
     .user-email { color: var(--plomb); }
     .row-date { color: var(--plomb); white-space: nowrap; }
@@ -132,8 +165,10 @@
         color: var(--plomb);
         white-space: nowrap;
     }
-    .role-pill.is-admin  { color: var(--magenta); border-color: rgba(179, 25, 131, .35); }
-    .role-pill.is-author { color: var(--bleu);    border-color: rgba(0, 130, 202, .35); }
+    .role-pill.is-admin      { color: var(--magenta); border-color: rgba(179, 25, 131, .35); }
+    .role-pill.is-editor     { color: var(--or);      border-color: rgba(201, 162, 39, .40); }
+    .role-pill.is-journalist { color: var(--bleu);    border-color: rgba(0, 130, 202, .35); }
+    .role-pill.is-producer   { color: var(--vert);    border-color: rgba(47, 191, 113, .35); }
 
     .row-actions { display: flex; align-items: center; gap: 6px; justify-content: flex-end; }
     .row-icon-btn {
@@ -333,7 +368,13 @@
                             <tr>
                                 <td>
                                     <div class="user-cell">
-                                        <span class="user-avatar">{{ mb_substr($user->name, 0, 1) }}</span>
+                                        <span class="user-avatar">
+                                            @if($user->avatar)
+                                                <img src="{{ asset('storage/' . $user->avatar) }}" alt="{{ $user->name }}">
+                                            @else
+                                                {{ mb_substr($user->name, 0, 1) }}
+                                            @endif
+                                        </span>
                                         <span class="user-name">
                                             {{ $user->name }}
                                             @if($isSelf)<span class="user-you">(vous)</span>@endif
@@ -342,7 +383,7 @@
                                 </td>
                                 <td class="user-email">{{ $user->email }}</td>
                                 <td>
-                                    <span class="role-pill {{ $user->role === 'admin' ? 'is-admin' : ($user->role === 'author' ? 'is-author' : '') }}">
+                                    <span class="role-pill is-{{ $user->role }}">
                                         {{ $roles[$user->role] ?? $user->role }}
                                     </span>
                                 </td>
@@ -357,7 +398,8 @@
                                             data-id="{{ $user->id }}"
                                             data-name="{{ $user->name }}"
                                             data-email="{{ $user->email }}"
-                                            data-role="{{ $user->role }}">
+                                            data-role="{{ $user->role }}"
+                                            data-avatar="{{ $user->avatar ? asset('storage/' . $user->avatar) : '' }}">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m16.5 3.5 4 4L7 21H3v-4L16.5 3.5Z"/></svg>
                                         </button>
                                         <button type="button"
@@ -405,9 +447,26 @@
             </div>
 
             <div class="modal-card__body">
-                <form action="{{ route('users.store') }}" method="POST" class="user-form" data-turbo="false" autocomplete="off">
+                <form action="{{ route('users.store') }}" method="POST" class="user-form" enctype="multipart/form-data" data-turbo="false" autocomplete="off">
                     @csrf
                     <input type="hidden" name="_form" value="create">
+
+                    <div class="field">
+                        <label for="createAvatar">Photo de profil</label>
+                        <div class="avatar-field">
+                            <span class="avatar-preview" id="createAvatarPreview">👤</span>
+                            <div class="avatar-field__input">
+                                <input type="file" id="createAvatar" name="avatar"
+                                       accept="image/png,image/jpeg,image/webp"
+                                       class="{{ $createError('avatar') ? 'has-error' : '' }}">
+                                @if($createError('avatar'))
+                                    <p class="field-error">{{ $createError('avatar') }}</p>
+                                @else
+                                    <p class="field-hint">JPG, PNG ou WebP · 2 Mo maximum · facultatif.</p>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="field">
                         <label for="createName">Nom complet <span class="req">*</span></label>
@@ -435,7 +494,7 @@
                         @if($createError('role'))
                             <p class="field-error">{{ $createError('role') }}</p>
                         @else
-                            <p class="field-hint">Utilisateur : lecture seule · Auteur : gère ses contenus · Administrateur : accès complet.</p>
+                            <p class="field-hint" id="createRoleHint"></p>
                         @endif
                     </div>
 
@@ -480,11 +539,32 @@
             </div>
 
             <div class="modal-card__body">
-                <form action="" method="POST" class="user-form" id="userEditForm" data-turbo="false" autocomplete="off">
+                <form action="" method="POST" class="user-form" id="userEditForm" enctype="multipart/form-data" data-turbo="false" autocomplete="off">
                     @csrf
                     @method('PUT')
                     <input type="hidden" name="_form" value="edit">
                     <input type="hidden" name="_edit_id" id="editUserId" value="{{ $isEditError ? old('_edit_id') : '' }}">
+
+                    <div class="field">
+                        <label for="editAvatar">Photo de profil</label>
+                        <div class="avatar-field">
+                            <span class="avatar-preview" id="editAvatarPreview">?</span>
+                            <div class="avatar-field__input">
+                                <input type="file" id="editAvatar" name="avatar"
+                                       accept="image/png,image/jpeg,image/webp"
+                                       class="{{ $editError('avatar') ? 'has-error' : '' }}">
+                                @if($editError('avatar'))
+                                    <p class="field-error">{{ $editError('avatar') }}</p>
+                                @else
+                                    <p class="field-hint">JPG, PNG ou WebP · 2 Mo maximum. Laissez vide pour conserver la photo.</p>
+                                @endif
+                                <label class="check-line" id="editRemoveAvatarWrap" style="display:none;">
+                                    <input type="checkbox" name="remove_avatar" value="1" id="editRemoveAvatar">
+                                    Supprimer la photo actuelle
+                                </label>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="field">
                         <label for="editName">Nom complet <span class="req">*</span></label>
@@ -508,6 +588,7 @@
                             @endforeach
                         </select>
                         @if($editError('role'))<p class="field-error">{{ $editError('role') }}</p>@endif
+                        <p class="field-hint" id="editRoleHint"></p>
                     </div>
 
                     <div class="field-row">
@@ -618,8 +699,17 @@
                 editName.value = btn.dataset.name;
                 editEmail.value = btn.dataset.email;
                 editRole.value = btn.dataset.role;
+                editRole.dispatchEvent(new Event('change'));
                 editPassword.value = '';
                 editPasswordConfirm.value = '';
+
+                // Photo de profil
+                editAvatarCurrent = btn.dataset.avatar || '';
+                editAvatarInput.value = '';
+                editRemoveAvatar.checked = false;
+                editRemoveWrap.style.display = editAvatarCurrent ? '' : 'none';
+                renderPreview(editAvatarPreview, editAvatarCurrent, (btn.dataset.name || '?').charAt(0));
+
                 openEditModal();
             });
         });
@@ -658,6 +748,61 @@
             });
         }
 
+        // ---------- Photo de profil : aperçu ----------
+        function renderPreview(box, url, fallback) {
+            box.innerHTML = '';
+            if (url) {
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = '';
+                box.appendChild(img);
+            } else {
+                box.textContent = fallback;
+            }
+        }
+
+        const createAvatarInput = document.getElementById('createAvatar');
+        const createAvatarPreview = document.getElementById('createAvatarPreview');
+        createAvatarInput.addEventListener('change', function () {
+            const file = createAvatarInput.files[0];
+            renderPreview(createAvatarPreview, file ? URL.createObjectURL(file) : '', '👤');
+        });
+
+        let editAvatarCurrent = '';
+        const editAvatarInput = document.getElementById('editAvatar');
+        const editAvatarPreview = document.getElementById('editAvatarPreview');
+        const editRemoveAvatar = document.getElementById('editRemoveAvatar');
+        const editRemoveWrap = document.getElementById('editRemoveAvatarWrap');
+
+        editAvatarInput.addEventListener('change', function () {
+            const file = editAvatarInput.files[0];
+            if (file) {
+                editRemoveAvatar.checked = false;
+                renderPreview(editAvatarPreview, URL.createObjectURL(file), '');
+            } else {
+                renderPreview(editAvatarPreview, editAvatarCurrent, (editName.value || '?').charAt(0));
+            }
+        });
+        editRemoveAvatar.addEventListener('change', function () {
+            if (editRemoveAvatar.checked) {
+                editAvatarInput.value = '';
+                renderPreview(editAvatarPreview, '', (editName.value || '?').charAt(0));
+            } else {
+                renderPreview(editAvatarPreview, editAvatarCurrent, (editName.value || '?').charAt(0));
+            }
+        });
+
+        // ---------- Description du rôle sélectionné ----------
+        const ROLE_DESCRIPTIONS = @json($roleDescriptions);
+        function bindRoleHint(select, hint) {
+            if (!select || !hint) return;
+            const update = function () { hint.textContent = ROLE_DESCRIPTIONS[select.value] || ''; };
+            select.addEventListener('change', update);
+            update();
+        }
+        bindRoleHint(document.getElementById('createRole'), document.getElementById('createRoleHint'));
+        bindRoleHint(editRole, document.getElementById('editRoleHint'));
+
         // Échap : ferme la modale actuellement ouverte
         document.addEventListener('keydown', function (e) {
             if (e.key !== 'Escape') return;
@@ -673,6 +818,7 @@
                 editName.value = @json(old('name', ''));
                 editEmail.value = @json(old('email', ''));
                 editRole.value = @json(old('role', 'user'));
+                editRole.dispatchEvent(new Event('change'));
                 openEditModal();
             @else
                 openModal();
