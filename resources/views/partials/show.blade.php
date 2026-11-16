@@ -27,7 +27,7 @@
     <h1 class="video-single-title">{{ $video['title'] }}</h1>
     <div class="video-single-meta">
       <span>{{ \App\Support\Fr::date($video['publishedAt']) }}</span>
-      <span>{{ \App\Support\Fr::views($video['views'] ?? 0) }}</span>
+      <!-- <span>{{ \App\Support\Fr::views($video['views'] ?? 0) }}</span> -->
       <span>{{ \App\Support\Fr::duration($video['duration'] ?? '') }}</span>
     </div>
     @if(!empty($video['description']))

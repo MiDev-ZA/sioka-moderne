@@ -431,13 +431,7 @@
                             <tr>
                                 <td>
                                     <div class="row-podcast">
-                                        @if(!empty($podcast->image))
-                                            <img class="row-thumb" src="{{ asset('storage/' . $podcast->image) }}" alt="">
-                                        @else
-                                            <div class="row-thumb row-thumb--placeholder">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Z"/><path d="M19 11v1a7 7 0 0 1-14 0v-1M12 19v3"/></svg>
-                                            </div>
-                                        @endif
+                                        <img class="row-thumb" src="{{ $podcast->cover_url }}" alt="">
                                         <div>
                                             <div class="row-podcast__title">{{ $podcast->title }}</div>
                                             <div class="row-podcast__slug">/{{ $podcast->slug }}</div>

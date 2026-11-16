@@ -206,6 +206,11 @@
 #podcasts .feat-big.is-playing .feat-play-badge,
 #podcasts .feat-big.is-loading .feat-play-badge { opacity: 1; transform: scale(1); }
 
+/* écrans tactiles : pas de survol, la pastille reste visible pour indiquer qu'on peut lancer la lecture */
+@media (hover: none) {
+  #podcasts .feat-big .feat-play-badge { opacity: 1; transform: scale(1); }
+}
+
 /* halo pulsé pendant la lecture */
 #podcasts .feat-play-badge::before {
   content: '';
@@ -270,7 +275,8 @@
   border-color: rgba(233, 30, 140, 0.35);
   box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.15);
 }
-#podcasts .feat-mini:focus-visible { outline: 2px solid var(--bleu, #3b82f6); outline-offset: 2px; }
+#podcasts .feat-mini:focus-visible,
+#podcasts .feat-mini:has(.feat-mini-play:focus-visible) { outline: 2px solid var(--bleu, #3b82f6); outline-offset: 2px; }
 #podcasts .feat-mini.is-playing { border-color: var(--magenta, #e91e8c); background: var(--magenta-glow); /* ✅ Correction Light Mode */ }
 
 #podcasts .feat-mini-play {

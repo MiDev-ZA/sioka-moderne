@@ -46,4 +46,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Vrai si l'utilisateur est admin (accès total) ou possède l'un des rôles donnés.
+     */
+    public function hasRole(string ...$roles): bool
+    {
+        return $this->role === 'admin' || in_array($this->role, $roles, true);
+    }
 }

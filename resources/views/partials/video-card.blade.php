@@ -34,10 +34,10 @@
       @endif
       <div class="video-meta">
         <span class="video-date">{{ \App\Support\Fr::date($video['publishedAt'], 'd M Y') }}</span>
-        <span class="video-views">
+        <!-- <span class="video-views">
           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
           {{ \App\Support\Fr::views($video['views'] ?? 0) }}
-        </span>
+        </span> -->
       </div>
     </div>
   </article>

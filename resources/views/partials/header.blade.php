@@ -1,20 +1,38 @@
+@php
+    // Catégories du menu Actualités (affichées en desktop et en mobile)
+    $navCategories = [
+        'a-la-une'      => 'À la Une',
+        'politique'     => 'Politique',
+        'societe'       => 'Société',
+        'economie'      => 'Économie',
+        'sport'         => 'Sport',
+        'culture'       => 'Culture',
+        'international' => 'International',
+    ];
+
+    // Les ancres pointent vers l'accueil : elles fonctionnent depuis n'importe quelle page
+    $home = route('home');
+@endphp
+
 <header class="header">
     <div class="header-row">
-        <button class="hbg" id="hbg" aria-label="Ouvrir le menu" aria-expanded="false">
+        <button type="button" class="hbg" id="hbg" aria-label="Ouvrir le menu"
+            aria-expanded="false" aria-controls="mobileNav">
             <span class="hbg-bar"></span>
             <span class="hbg-bar"></span>
             <span class="hbg-bar"></span>
         </button>
 
-        <a href="/" class="logo" aria-label="SIOKA Web TV & Radio">
+        <a href="{{ $home }}" class="logo" aria-label="SIOKA Web TV &amp; Radio">
             <img src="{{ asset('images/SIOKA-LogoOfficiel.png') }}" alt="SIOKA" class="logo-image">
         </a>
 
         <nav class="nav-main" aria-label="Navigation principale">
-            <a href="/" class="active-magenta">Accueil</a>
+            <a href="{{ $home }}" class="{{ request()->routeIs('home') ? 'active-magenta' : '' }}">Accueil</a>
 
             <div class="nav-item" id="navActualites">
-                <button class="nav-link nav-trigger" id="actuTrigger" aria-haspopup="true" aria-expanded="false">
+                <button type="button" class="nav-link nav-trigger" id="actuTrigger"
+                    aria-haspopup="true" aria-expanded="false">
                     Actualités
                     <svg class="nav-caret" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
                         aria-hidden="true">
@@ -23,38 +41,35 @@
                 </button>
                 <div class="nav-dropdown" id="actuDropdown" role="menu">
                     <div class="nav-dropdown-inner">
-                        <a href="/categories/a-la-une" role="menuitem">À la Une</a>
-                        <a href="/categories/politique" role="menuitem">Politique</a>
-                        <a href="/categories/societe" role="menuitem">Société</a>
-                        <a href="/categories/economie" role="menuitem">Économie</a>
-                        <a href="/categories/sport" role="menuitem">Sport</a>
-                        <a href="/categories/culture" role="menuitem">Culture</a>
-                        <a href="/categories/international" role="menuitem">International</a>
+                        @foreach ($navCategories as $slug => $label)
+                            <a href="{{ route('categories.show', $slug) }}" role="menuitem">{{ $label }}</a>
+                        @endforeach
                     </div>
                 </div>
             </div>
 
-            <a href="#webtv" class="nav-webtv"><span class="webtv-dot" aria-hidden="true"></span>WebTV</a>
-            <a href="#emissions">Émissions</a>
-            <a href="#podcasts">Podcasts</a>
-            <a href="#equipe">L'Équipe</a>
-            <a href="#contact">Contact</a>
-            <a href="#partners">Partenaires</a>
+            <a href="{{ $home }}#webtv" class="nav-webtv"><span class="webtv-dot" aria-hidden="true"></span>WebTV</a>
+            <a href="{{ route('emissions.public') }}"
+                class="{{ request()->routeIs('emissions.public') ? 'active-magenta' : '' }}">Émissions</a>
+            <a href="{{ $home }}#podcasts">Podcasts</a>
+            <a href="{{ $home }}#equipe">L'Équipe</a>
+            <a href="{{ $home }}#contact">Contact</a>
+            <a href="{{ $home }}#partenaires">Partenaires</a>
         </nav>
 
         <div class="header-actions">
-            <button class="btn-live-radio" aria-label="Écouter la radio en direct" onclick="togglePlay()">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <button type="button" class="btn-live-radio" aria-label="Écouter la radio en direct" onclick="togglePlay()">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                     <rect x="3" y="7" width="18" height="13" rx="2" />
                     <line x1="7" y1="3" x2="17" y2="7" />
                     <circle cx="8" cy="13" r="2" />
                     <line x1="13" y1="12" x2="18" y2="12" />
                     <line x1="13" y1="15" x2="18" y2="15" />
                 </svg>
-                LE Direct
+                Le Direct
             </button>
 
-            <button class="h-btn theme-toggle" id="themeToggle" aria-label="Changer de thème"
+            <button type="button" class="h-btn theme-toggle" id="themeToggle" aria-label="Changer de thème"
                 title="Mode sombre / clair">
                 <svg class="icon-moon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
                     aria-hidden="true">
@@ -82,8 +97,8 @@
 
             @auth
                 <div class="user-menu" id="userMenu">
-                    <button class="user-avatar-btn" id="userMenuBtn" aria-haspopup="true" aria-expanded="false"
-                        aria-label="Menu du compte">
+                    <button type="button" class="user-avatar-btn" id="userMenuBtn" aria-haspopup="true"
+                        aria-expanded="false" aria-label="Menu du compte">
                         @if (auth()->user()->avatar ?? false)
                             <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="{{ auth()->user()->name }}">
                         @else
@@ -96,15 +111,15 @@
                             <div class="um-name">{{ auth()->user()->name }}</div>
                             <div class="um-email">{{ auth()->user()->email }}</div>
                         </div>
-                        <a href="#" role="menuitem">
-                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <a href="{{ route('profil') }}" role="menuitem">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                                 <circle cx="12" cy="7" r="4" />
                                 <path d="M5.5 21a6.5 6.5 0 0 1 13 0" />
                             </svg>
                             Mon profil
                         </a>
                         <a href="{{ route('dashboard') }}" role="menuitem">
-                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                                 <rect x="3" y="3" width="7" height="9" />
                                 <rect x="14" y="3" width="7" height="5" />
                                 <rect x="14" y="12" width="7" height="9" />
@@ -115,7 +130,7 @@
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="um-logout" role="menuitem">
-                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                                     <polyline points="16 17 21 12 16 7" />
                                     <line x1="21" y1="12" x2="9" y2="12" />
@@ -127,8 +142,8 @@
                 </div>
             @endauth
 
-            <button class="h-btn" id="searchBtn" aria-label="Rechercher" title="Rechercher">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <button type="button" class="h-btn" id="searchBtn" aria-label="Rechercher" title="Rechercher">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                     <circle cx="11" cy="11" r="8" />
                     <path d="m21 21-4.35-4.35" />
                 </svg>
@@ -137,11 +152,13 @@
     </div>
 
     <nav class="mobile-nav" id="mobileNav" aria-label="Navigation mobile">
-        <a href="#" style="color: var(--magenta);">Ecouter FM 106 en Direct </a>
-        <a href="#">Accueil</a>
+        <a href="#" role="button" style="color: var(--magenta);"
+            onclick="event.preventDefault(); togglePlay();">Écouter FM 106 en direct</a>
+
+        <a href="{{ $home }}" class="{{ request()->routeIs('home') ? 'active-magenta' : '' }}">Accueil</a>
 
         <div class="mnav-item">
-            <button class="mnav-trigger" id="actuTriggerMobile" aria-expanded="false"
+            <button type="button" class="mnav-trigger" id="actuTriggerMobile" aria-expanded="false"
                 aria-controls="actuPanelMobile">
                 Actualités
                 <svg class="nav-caret" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
@@ -152,36 +169,33 @@
 
             <div class="mnav-panel" id="actuPanelMobile">
                 <div class="mnav-panel-inner">
-                    <a href="/categories/a-la-une">À la Une</a>
-                    <a href="/categories/politique">Politique</a>
-                    <a href="/categories/societe">Société</a>
-                    <a href="/categories/economie">Économie</a>
-                    <a href="/categories/sport">Sport</a>
-                    <a href="/categories/culture">Culture</a>
-                    <a href="/categories/international">International</a>
+                    @foreach ($navCategories as $slug => $label)
+                        <a href="{{ route('categories.show', $slug) }}">{{ $label }}</a>
+                    @endforeach
                 </div>
             </div>
         </div>
-        
-        <a href="#webtv" class="nav-webtv"><span class="webtv-dot" aria-hidden="true"></span>WebTV</a>
-        <a href="#emissions">Émissions</a>
-        <a href="#podcasts">Podcasts</a>
-        <a href="#contact">Contact</a>
+
+        <a href="{{ $home }}#webtv" class="nav-webtv"><span class="webtv-dot" aria-hidden="true"></span>WebTV</a>
+        <a href="{{ route('emissions.public') }}"
+            class="{{ request()->routeIs('emissions.public') ? 'active-magenta' : '' }}">Émissions</a>
+        <a href="{{ $home }}#podcasts">Podcasts</a>
+        <a href="{{ $home }}#equipe">L'Équipe</a>
+        <a href="{{ $home }}#contact">Contact</a>
+        <a href="{{ $home }}#partenaires">Partenaires</a>
 
         <div class="mobile-nav-utility">
             @guest
-                <button class="btn-login" onclick="window.location.href=''">
+                <a href="{{ route('login') }}" class="btn-login" style="flex:1; justify-content:center;">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
                         <polyline points="10 17 15 12 10 7" />
                         <line x1="15" y1="12" x2="3" y2="12" />
                     </svg>
-                    <!-- <span class="btn-login-label">Connexion</span> -->
-                    <a href="{{ route('login') }}" class="btn-login-label">Connexion</a>
-                </button>
+                    <span class="btn-login-label">Connexion</span>
+                </a>
             @else
-                <button class="btn-login" onclick="window.location.href='{{ route('dashboard') }}'"
-                    style="flex:1; justify-content:center;">
+                <a href="{{ route('dashboard') }}" class="btn-login" style="flex:1; justify-content:center;">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                         <rect x="3" y="3" width="7" height="9" />
                         <rect x="14" y="3" width="7" height="5" />
@@ -189,10 +203,22 @@
                         <rect x="3" y="16" width="7" height="5" />
                     </svg>
                     <span class="btn-login-label">Tableau de bord</span>
-                </button>
+                </a>
+
+                <form method="POST" action="{{ route('logout') }}" style="display:contents;">
+                    @csrf
+                    <button type="submit" class="btn-login" style="flex:1; justify-content:center;">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                            <polyline points="16 17 21 12 16 7" />
+                            <line x1="21" y1="12" x2="9" y2="12" />
+                        </svg>
+                        <span class="btn-login-label">Déconnexion</span>
+                    </button>
+                </form>
             @endguest
 
-            <button class="h-btn theme-toggle" id="themeToggleMobile" aria-label="Changer de thème"
+            <button type="button" class="h-btn theme-toggle" id="themeToggleMobile" aria-label="Changer de thème"
                 title="Mode sombre / clair">
                 <svg class="icon-moon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
                     aria-hidden="true">
@@ -210,11 +236,16 @@
 </header>
 
 <script>
-    (function() {
-        // ── Theme toggle ──────────────────────────────────────────
-        const root = document.documentElement;
-        const KEY = 'sioka-theme';
+    (function () {
+        // Évite de lier les écouteurs plusieurs fois (navigation Turbo, header inclus deux fois)
+        if (window.__siokaHeaderReady) return;
+        window.__siokaHeaderReady = true;
 
+        const root = document.documentElement;
+        const KEY  = 'sioka-theme';
+        const $    = function (id) { return document.getElementById(id); };
+
+        // ── Thème clair / sombre ──────────────────────────────────
         function applyTheme(theme) {
             if (theme === 'light') {
                 root.setAttribute('data-theme', 'light');
@@ -230,78 +261,72 @@
         function toggleTheme() {
             const next = currentTheme() === 'light' ? 'dark' : 'light';
             applyTheme(next);
-            try {
-                localStorage.setItem(KEY, next);
-            } catch (e) {}
+            try { localStorage.setItem(KEY, next); } catch (e) {}
         }
 
-        document.getElementById('themeToggle')?.addEventListener('click', toggleTheme);
-        document.getElementById('themeToggleMobile')?.addEventListener('click', toggleTheme);
+        // Relit le thème enregistré au chargement
+        try {
+            const saved = localStorage.getItem(KEY);
+            if (saved === 'light' || saved === 'dark') applyTheme(saved);
+        } catch (e) {}
 
-        // ── User dropdown ─────────────────────────────────────────
-        const menuBtn = document.getElementById('userMenuBtn');
-        const menuCard = document.getElementById('userMenuCard');
-
-        if (menuBtn && menuCard) {
-            menuBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const open = menuCard.classList.toggle('open');
-                menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-            });
-
-            document.addEventListener('click', (e) => {
-                if (!menuCard.contains(e.target) && !menuBtn.contains(e.target)) {
-                    menuCard.classList.remove('open');
-                    menuBtn.setAttribute('aria-expanded', 'false');
-                }
-            });
-
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    menuCard.classList.remove('open');
-                    menuBtn.setAttribute('aria-expanded', 'false');
-                    menuBtn.focus();
-                }
-            });
+        // ── Ouverture / fermeture des menus ───────────────────────
+        function setOpen(panel, trigger, open) {
+            if (!panel || !trigger) return;
+            panel.classList.toggle('open', open);
+            trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
         }
 
-        // ── Dropdown Actualités (desktop) ──────────────────────────
-        const actuTrigger = document.getElementById('actuTrigger');
-        const actuDropdown = document.getElementById('actuDropdown');
-        const navActu = document.getElementById('navActualites');
+        function isOpen(el) { return !!el && el.classList.contains('open'); }
 
-        if (actuTrigger && actuDropdown && navActu) {
-            actuTrigger.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const open = actuDropdown.classList.toggle('open');
-                actuTrigger.setAttribute('aria-expanded', open ? 'true' : 'false');
-            });
+        function closeUserMenu() { setOpen($('userMenuCard'), $('userMenuBtn'), false); }
+        function closeActu()     { setOpen($('actuDropdown'), $('actuTrigger'), false); }
 
-            document.addEventListener('click', (e) => {
-                if (!navActu.contains(e.target)) {
-                    actuDropdown.classList.remove('open');
-                    actuTrigger.setAttribute('aria-expanded', 'false');
-                }
-            });
+        // ── Clics (écouteur unique, délégué : fonctionne même si le DOM est remplacé) ──
+        document.addEventListener('click', function (e) {
+            const t = e.target;
 
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && actuDropdown.classList.contains('open')) {
-                    actuDropdown.classList.remove('open');
-                    actuTrigger.setAttribute('aria-expanded', 'false');
-                    actuTrigger.focus();
-                }
-            });
-        }
+            if (t.closest('#themeToggle, #themeToggleMobile')) {
+                toggleTheme();
+                return;
+            }
 
-        // ── Accordéon Actualités (mobile) ──────────────────────────
-        const actuTriggerMobile = document.getElementById('actuTriggerMobile');
-        const actuPanelMobile = document.getElementById('actuPanelMobile');
+            if (t.closest('#userMenuBtn')) {
+                const open = !isOpen($('userMenuCard'));
+                closeActu();
+                setOpen($('userMenuCard'), $('userMenuBtn'), open);
+                return;
+            }
 
-        if (actuTriggerMobile && actuPanelMobile) {
-            actuTriggerMobile.addEventListener('click', () => {
-                const open = actuPanelMobile.classList.toggle('open');
-                actuTriggerMobile.setAttribute('aria-expanded', open ? 'true' : 'false');
-            });
-        }
+            if (t.closest('#actuTrigger')) {
+                const open = !isOpen($('actuDropdown'));
+                closeUserMenu();
+                setOpen($('actuDropdown'), $('actuTrigger'), open);
+                return;
+            }
+
+            if (t.closest('#actuTriggerMobile')) {
+                setOpen($('actuPanelMobile'), $('actuTriggerMobile'), !isOpen($('actuPanelMobile')));
+                return;
+            }
+
+            // Clic ailleurs (ou sur un lien du menu) : referme les menus déroulants
+            if (!t.closest('#navActualites') || t.closest('#actuDropdown a')) closeActu();
+            if (!t.closest('#userMenu')) closeUserMenu();
+        });
+
+        // ── Touche Échap ──────────────────────────────────────────
+        document.addEventListener('keydown', function (e) {
+            if (e.key !== 'Escape') return;
+
+            if (isOpen($('actuDropdown'))) {
+                closeActu();
+                if ($('actuTrigger')) $('actuTrigger').focus();
+            }
+            if (isOpen($('userMenuCard'))) {
+                closeUserMenu();
+                if ($('userMenuBtn')) $('userMenuBtn').focus();
+            }
+        });
     })();
 </script>

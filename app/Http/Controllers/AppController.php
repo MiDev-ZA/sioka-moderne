@@ -6,7 +6,9 @@ use App\Models\Article;
 use App\Models\Category;
 use App\Models\Fil;
 use App\Models\FlashInfo;
+use App\Models\NewsletterSubscriber;
 use App\Models\Podcast;
+use App\Models\Programme;
 use App\Services\YoutubeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -46,7 +48,7 @@ class AppController extends Controller
             ->take(10)
             ->get();
 
-        // Récupétation des podcasts
+        // Récupération des podcasts
         $podcasts = Podcast::where('is_published', true)
             ->latest()
             ->take(4)
@@ -158,23 +160,22 @@ class AppController extends Controller
 
         return response(view('partials/videos-all', compact('videos', 'categories')))->header('Vary', 'Accept');
     }
- 
 
-    // Methode pour affiche la liste des podcasts modal
+    // Méthode pour afficher la liste des podcasts dans la modale
     public function podcastsLibrary()
     {
         $podcasts = Podcast::where('is_published', true)
             ->with('user')
             ->orderByDesc('created_at')
             ->get();
-    
+
         $groups = $podcasts->groupBy(function ($podcast) {
             return $podcast->created_at->copy()->startOfWeek(Carbon::MONDAY)->format('Y-m-d');
         });
-    
+
         $currentWeekStart = now()->startOfWeek(Carbon::MONDAY)->format('Y-m-d');
         $lastWeekStart = now()->subWeek()->startOfWeek(Carbon::MONDAY)->format('Y-m-d');
-    
+
         $weekLabels = $groups->keys()->mapWithKeys(function ($key) use ($currentWeekStart, $lastWeekStart) {
             if ($key === $currentWeekStart) {
                 $label = 'Cette semaine';
@@ -186,10 +187,10 @@ class AppController extends Controller
                 $label = 'Semaine du ' . $start->translatedFormat('d')
                     . ' au ' . $end->translatedFormat('d F Y');
             }
-    
+
             return [$key => $label];
         });
-    
+
         return view('partials.podcasts-library-list', compact('groups', 'weekLabels'));
     }
 
@@ -250,6 +251,29 @@ class AppController extends Controller
         return view('news-index', compact('articles', 'categories', 'category'));
     }
 
+    // Page publique : grille des émissions de la semaine
+    public function emissionsPublic()
+    {
+        $programmes = Programme::orderBy('start')->get()->groupBy('day');
+
+        // Jour courant et émission en cours : toujours à l'heure de Madagascar (UTC+3),
+        // quel que soit le fuseau configuré dans config/app.php
+        $now        = now('Indian/Antananarivo');
+        $jourActuel = Programme::JOURS[$now->dayOfWeekIso - 1];
+        $heure      = $now->format('H:i:s');
+
+        $enDirectId = ($programmes[$jourActuel] ?? collect())
+            ->first(fn ($p) => $p->start <= $heure && $p->end > $heure)?->id;
+
+        return view('emissions_publique', [
+            'jours'      => Programme::JOURS,
+            'programmes' => $programmes,
+            'jourActuel' => $jourActuel,
+            'enDirectId' => $enDirectId,
+            'nowMinutes' => $now->hour * 60 + $now->minute + $now->second / 60,
+        ]);
+    }
+
     public function login()
     {
         return view('auth.login');
@@ -304,7 +328,7 @@ class AppController extends Controller
             'categories' => Category::orderBy('name')->get(),
         ]);
     }
-    
+
     public function fil_infos()
     {
         return view('dashboard.fil-en-continu', [
@@ -312,22 +336,64 @@ class AppController extends Controller
             'categories' => Category::orderBy('name')->get(),
         ]);
     }
-    
+
     public function emissions()
     {
-        return view('dashboard.emissions');
+        return view('dashboard.emissions', [
+            'programmes' => Programme::orderBy('start')->get(),
+        ]);
     }
 
     public function podcasts()
     {
-       return view('dashboard.podcasts', [
-        'podcasts' => Podcast::with('user')->latest()->paginate(10),
+        return view('dashboard.podcasts', [
+            'podcasts' => Podcast::with('user')->latest()->paginate(10),
         ]);
     }
 
-    public function abonnees_newsletter()
+    // Liste des abonnés à la newsletter (recherche instantanée + pagination)
+    public function abonnees_newsletter(Request $request)
     {
-        return view('dashboard.abonnees-newsletter');
+        // Entrée de recherche : texte uniquement (refuse ?q[]=x), sans caractères de contrôle, 100 caractères max
+        $raw = $request->query('q');
+        $q   = is_string($raw)
+            ? mb_substr(trim((string) preg_replace('/[\x00-\x1F\x7F]/u', '', $raw)), 0, 100)
+            : '';
+
+        $perPage = 25;
+
+        $query = NewsletterSubscriber::query()
+            ->when($q !== '', function ($query) use ($q) {
+                // Neutralise les jokers LIKE (% et _) saisis par l'utilisateur ; la valeur reste un paramètre lié
+                $term = str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $q);
+                $query->whereRaw("email LIKE ? ESCAPE '!'", ['%' . $term . '%']);
+            })
+            ->latest()
+            ->orderByDesc('id');
+
+        $abonnes = (clone $query)->paginate($perPage)->withQueryString();
+
+        // Après une suppression, la dernière page peut devenir vide : retour à la dernière page valide
+        if ($abonnes->isEmpty() && $abonnes->currentPage() > 1) {
+            $abonnes = $query->paginate($perPage, ['*'], 'page', $abonnes->lastPage())->withQueryString();
+        }
+
+        // Requête AJAX (recherche en direct, suppression) : uniquement le fragment à remplacer
+        if ($request->wantsJson()) {
+            return response()->json([
+                'html'  => view('dashboard.partials.abonnees-results', compact('abonnes', 'q'))->render(),
+                'total' => NewsletterSubscriber::count(),
+                'page'  => $abonnes->currentPage(),
+            ])->header('Vary', 'Accept')
+              ->header('Cache-Control', 'no-store')
+              ->header('X-Content-Type-Options', 'nosniff');
+        }
+
+        return response(view('dashboard.abonnees-newsletter', [
+            'abonnes' => $abonnes,
+            'total'   => NewsletterSubscriber::count(),
+            'q'       => $q,
+        ]))->header('Vary', 'Accept');
     }
 
     public function lequipe()

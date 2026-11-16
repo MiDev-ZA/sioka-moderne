@@ -20,12 +20,12 @@
             <span class="onair-label">En direct</span>
             <span class="onair-clock" data-live-clock aria-hidden="true">00:00:00</span>
           </span>
-          @if($webtvLive['viewers'])
+          <!-- @if($webtvLive['viewers'])
             <span class="viewers">
               <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
               {{ \App\Support\Fr::compact($webtvLive['viewers']) }} {{ (int) $webtvLive['viewers'] > 1 ? 'spectateurs' : 'spectateur' }}
             </span>
-          @endif
+          @endif -->
           <span class="play xl"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
         </div>
         <div class="hero-info">
@@ -46,10 +46,10 @@
             <span class="onair-dot" aria-hidden="true"></span>
             <span class="onair-label">Dernière publication</span>
           </span>
-          <span class="viewers">
+          <!-- <span class="viewers">
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
             {{ \App\Support\Fr::views($webtvHero['views'] ?? 0) }}
-          </span>
+          </span> -->
           <span class="play xl"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span>
         </div>
         <div class="hero-info">

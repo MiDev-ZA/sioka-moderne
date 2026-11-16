@@ -6,11 +6,9 @@
         <div class="feat-mini library-item"
              tabindex="0"
              data-soundcloud-url="{{ $podcast->soundcloud_url }}">
-          <button class="feat-mini-play {{ !empty($podcast->image) ? 'has-image' : '' }}" aria-label="Écouter" aria-pressed="false">
-            @if(!empty($podcast->image))
-              <img src="{{ asset('storage/' . $podcast->image) }}" alt="" loading="lazy">
-              <span class="feat-mini-play-scrim" aria-hidden="true"></span>
-            @endif
+          <button class="feat-mini-play has-image" aria-label="Écouter" aria-pressed="false">
+            <img src="{{ $podcast->cover_url }}" alt="" loading="lazy">
+            <span class="feat-mini-play-scrim" aria-hidden="true"></span>
             <svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
           </button>
           <div class="feat-mini-body">

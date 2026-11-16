@@ -2,9 +2,13 @@
 
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\BoiteController;
 use App\Http\Controllers\FilController;
 use App\Http\Controllers\FlashInfoController;
+use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\PodcastController;
+use App\Http\Controllers\ProgrammeController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\WebTvController;
 use App\Http\Controllers\YoutubeAuthController;
 use App\Http\Controllers\UserController;
@@ -15,6 +19,9 @@ Route::get('/', [AppController::class, 'home'])->name('home');
 
 // Affichage public d'un article
 Route::get('/articles/{article:slug}', [ArticleController::class, 'show'])->name('articles.show');
+
+// Recherche en direct (modale du header) : articles et vidéos archives
+Route::get('/recherche', [SearchController::class, 'index'])->middleware('throttle:60,1')->name('search');
 
 // Chargement AJAX des articles suivants (public, accessible à tous)
 Route::get('/actualites/load-more', [AppController::class, 'loadMoreNews'])->name('news.loadMore');
@@ -28,6 +35,22 @@ Route::get('/webtv/toutes-les-videos', [AppController::class, 'webtvIndex'])->na
 
 // Affichage public d'une vidéo WebTV
 Route::get('/webtv/{id}', [WebTvController::class, 'show'])->name('webtv.show');
+
+// Grille publique des émissions (planning de la semaine)
+Route::get('/nos-emissions', [AppController::class, 'emissionsPublic'])->name('emissions.public');
+
+// Bibliothèque publique des podcasts (chargée en AJAX dans la modale, accessible à tous)
+Route::get('/podcasts/bibliotheque', [AppController::class, 'podcastsLibrary'])->name('podcasts.library');
+
+// Abonnement public à la newsletter (AJAX, limité à 5 tentatives/minute/IP)
+Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe'])
+    ->middleware('throttle:5,1')
+    ->name('newsletter.subscribe');
+
+// Boîte aux lettres publique : messages des citoyens (AJAX, limité à 5 tentatives/minute/IP)
+Route::post('/boite-aux-lettres', [BoiteController::class, 'send'])
+    ->middleware('throttle:5,1')
+    ->name('mailbox.send');
 
 // Routes accessibles uniquement aux visiteurs
 Route::middleware('guest')->group(function () {
@@ -66,18 +89,27 @@ Route::middleware('auth')->group(function () {
         Route::put('/fil-en-continu/{fil}', [FilController::class, 'update'])->name('fil-en-continu.update');
         Route::delete('/fil-en-continu/{fil}', [FilController::class, 'destroy'])->name('fil-en-continu.destroy');
         Route::patch('/fil-en-continu/{fil}/toggle', [FilController::class, 'toggle'])->name('fil-en-continu.toggle');
+
+        // ---- Boîte aux lettres (messages des citoyens) ----
+        Route::get('/messages-citoyens', [BoiteController::class, 'index'])->name('messages-citoyens');
+        Route::patch('/messages-citoyens/{boite}/toggle', [BoiteController::class, 'toggle'])->name('messages-citoyens.toggle');
+        Route::delete('/messages-citoyens/{boite}', [BoiteController::class, 'destroy'])->name('messages-citoyens.destroy');
     });
 
     // ---- Émissions, podcasts : admin, editor, producer ----
     Route::middleware('role:editor,producer')->group(function () {
         Route::get('/emissions', [AppController::class, 'emissions'])->name('emissions');
         Route::get('/podcasts', [AppController::class, 'podcasts'])->name('podcasts');
-        Route::get('/podcasts/bibliotheque', [AppController::class, 'podcastsLibrary'])->name('podcasts.library');
 
         // Podcasts actions
         Route::post('/podcasts', [PodcastController::class, 'store'])->name('podcasts.store');
         Route::put('/podcasts/{podcast}', [PodcastController::class, 'update'])->name('podcasts.update');
         Route::delete('/podcasts/{podcast}', [PodcastController::class, 'destroy'])->name('podcasts.destroy');
+
+        // Émissions (planning) actions
+        Route::post('/emissions', [ProgrammeController::class, 'store'])->name('emissions.store');
+        Route::put('/emissions/{programme}', [ProgrammeController::class, 'update'])->name('emissions.update');
+        Route::delete('/emissions/{programme}', [ProgrammeController::class, 'destroy'])->name('emissions.destroy');
     });
 
     // ---- WebTV : admin et integrator uniquement ----
@@ -94,6 +126,7 @@ Route::middleware('auth')->group(function () {
     // ---- Newsletter : admin, editor ----
     Route::middleware('role:editor')->group(function () {
         Route::get('/abonnees-newsletter', [AppController::class, 'abonnees_newsletter'])->name('abonnees-newsletter');
+        Route::delete('/abonnees-newsletter/{subscriber}', [NewsletterController::class, 'destroy'])->name('abonnees-newsletter.destroy');
     });
 
     // ---- Admin uniquement : connexion YouTube + utilisateurs ----

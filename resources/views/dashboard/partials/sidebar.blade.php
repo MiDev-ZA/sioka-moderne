@@ -17,6 +17,8 @@
 
         <nav class="nav">
             <div class="nav-label">Général</div>
+
+            {{-- Commun à tous les comptes connectés --}}
             <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}"
                 data-page-loading="Chargement du tableau de bord…">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -27,66 +29,97 @@
                 </svg>
                 Vue d'ensemble
             </a>
-            <a href="{{ route('actualites') }}" class="{{ request()->routeIs('actualites') ? 'active' : '' }}"
-                data-page-loading="Chargement des actualités…">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M4 19V6a2 2 0 0 1 2-2h9l5 5v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z" />
-                    <path d="M14 4v5h5" />
-                </svg>
-                Actualités
-            </a>
-            <a href="{{ route('flash-infos') }}" class="{{ request()->routeIs('flash-infos') ? 'active' : '' }}"
-                data-page-loading="Chargement des flash infos…">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z" />
-                </svg>
-                Flash infos
-            </a>
-            <a href="{{ route('fil-infos') }}" class="{{ request()->routeIs('fil-infos') ? 'active' : '' }}"
-                data-page-loading="Chargement du fil d'infos…">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                </svg>
-                Fil d'infos en continu
-            </a>
 
-            <a href="{{ route('webtv') }}" class="{{ request()->routeIs('webtv') ? 'active' : '' }}" data-turbo="false"
-                data-page-loading="Chargement de la WebTV…">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="m10 8 6 4-6 4V8Z" />
-                    <rect x="2" y="4" width="20" height="16" rx="2" />
-                </svg>
-                WebTV
-            </a>
+            {{-- admin, editor, journalist --}}
+            @role('editor', 'journalist')
+                <a href="{{ route('actualites') }}" class="{{ request()->routeIs('actualites') ? 'active' : '' }}"
+                    data-page-loading="Chargement des actualités…">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M4 19V6a2 2 0 0 1 2-2h9l5 5v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z" />
+                        <path d="M14 4v5h5" />
+                    </svg>
+                    Actualités
+                </a>
+                <a href="{{ route('flash-infos') }}" class="{{ request()->routeIs('flash-infos') ? 'active' : '' }}"
+                    data-page-loading="Chargement des flash infos…">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z" />
+                    </svg>
+                    Flash infos
+                </a>
+                <a href="{{ route('fil-infos') }}" class="{{ request()->routeIs('fil-infos') ? 'active' : '' }}"
+                    data-page-loading="Chargement du fil d'infos…">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                    </svg>
+                    Fil d'infos en continu
+                </a>
+            @endrole
 
-            <a href="{{ route('emissions') }}" class="{{ request()->routeIs('emissions') ? 'active' : '' }}"
-                data-page-loading="Chargement des émissions…">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="2" />
-                    <path
-                        d="M16.24 7.76a6 6 0 0 1 0 8.49M7.76 16.24a6 6 0 0 1 0-8.49M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14" />
-                </svg>
-                Émissions
-            </a>
-            <a href="{{ route('podcasts') }}" class="{{ request()->routeIs('podcasts') ? 'active' : '' }}"
-                data-page-loading="Chargement des podcasts…">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 8v4l3 2" />
-                </svg>
-                Podcasts
-            </a>
+            {{-- admin, integrator --}}
+            @role('integrator')
+                <a href="{{ route('webtv') }}" class="{{ request()->routeIs('webtv') ? 'active' : '' }}" data-turbo="false"
+                    data-page-loading="Chargement de la WebTV…">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="m10 8 6 4-6 4V8Z" />
+                        <rect x="2" y="4" width="20" height="16" rx="2" />
+                    </svg>
+                    WebTV
+                </a>
+            @endrole
+
+            {{-- admin, editor, producer --}}
+            @role('editor', 'producer')
+                <a href="{{ route('emissions') }}" class="{{ request()->routeIs('emissions') ? 'active' : '' }}"
+                    data-page-loading="Chargement des émissions…">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="2" />
+                        <path
+                            d="M16.24 7.76a6 6 0 0 1 0 8.49M7.76 16.24a6 6 0 0 1 0-8.49M19.07 4.93a10 10 0 0 1 0 14.14M4.93 19.07a10 10 0 0 1 0-14.14" />
+                    </svg>
+                    Émissions
+                </a>
+                <a href="{{ route('podcasts') }}" class="{{ request()->routeIs('podcasts') ? 'active' : '' }}"
+                    data-page-loading="Chargement des podcasts…">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M12 8v4l3 2" />
+                    </svg>
+                    Podcasts
+                </a>
+            @endrole
+
             <div class="nav-sep"></div>
             <div class="nav-label">Communauté</div>
-            <a href="{{ route('abonnees-newsletter') }}"
-                class="{{ request()->routeIs('abonnees-newsletter') ? 'active' : '' }}"
-                data-page-loading="Chargement des abonnés…">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <rect x="2" y="4" width="20" height="16" rx="2" />
-                    <path d="m22 7-10 5L2 7" />
-                </svg>
-                Abonnés newsletter
-            </a>
+
+            {{-- admin, editor --}}
+            @role('editor')
+                <a href="{{ route('abonnees-newsletter') }}"
+                    class="{{ request()->routeIs('abonnees-newsletter') ? 'active' : '' }}"
+                    data-page-loading="Chargement des abonnés…">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <rect x="2" y="4" width="20" height="16" rx="2" />
+                        <path d="m22 7-10 5L2 7" />
+                    </svg>
+                    Abonnés newsletter
+                </a>
+            @endrole
+
+            {{-- admin, editor, journalist --}}
+            @role('editor', 'journalist')
+                <a href="{{ route('messages-citoyens') }}"
+                    class="{{ request()->routeIs('messages-citoyens*') ? 'active' : '' }}"
+                    data-page-loading="Chargement des messages…">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <polyline points="22 12 16 12 14 15 10 15 8 12 2 12" />
+                        <path
+                            d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+                    </svg>
+                    Boîte aux lettres
+                </a>
+            @endrole
+
+            {{-- Commun à tous les comptes connectés --}}
             <a href="{{ route('lequipe') }}" class="{{ request()->routeIs('lequipe') ? 'active' : '' }}"
                 data-page-loading="Chargement de l'équipe…">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -97,17 +130,20 @@
                 </svg>
                 L'équipe
             </a>
-            @if(auth()->user()->role === 'admin')
-            <a href="{{ route('users.index') }}" class="{{ request()->routeIs('users.*') ? 'active' : '' }}"
-                data-page-loading="Chargement des utilisateurs…">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M19 8v6M22 11h-6" />
-                </svg>
-                Utilisateurs
-            </a>
-            @endif
+
+            {{-- admin uniquement --}}
+            @role('admin')
+                <a href="{{ route('users.index') }}" class="{{ request()->routeIs('users.*') ? 'active' : '' }}"
+                    data-page-loading="Chargement des utilisateurs…">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M19 8v6M22 11h-6" />
+                    </svg>
+                    Utilisateurs
+                </a>
+            @endrole
+
             <div class="nav-sep"></div>
             <div class="nav-label">Compte</div>
             <a href="{{ route('profil') }}" class="{{ request()->routeIs('profil') ? 'active' : '' }}"

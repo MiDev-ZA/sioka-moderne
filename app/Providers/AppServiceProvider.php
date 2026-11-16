@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\FlashInfo;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -23,6 +24,11 @@ class AppServiceProvider extends ServiceProvider
     {
         View::composer('partials.ticker', function ($view) {
             $view->with('flashInfos', FlashInfo::with('category')->where('is_active', true)->latest()->take(10)->get());
+        });
+
+        // Directive @role('editor', 'journalist') ... @endrole
+        Blade::if('role', function (string ...$roles) {
+            return auth()->check() && auth()->user()->hasRole(...$roles);
         });
     }
 }

@@ -10,6 +10,11 @@ class Podcast extends Model
 {
     use HasFactory;
 
+    /**
+     * Image affichée quand aucune couverture n'a été envoyée (dans public/images).
+     */
+    public const DEFAULT_IMAGE = 'images/SIOKA-LogoOfficiel_2.png';
+
     protected $fillable = [
         'title',
         'slug',
@@ -32,6 +37,16 @@ class Podcast extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * URL de la couverture : image envoyée, sinon le logo SIOKA par défaut.
+     */
+    public function getCoverUrlAttribute(): string
+    {
+        return !empty($this->image)
+            ? asset('storage/' . $this->image)
+            : asset(self::DEFAULT_IMAGE);
     }
 
     /**

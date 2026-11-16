@@ -14,5 +14,7 @@
 
     @include('sections.newsletter')
 
+    @include('sections.boites-aux-lettres')
+
 @endsection
 

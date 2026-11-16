@@ -1,3 +1,17 @@
+<style>
+    html { scroll-behavior: smooth; }
+
+    /* Décalage sous l'en-tête fixe : ajustez 90px à la hauteur réelle de votre en-tête */
+    #partenaires,
+    #contact {
+        scroll-margin-top: 90px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+    }
+</style>
+
 {{-- ==========================================================
      PARTENAIRES DU PROJET — 3 niveaux :
      1. Logo (SIOKA) — badge agrandi (--featured)
@@ -7,8 +21,9 @@
      (nouvel onglet, rel sécurisé). Plusieurs logos sont des
      PLACEHOLDERS, à remplacer dans public/images/partners/
      dès réception des vrais fichiers (dont logo-sioka.png).
+     Ancre : #partenaires
      ========================================================== --}}
-<section id="partners" class="partners" aria-labelledby="partners-heading">
+<section id="partenaires" class="partners" aria-label="Partenaires du projet">
     <div class="partners-inner">
 
         {{-- Niveau 1 : logo SIOKA — mis en évidence --}}
@@ -171,7 +186,8 @@
             </ul>
         </nav>
 
-        <div class="footer-col" aria-labelledby="footer-heading-contact">
+        {{-- Ancre : #contact --}}
+        <div class="footer-col" id="contact" role="group" aria-labelledby="footer-heading-contact">
             <h4 id="footer-heading-contact">Contact & Mentions</h4>
             <ul>
                 <li><a href="mailto:contact@sioka.org">contact@sioka.org</a></li>
