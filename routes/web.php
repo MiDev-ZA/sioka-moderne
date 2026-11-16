@@ -96,20 +96,24 @@ Route::middleware('auth')->group(function () {
         Route::delete('/messages-citoyens/{boite}', [BoiteController::class, 'destroy'])->name('messages-citoyens.destroy');
     });
 
-    // ---- Émissions, podcasts : admin, editor, producer ----
+    // ---- Émissions : admin, editor, producer ----
     Route::middleware('role:editor,producer')->group(function () {
         Route::get('/emissions', [AppController::class, 'emissions'])->name('emissions');
+
+        // Émissions (planning) actions
+        Route::post('/emissions', [ProgrammeController::class, 'store'])->name('emissions.store');
+        Route::put('/emissions/{programme}', [ProgrammeController::class, 'update'])->name('emissions.update');
+        Route::delete('/emissions/{programme}', [ProgrammeController::class, 'destroy'])->name('emissions.destroy');
+    });
+
+    // ---- Podcasts : admin, editor, producer, integrator ----
+    Route::middleware('role:editor,producer,integrator')->group(function () {
         Route::get('/podcasts', [AppController::class, 'podcasts'])->name('podcasts');
 
         // Podcasts actions
         Route::post('/podcasts', [PodcastController::class, 'store'])->name('podcasts.store');
         Route::put('/podcasts/{podcast}', [PodcastController::class, 'update'])->name('podcasts.update');
         Route::delete('/podcasts/{podcast}', [PodcastController::class, 'destroy'])->name('podcasts.destroy');
-
-        // Émissions (planning) actions
-        Route::post('/emissions', [ProgrammeController::class, 'store'])->name('emissions.store');
-        Route::put('/emissions/{programme}', [ProgrammeController::class, 'update'])->name('emissions.update');
-        Route::delete('/emissions/{programme}', [ProgrammeController::class, 'destroy'])->name('emissions.destroy');
     });
 
     // ---- WebTV : admin et integrator uniquement ----

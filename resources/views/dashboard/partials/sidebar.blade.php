@@ -17,7 +17,6 @@
 
         <nav class="nav">
             <div class="nav-label">Général</div>
-
             {{-- Commun à tous les comptes connectés --}}
             <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}"
                 data-page-loading="Chargement du tableau de bord…">
@@ -29,7 +28,6 @@
                 </svg>
                 Vue d'ensemble
             </a>
-
             {{-- admin, editor, journalist --}}
             @role('editor', 'journalist')
                 <a href="{{ route('actualites') }}" class="{{ request()->routeIs('actualites') ? 'active' : '' }}"
@@ -79,6 +77,9 @@
                     </svg>
                     Émissions
                 </a>
+            @endrole
+            {{-- admin, editor, producer, integrator --}}
+            @role('editor', 'producer', 'integrator')
                 <a href="{{ route('podcasts') }}" class="{{ request()->routeIs('podcasts') ? 'active' : '' }}"
                     data-page-loading="Chargement des podcasts…">
                     <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -88,10 +89,8 @@
                     Podcasts
                 </a>
             @endrole
-
             <div class="nav-sep"></div>
             <div class="nav-label">Communauté</div>
-
             {{-- admin, editor --}}
             @role('editor')
                 <a href="{{ route('abonnees-newsletter') }}"
@@ -104,7 +103,6 @@
                     Abonnés newsletter
                 </a>
             @endrole
-
             {{-- admin, editor, journalist --}}
             @role('editor', 'journalist')
                 <a href="{{ route('messages-citoyens') }}"
@@ -118,7 +116,6 @@
                     Boîte aux lettres
                 </a>
             @endrole
-
             {{-- Commun à tous les comptes connectés --}}
             <a href="{{ route('lequipe') }}" class="{{ request()->routeIs('lequipe') ? 'active' : '' }}"
                 data-page-loading="Chargement de l'équipe…">
@@ -130,7 +127,6 @@
                 </svg>
                 L'équipe
             </a>
-
             {{-- admin uniquement --}}
             @role('admin')
                 <a href="{{ route('users.index') }}" class="{{ request()->routeIs('users.*') ? 'active' : '' }}"
@@ -143,7 +139,6 @@
                     Utilisateurs
                 </a>
             @endrole
-
             <div class="nav-sep"></div>
             <div class="nav-label">Compte</div>
             <a href="{{ route('profil') }}" class="{{ request()->routeIs('profil') ? 'active' : '' }}"
