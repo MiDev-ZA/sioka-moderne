@@ -14,7 +14,21 @@
                 {{ ucfirst(\Carbon\Carbon::now()->locale('fr')->translatedFormat('l j F Y')) }}
             </div>
             {{-- Bouton exclu du PDF grâce à data-html2canvas-ignore --}}
-            <button type="button" id="btnPdf" class="date-pill" data-html2canvas-ignore="true" style="cursor:pointer; border:0;">⬇ Exporter en PDF</button>
+            <button type="button" id="btnPdf" class="date-pill" data-html2canvas-ignore="true"
+                title="Télécharger les statistiques au format PDF"
+                aria-label="Exporter les statistiques en PDF"
+                style="cursor:pointer; border:0; display:inline-flex; align-items:center; justify-content:center; gap:.55rem; padding:.7rem 1.15rem; border-radius:12px; background:linear-gradient(135deg, #b31983 0%, #0082ca 100%); color:#fff; font-size:.88rem; font-weight:700; letter-spacing:.01em; box-shadow:0 5px 16px rgba(179,25,131,.25); transition:transform .2s ease, box-shadow .2s ease, opacity .2s ease;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <path d="M14 2v6h6" />
+                    <path d="M8 13h2a1.5 1.5 0 0 1 0 3H8v-3Z" />
+                    <path d="M14 16v-3h1a1.5 1.5 0 0 1 0 3h-1Z" />
+                    <path d="M20 13h-2v3" />
+                    <path d="M18 14.5h1.5" />
+                </svg>
+                <span>Exporter en PDF</span>
+            </button>
         </div>
     </div>
 
