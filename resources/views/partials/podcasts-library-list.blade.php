@@ -5,6 +5,9 @@
       @foreach($weekPodcasts as $podcast)
         <div class="feat-mini library-item"
              tabindex="0"
+             data-track="podcast_play"
+             data-track-start-only
+             data-track-title="{{ $podcast->title }}"
              data-soundcloud-url="{{ $podcast->soundcloud_url }}">
           <button class="feat-mini-play has-image" aria-label="Écouter" aria-pressed="false">
             <img src="{{ $podcast->cover_url }}" alt="" loading="lazy">

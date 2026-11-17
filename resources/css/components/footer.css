@@ -163,6 +163,18 @@
     }
 }
 
+/* Logo ONG Ravintsara : plus petit que les autres dans son fichier source.
+   On agrandit l'image seule ; le badge garde sa taille et rogne le débordement. */
+.partners-grid--network .partner-card-logo--zoom {
+    overflow: hidden;
+    padding: 4px 8px;
+}
+
+.partners-grid--network .partner-card-logo--zoom img {
+    transform: scale(1.4);
+    transform-origin: center;
+}
+
 /* ==========================================================
    FOOTER
    ========================================================== */

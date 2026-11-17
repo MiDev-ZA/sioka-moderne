@@ -9,6 +9,8 @@ use App\Models\FlashInfo;
 use App\Models\NewsletterSubscriber;
 use App\Models\Podcast;
 use App\Models\Programme;
+use App\Services\GoogleAnalyticsAudience;
+use App\Services\GoogleAnalyticsService;
 use App\Services\YoutubeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -298,9 +300,17 @@ class AppController extends Controller
             ->with('error', 'Adresse e-mail ou mot de passe incorrect.');
     }
 
-    public function dashboard()
+    public function dashboard(GoogleAnalyticsService $analytics, GoogleAnalyticsAudience $audience)
     {
-        return view('dashboard.vue-ensemble');
+        $ga = $analytics->dashboard();
+
+        if ($ga['available']) {
+            $ga['audience'] = $audience->fetch();
+        }
+
+        return view('dashboard.vue-ensemble', [
+            'ga' => $ga,
+        ]);
     }
 
     public function logout(Request $request)

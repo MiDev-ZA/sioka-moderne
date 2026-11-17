@@ -69,7 +69,7 @@
                 </a>
                 <a href="#" target="_blank" rel="noopener noreferrer"
                    class="partner-card" aria-label="ONG Ravintsara (nouvel onglet)">
-                    <span class="partner-card-logo">
+                    <span class="partner-card-logo partner-card-logo--zoom">
                         <img src="{{ asset('images/partners/logo-ong-ravintsara.jpg') }}"
                              alt="ONG Ravintsara" loading="lazy" width="320" height="140">
                     </span>

@@ -3,197 +3,71 @@
 @section('title', "Tableau de bord - SIOKA")
 
 @section('content')
+<div id="export-zone">
     <div class="welcome">
         <div>
             <h1>Bonjour, <em>{{ auth()->user()->name }}</em> <span>👋</span></h1>
             <p>Voici un aperçu de l'activité SIOKA aujourd'hui.</p>
         </div>
-        <div class="date-pill">
-            {{ ucfirst(\Carbon\Carbon::now()->locale('fr')->translatedFormat('l j F Y')) }}
+        <div style="display:flex; gap:.6rem; align-items:center; flex-wrap:wrap;">
+            <div class="date-pill">
+                {{ ucfirst(\Carbon\Carbon::now()->locale('fr')->translatedFormat('l j F Y')) }}
+            </div>
+            {{-- Bouton exclu du PDF grâce à data-html2canvas-ignore --}}
+            <button type="button" id="btnPdf" class="date-pill" data-html2canvas-ignore="true" style="cursor:pointer; border:0;">⬇ Exporter en PDF</button>
         </div>
     </div>
 
+    @if ($ga['available'])
     <div class="stats">
         <div class="stat" style="--stat-glow:var(--magenta-glow); --stat-color:var(--magenta);">
             <div class="stat-top">
-                <div class="stat-icon"><svg fill="none" stroke="currentColor" stroke-width="2"
-                            viewBox="0 0 24 24">
-                        <path d="M11 5 6 9H2v6h4l5 4V5Z" />
-                        <path d="M15.5 8.5a5 5 0 0 1 0 7" />
-                    </svg></div>
-                <span class="stat-delta up">▲ 8,2%</span>
+                <div class="stat-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5Z" /><path d="M15.5 8.5a5 5 0 0 1 0 7" /></svg></div>
+                <span class="stat-delta">30 min</span>
             </div>
-            <div class="stat-value">1 284</div>
-            <div class="stat-label">Auditeurs live</div>
+            <div class="stat-value">{{ number_format($ga['live']['count'], 0, ',', ' ') }}</div>
+            <div class="stat-label">Visiteurs en direct</div>
             <svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none">
-                <polyline points="0,20 14,17 28,19 42,10 56,13 70,6 84,9 100,3" fill="none"
-                    stroke="var(--magenta)" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" />
+                <polyline points="{{ $ga['live']['spark'] }}" fill="none" stroke="var(--magenta)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
         </div>
 
         <div class="stat" style="--stat-glow:var(--bleu-glow); --stat-color:var(--bleu);">
             <div class="stat-top">
-                <div class="stat-icon"><svg fill="none" stroke="currentColor" stroke-width="2"
-                            viewBox="0 0 24 24">
-                        <path d="M4 19V6a2 2 0 0 1 2-2h9l5 5v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z" />
-                        <path d="M14 4v5h5" />
-                    </svg></div>
-                <span class="stat-delta up">▲ 5</span>
+                <div class="stat-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M20 21a8 8 0 0 0-16 0" /></svg></div>
+                <span class="stat-delta {{ $ga['cards']['users']['delta']['up'] ? 'up' : 'down' }}">{{ $ga['cards']['users']['delta']['label'] }}</span>
             </div>
-            <div class="stat-value">37</div>
-            <div class="stat-label">Actualités publiées</div>
+            <div class="stat-value">{{ $ga['cards']['users']['value'] }}</div>
+            <div class="stat-label">Visiteurs · 7 jours</div>
             <svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none">
-                <polyline points="0,22 14,20 28,15 42,17 56,9 70,12 84,7 100,8" fill="none"
-                    stroke="var(--bleu)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <polyline points="{{ $ga['cards']['users']['spark'] }}" fill="none" stroke="var(--bleu)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
         </div>
 
         <div class="stat" style="--stat-glow:rgba(201,162,39,.18); --stat-color:var(--or);">
             <div class="stat-top">
-                <div class="stat-icon"><svg fill="none" stroke="currentColor" stroke-width="2"
-                            viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10" />
-                        <path d="M12 8v4l3 2" />
-                    </svg></div>
-                <span class="stat-delta up">▲ 2</span>
+                <div class="stat-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19V6a2 2 0 0 1 2-2h9l5 5v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z" /><path d="M14 4v5h5" /></svg></div>
+                <span class="stat-delta {{ $ga['cards']['views']['delta']['up'] ? 'up' : 'down' }}">{{ $ga['cards']['views']['delta']['label'] }}</span>
             </div>
-            <div class="stat-value">18</div>
-            <div class="stat-label">Podcasts en ligne</div>
+            <div class="stat-value">{{ $ga['cards']['views']['value'] }}</div>
+            <div class="stat-label">Pages vues · 7 jours</div>
             <svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none">
-                <polyline points="0,18 14,19 28,14 42,16 56,11 70,13 84,8 100,10" fill="none"
-                    stroke="var(--or)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <polyline points="{{ $ga['cards']['views']['spark'] }}" fill="none" stroke="var(--or)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
         </div>
 
         <div class="stat" style="--stat-glow:var(--vert-glow); --stat-color:var(--vert);">
             <div class="stat-top">
-                <div class="stat-icon"><svg fill="none" stroke="currentColor" stroke-width="2"
-                            viewBox="0 0 24 24">
-                        <rect x="2" y="4" width="20" height="16" rx="2" />
-                        <path d="m22 7-10 5L2 7" />
-                    </svg></div>
-                <span class="stat-delta up">▲ 128</span>
+                <div class="stat-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M12 8v4l3 2" /></svg></div>
+                <span class="stat-delta {{ $ga['cards']['duration']['delta']['up'] ? 'up' : 'down' }}">{{ $ga['cards']['duration']['delta']['label'] }}</span>
             </div>
-            <div class="stat-value">3 942</div>
-            <div class="stat-label">Abonnés newsletter</div>
+            <div class="stat-value">{{ $ga['cards']['duration']['value'] }}</div>
+            <div class="stat-label">Durée moy. de session</div>
             <svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none">
-                <polyline points="0,24 14,22 28,20 42,17 56,15 70,11 84,8 100,4" fill="none"
-                    stroke="var(--vert)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <polyline points="{{ $ga['cards']['duration']['spark'] }}" fill="none" stroke="var(--vert)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
         </div>
     </div>
-
-    <section>
-        <div class="dash-sec-head">
-            <div class="dash-sec-title">Actions rapides</div>
-        </div>
-        <div class="actions">
-            <a href="#" class="action">
-                <div class="action-top">
-                    <div class="action-icon"><svg fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                            <path d="M12 5v14M5 12h14" />
-                        </svg></div>
-                    <span class="action-arrow"><svg fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                            <path d="M5 12h14M13 6l6 6-6 6" />
-                        </svg></span>
-                </div>
-                <h4>Publier une actualité</h4>
-                <p>Rédigez et publiez un nouvel article sur le site SIOKA.</p>
-            </a>
-            <a href="#" class="action">
-                <div class="action-top">
-                    <div class="action-icon"><svg fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                            <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z" />
-                        </svg></div>
-                    <span class="action-arrow"><svg fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                            <path d="M5 12h14M13 6l6 6-6 6" />
-                        </svg></span>
-                </div>
-                <h4>Diffuser un flash info</h4>
-                <p>Envoyez une alerte prioritaire sur le fil d'infos en continu.</p>
-            </a>
-            <a href="#" class="action">
-                <div class="action-top">
-                    <div class="action-icon"><svg fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                            <circle cx="12" cy="12" r="10" />
-                            <path d="M12 8v4l3 2" />
-                        </svg></div>
-                    <span class="action-arrow"><svg fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                            <path d="M5 12h14M13 6l6 6-6 6" />
-                        </svg></span>
-                </div>
-                <h4>Gérer les podcasts</h4>
-                <p>Ajoutez ou modifiez un épisode de podcast.</p>
-            </a>
-        </div>
-    </section>
-
-    <div class="grid2">
-        <section class="panel">
-            <div class="panel-pad">
-                <div class="dash-sec-head">
-                    <div class="dash-sec-title">Activité récente</div>
-                    <a href="#" class="dash-sec-link">Tout voir</a>
-                </div>
-            </div>
-
-            <div class="activity" style="--a-glow:var(--bleu-glow); --a-color:var(--bleu);">
-                <div class="activity-icon"><svg fill="none" stroke="currentColor" stroke-width="2"
-                            viewBox="0 0 24 24">
-                        <path d="M4 19V6a2 2 0 0 1 2-2h9l5 5v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z" />
-                    </svg></div>
-                <div class="activity-text">
-                    <p><strong>Élections communales</strong> — article mis à jour</p>
-                    <span>Il y a 24 minutes</span>
-                </div>
-                <span class="pill ok">Publié</span>
-            </div>
-
-            <div class="activity" style="--a-glow:var(--magenta-glow); --a-color:var(--magenta);">
-                <div class="activity-icon"><svg fill="none" stroke="currentColor" stroke-width="2"
-                            viewBox="0 0 24 24">
-                        <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z" />
-                    </svg></div>
-                <div class="activity-text">
-                    <p><strong>Coupure d'électricité à Analamanga</strong> — flash info diffusé</p>
-                    <span>Il y a 2 heures</span>
-                </div>
-                <span class="pill ok">En ligne</span>
-            </div>
-
-            <div class="activity" style="--a-glow:var(--vert-glow); --a-color:var(--vert);">
-                <div class="activity-icon"><svg fill="none" stroke="currentColor" stroke-width="2"
-                            viewBox="0 0 24 24">
-                        <rect x="2" y="4" width="20" height="16" rx="2" />
-                        <path d="m22 7-10 5L2 7" />
-                    </svg></div>
-                <div class="activity-text">
-                    <p><strong>128 nouveaux abonnés</strong> à la newsletter cette semaine</p>
-                    <span>Hier à 18:40</span>
-                </div>
-                <span class="pill ok">En hausse</span>
-            </div>
-
-            <div class="activity" style="--a-glow:var(--bleu-glow); --a-color:var(--bleu);">
-                <div class="activity-icon"><svg fill="none" stroke="currentColor" stroke-width="2"
-                            viewBox="0 0 24 24">
-                        <path d="M4 19V6a2 2 0 0 1 2-2h9l5 5v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z" />
-                    </svg></div>
-                <div class="activity-text">
-                    <p><strong>Budget municipal 2027</strong> — brouillon enregistré</p>
-                    <span>Hier à 15:02</span>
-                </div>
-                <span class="pill pending">Brouillon</span>
-            </div>
-        </section>
-
         <section class="panel live-panel">
             <div class="live-top">
                 <span class="live-title">SIOKA en direct</span>
@@ -205,7 +79,7 @@
                         stroke-width="10" />
                     <circle cx="75" cy="75" r="64" fill="none" stroke="url(#g1)"
                         stroke-width="10" stroke-linecap="round" stroke-dasharray="402"
-                        stroke-dashoffset="90" />
+                        stroke-dashoffset="{{ $ga['live']['ring_offset'] }}" />
                     <defs>
                         <linearGradient id="g1" x1="0" y1="0" x2="1"
                             y2="1">
@@ -215,12 +89,12 @@
                     </defs>
                 </svg>
                 <div class="radial-center">
-                    <strong>1 284</strong>
-                    <span>Auditeurs</span>
+                    <strong>{{ number_format($ga['live']['count'], 0, ',', ' ') }}</strong>
+                    <span>Visiteurs</span>
                 </div>
             </div>
 
-            <div class="trend-label"><span>Tendance 7 jours</span><span>+12%</span></div>
+            <div class="trend-label"><span>Tendance 7 jours</span><span>{{ $ga['live']['trend_label'] }}</span></div>
             <svg class="trend" viewBox="0 0 200 44" preserveAspectRatio="none">
                 <defs>
                     <linearGradient id="g2" x1="0" y1="0" x2="0"
@@ -229,14 +103,14 @@
                         <stop offset="100%" stop-color="var(--bleu)" stop-opacity="0" />
                     </linearGradient>
                 </defs>
-                <path d="M0,34 L28,28 L57,31 L85,18 L114,22 L142,10 L171,15 L200,4 L200,44 L0,44 Z"
+                <path d="{{ $ga['live']['trend_area'] }}"
                     fill="url(#g2)" />
-                <polyline points="0,34 28,28 57,31 85,18 114,22 142,10 171,15 200,4" fill="none"
+                <polyline points="{{ $ga['live']['trend_points'] }}" fill="none"
                     stroke="var(--bleu)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
 
-            <div class="mini-player">
-                <button class="mini-play" aria-label="Écouter"><svg fill="currentColor" viewBox="0 0 24 24">
+            {{-- Lecteur radio : exclu du PDF --}}
+            <div class="mini-player" data-html2canvas-ignore="true">
                         <polygon points="6 4 20 12 6 20 6 4" />
                     </svg></button>
                 <div class="mini-text">
@@ -245,7 +119,41 @@
                 </div>
             </div>
         </section>
-    </div>
+
+    <section>
+        <div class="dash-sec-head">
+            <div class="dash-sec-title">Interactions · 7 jours</div>
+        </div>
+        <div class="stats">
+            @php
+                $icons = [
+                    'radio_play' => '<path d="M11 5 6 9H2v6h4l5 4V5Z" /><path d="M15.5 8.5a5 5 0 0 1 0 7" />',
+                    'article_click' => '<path d="M4 19V6a2 2 0 0 1 2-2h9l5 5v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z" /><path d="M14 4v5h5" />',
+                    'video_click' => '<rect x="3" y="5" width="18" height="14" rx="2" /><path d="m10 9 5 3-5 3V9Z" />',
+                    'podcast_play' => '<circle cx="12" cy="12" r="10" /><path d="m10 8 6 4-6 4V8Z" />',
+                ];
+                $colors = [
+                    'radio_play' => ['var(--magenta-glow)', 'var(--magenta)'],
+                    'article_click' => ['var(--bleu-glow)', 'var(--bleu)'],
+                    'video_click' => ['rgba(201,162,39,.18)', 'var(--or)'],
+                    'podcast_play' => ['var(--vert-glow)', 'var(--vert)'],
+                ];
+            @endphp
+            @foreach ($ga['interactions'] as $key => $item)
+                <div class="stat" style="--stat-glow:{{ $colors[$key][0] }}; --stat-color:{{ $colors[$key][1] }};">
+                    <div class="stat-top">
+                        <div class="stat-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">{!! $icons[$key] !!}</svg></div>
+                        <span class="stat-delta {{ $item['delta']['up'] ? 'up' : 'down' }}">{{ $item['delta']['label'] }}</span>
+                    </div>
+                    <div class="stat-value">{{ $item['value'] }}</div>
+                    <div class="stat-label">{{ $item['label'] }}</div>
+                </div>
+            @endforeach
+        </div>
+        @if (collect($ga['interactions'])->sum('raw') === 0)
+            <p style="color:var(--plomb); font-size:.85rem; margin-top:.75rem;">Aucun clic enregistré pour le moment. Les compteurs apparaissent quelques heures après les premiers événements envoyés par le site.</p>
+        @endif
+    </section>
 
     <section>
         <div class="dash-sec-head">
@@ -254,8 +162,8 @@
         <div class="panel visits-panel" id="visitsPanel">
             <div class="visits-head">
                 <div class="visits-total">
-                    <strong id="visitsTotal" data-t7="24680" data-t30="104920" data-tyear="1187450">0</strong>
-                    <span>Visites <span id="visitsPeriodLabel">cette semaine</span> · <span id="visitsDelta" style="color:var(--vert); font-weight:700;" data-d7="▲ 14,6%" data-d30="▲ 9,3%" data-dyear="▲ 22,4%">▲ 14,6%</span> vs période précédente</span>
+                    <strong id="visitsTotal" data-t7="{{ $ga['visits']['totals']['7'] }}" data-t30="{{ $ga['visits']['totals']['30'] }}" data-tyear="{{ $ga['visits']['totals']['year'] }}">0</strong>
+                    <span>Visites <span id="visitsPeriodLabel">cette semaine</span> · <span id="visitsDelta" style="color:{{ str_starts_with($ga['visits']['deltas']['7'], '▼') ? 'var(--magenta)' : 'var(--vert)' }}; font-weight:700;" data-d7="{{ $ga['visits']['deltas']['7'] }}" data-d30="{{ $ga['visits']['deltas']['30'] }}" data-dyear="{{ $ga['visits']['deltas']['year'] }}">{{ $ga['visits']['deltas']['7'] }}</span> vs période précédente</span>
                 </div>
                 <div class="visits-period">
                     <button class="on" data-period="7">7 jours</button>
@@ -294,117 +202,23 @@
                     <line class="grid-line grid-line-dash" x1="0" y1="56" x2="700" y2="56" stroke="var(--glass-bord)" stroke-width="1" stroke-dasharray="3 6" />
 
                     <g class="bar-set" id="daysSet">
-                    <!-- Lundi -->
-                    <g class="bar-group" style="--i:0" data-day="Lundi" data-u7="2210" data-p7="3980" data-u30="9350" data-p30="16850">
-                        <rect class="bar bar-u" filter="url(#barGlow)" x="25" y="125" width="22" height="45" rx="4" fill="url(#gradBleu)" data-y7="125" data-h7="45" data-y30="100" data-h30="70" />
-                        <rect class="bar bar-p" filter="url(#barGlow)" x="53" y="80" width="22" height="90" rx="4" fill="url(#gradMagenta)" data-y7="80" data-h7="90" data-y30="40" data-h30="130" />
-                        <text x="50" y="190" text-anchor="middle" font-size="11" fill="var(--plomb)">Lun</text>
-                    </g>
-
-                    <!-- Mardi -->
-                    <g class="bar-group" style="--i:1" data-day="Mardi" data-u7="2450" data-p7="4550" data-u30="10370" data-p30="19270">
-                        <rect class="bar bar-u" filter="url(#barGlow)" x="125" y="117" width="22" height="53" rx="4" fill="url(#gradBleu)" data-y7="117" data-h7="53" data-y30="85" data-h30="85" />
-                        <rect class="bar bar-p" filter="url(#barGlow)" x="153" y="65" width="22" height="105" rx="4" fill="url(#gradMagenta)" data-y7="65" data-h7="105" data-y30="20" data-h30="150" />
-                        <text x="150" y="190" text-anchor="middle" font-size="11" fill="var(--plomb)">Mar</text>
-                    </g>
-
-                    <!-- Mercredi -->
-                    <g class="bar-group" style="--i:2" data-day="Mercredi" data-u7="2320" data-p7="4200" data-u30="9820" data-p30="17780">
-                        <rect class="bar bar-u" filter="url(#barGlow)" x="225" y="121" width="22" height="49" rx="4" fill="url(#gradBleu)" data-y7="121" data-h7="49" data-y30="95" data-h30="75" />
-                        <rect class="bar bar-p" filter="url(#barGlow)" x="253" y="72" width="22" height="98" rx="4" fill="url(#gradMagenta)" data-y7="72" data-h7="98" data-y30="30" data-h30="140" />
-                        <text x="250" y="190" text-anchor="middle" font-size="11" fill="var(--plomb)">Mer</text>
-                    </g>
-
-                    <!-- Jeudi -->
-                    <g class="bar-group" style="--i:3" data-day="Jeudi" data-u7="2600" data-p7="5100" data-u30="11010" data-p30="21590">
-                        <rect class="bar bar-u" filter="url(#barGlow)" x="325" y="110" width="22" height="60" rx="4" fill="url(#gradBleu)" data-y7="110" data-h7="60" data-y30="75" data-h30="95" />
-                        <rect class="bar bar-p" filter="url(#barGlow)" x="353" y="50" width="22" height="120" rx="4" fill="url(#gradMagenta)" data-y7="50" data-h7="120" data-y30="10" data-h30="160" />
-                        <text x="350" y="190" text-anchor="middle" font-size="11" fill="var(--plomb)">Jeu</text>
-                    </g>
-
-                    <!-- Vendredi -->
-                    <g class="bar-group" style="--i:4" data-day="Vendredi" data-u7="2780" data-p7="5700" data-u30="11770" data-p30="24130">
-                        <rect class="bar bar-u" filter="url(#barGlow)" x="425" y="104" width="22" height="66" rx="4" fill="url(#gradBleu)" data-y7="104" data-h7="66" data-y30="70" data-h30="100" />
-                        <rect class="bar bar-p" filter="url(#barGlow)" x="453" y="35" width="22" height="135" rx="4" fill="url(#gradMagenta)" data-y7="35" data-h7="135" data-y30="12" data-h30="158" />
-                        <text x="450" y="190" text-anchor="middle" font-size="11" fill="var(--plomb)">Ven</text>
-                    </g>
-
-                    <!-- Samedi -->
-                    <g class="bar-group" style="--i:5" data-day="Samedi" data-u7="3150" data-p7="6800" data-u30="13340" data-p30="28790">
-                        <rect class="bar bar-u" filter="url(#barGlow)" x="525" y="88" width="22" height="82" rx="4" fill="url(#gradBleu)" data-y7="88" data-h7="82" data-y30="50" data-h30="120" />
-                        <rect class="bar bar-p" filter="url(#barGlow)" x="553" y="10" width="22" height="160" rx="4" fill="url(#gradMagenta)" data-y7="10" data-h7="160" data-y30="4" data-h30="166" />
-                        <text x="550" y="190" text-anchor="middle" font-size="11" fill="var(--plomb)">Sam</text>
-                    </g>
-
-                    <!-- Dimanche -->
-                    <g class="bar-group" style="--i:6" data-day="Dimanche" data-u7="2900" data-p7="6200" data-u30="12280" data-p30="26260">
-                        <rect class="bar bar-u" filter="url(#barGlow)" x="625" y="97" width="22" height="73" rx="4" fill="url(#gradBleu)" data-y7="97" data-h7="73" data-y30="65" data-h30="105" />
-                        <rect class="bar bar-p" filter="url(#barGlow)" x="653" y="26" width="22" height="144" rx="4" fill="url(#gradMagenta)" data-y7="26" data-h7="144" data-y30="20" data-h30="150" />
-                        <text x="650" y="190" text-anchor="middle" font-size="11" fill="var(--plomb)">Dim</text>
-                    </g>
+                        @foreach ($ga['visits']['days'] as $i => $d)
+                            <g class="bar-group" style="--i:{{ $i }}" data-day="{{ $d['label'] }}" data-u7="{{ $d['u7'] }}" data-p7="{{ $d['p7'] }}" data-u30="{{ $d['u30'] }}" data-p30="{{ $d['p30'] }}">
+                                <rect class="bar bar-u" filter="url(#barGlow)" x="{{ 25 + 100 * $i }}" y="{{ $d['y7u'] }}" width="22" height="{{ $d['h7u'] }}" rx="4" fill="url(#gradBleu)" data-y7="{{ $d['y7u'] }}" data-h7="{{ $d['h7u'] }}" data-y30="{{ $d['y30u'] }}" data-h30="{{ $d['h30u'] }}" />
+                                <rect class="bar bar-p" filter="url(#barGlow)" x="{{ 53 + 100 * $i }}" y="{{ $d['y7p'] }}" width="22" height="{{ $d['h7p'] }}" rx="4" fill="url(#gradMagenta)" data-y7="{{ $d['y7p'] }}" data-h7="{{ $d['h7p'] }}" data-y30="{{ $d['y30p'] }}" data-h30="{{ $d['h30p'] }}" />
+                                <text x="{{ 50 + 100 * $i }}" y="190" text-anchor="middle" font-size="11" fill="var(--plomb)">{{ $d['short'] }}</text>
+                            </g>
+                        @endforeach
                     </g>
 
                     <g class="bar-set" id="monthsSet" style="display:none">
-                        <g class="bar-group" style="--i:0" data-day="Janvier 2025" data-uyear="8200" data-pyear="15400">
-                            <rect class="bar bar-u" filter="url(#barGlow)" x="17" y="130" width="10" height="40" rx="3" fill="url(#gradBleu)" data-yyear="130" data-hyear="40" />
-                            <rect class="bar bar-p" filter="url(#barGlow)" x="31" y="100" width="10" height="70" rx="3" fill="url(#gradMagenta)" data-yyear="100" data-hyear="70" />
-                            <text x="29" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">Jan</text>
-                        </g>
-                        <g class="bar-group" style="--i:1" data-day="Février 2025" data-uyear="8900" data-pyear="16800">
-                            <rect class="bar bar-u" filter="url(#barGlow)" x="76" y="125" width="10" height="45" rx="3" fill="url(#gradBleu)" data-yyear="125" data-hyear="45" />
-                            <rect class="bar bar-p" filter="url(#barGlow)" x="90" y="92" width="10" height="78" rx="3" fill="url(#gradMagenta)" data-yyear="92" data-hyear="78" />
-                            <text x="88" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">Fév</text>
-                        </g>
-                        <g class="bar-group" style="--i:2" data-day="Mars 2025" data-uyear="9600" data-pyear="18100">
-                            <rect class="bar bar-u" filter="url(#barGlow)" x="134" y="120" width="10" height="50" rx="3" fill="url(#gradBleu)" data-yyear="120" data-hyear="50" />
-                            <rect class="bar bar-p" filter="url(#barGlow)" x="148" y="85" width="10" height="85" rx="3" fill="url(#gradMagenta)" data-yyear="85" data-hyear="85" />
-                            <text x="146" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">Mar</text>
-                        </g>
-                        <g class="bar-group" style="--i:3" data-day="Avril 2025" data-uyear="10200" data-pyear="19500">
-                            <rect class="bar bar-u" filter="url(#barGlow)" x="192" y="115" width="10" height="55" rx="3" fill="url(#gradBleu)" data-yyear="115" data-hyear="55" />
-                            <rect class="bar bar-p" filter="url(#barGlow)" x="206" y="78" width="10" height="92" rx="3" fill="url(#gradMagenta)" data-yyear="78" data-hyear="92" />
-                            <text x="204" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">Avr</text>
-                        </g>
-                        <g class="bar-group" style="--i:4" data-day="Mai 2025" data-uyear="11000" data-pyear="21000">
-                            <rect class="bar bar-u" filter="url(#barGlow)" x="250" y="108" width="10" height="62" rx="3" fill="url(#gradBleu)" data-yyear="108" data-hyear="62" />
-                            <rect class="bar bar-p" filter="url(#barGlow)" x="264" y="70" width="10" height="100" rx="3" fill="url(#gradMagenta)" data-yyear="70" data-hyear="100" />
-                            <text x="262" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">Mai</text>
-                        </g>
-                        <g class="bar-group" style="--i:5" data-day="Juin 2025" data-uyear="11800" data-pyear="22600">
-                            <rect class="bar bar-u" filter="url(#barGlow)" x="309" y="102" width="10" height="68" rx="3" fill="url(#gradBleu)" data-yyear="102" data-hyear="68" />
-                            <rect class="bar bar-p" filter="url(#barGlow)" x="323" y="62" width="10" height="108" rx="3" fill="url(#gradMagenta)" data-yyear="62" data-hyear="108" />
-                            <text x="321" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">Jun</text>
-                        </g>
-                        <g class="bar-group" style="--i:6" data-day="Juillet 2025" data-uyear="10600" data-pyear="20200">
-                            <rect class="bar bar-u" filter="url(#barGlow)" x="367" y="112" width="10" height="58" rx="3" fill="url(#gradBleu)" data-yyear="112" data-hyear="58" />
-                            <rect class="bar bar-p" filter="url(#barGlow)" x="381" y="75" width="10" height="95" rx="3" fill="url(#gradMagenta)" data-yyear="75" data-hyear="95" />
-                            <text x="379" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">Jul</text>
-                        </g>
-                        <g class="bar-group" style="--i:7" data-day="Août 2025" data-uyear="9700" data-pyear="18400">
-                            <rect class="bar bar-u" filter="url(#barGlow)" x="425" y="120" width="10" height="50" rx="3" fill="url(#gradBleu)" data-yyear="120" data-hyear="50" />
-                            <rect class="bar bar-p" filter="url(#barGlow)" x="440" y="88" width="10" height="82" rx="3" fill="url(#gradMagenta)" data-yyear="88" data-hyear="82" />
-                            <text x="438" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">Aoû</text>
-                        </g>
-                        <g class="bar-group" style="--i:8" data-day="Septembre 2025" data-uyear="12600" data-pyear="24800">
-                            <rect class="bar bar-u" filter="url(#barGlow)" x="484" y="98" width="10" height="72" rx="3" fill="url(#gradBleu)" data-yyear="98" data-hyear="72" />
-                            <rect class="bar bar-p" filter="url(#barGlow)" x="498" y="52" width="10" height="118" rx="3" fill="url(#gradMagenta)" data-yyear="52" data-hyear="118" />
-                            <text x="496" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">Sep</text>
-                        </g>
-                        <g class="bar-group" style="--i:9" data-day="Octobre 2025" data-uyear="13800" data-pyear="27200">
-                            <rect class="bar bar-u" filter="url(#barGlow)" x="542" y="90" width="10" height="80" rx="3" fill="url(#gradBleu)" data-yyear="90" data-hyear="80" />
-                            <rect class="bar bar-p" filter="url(#barGlow)" x="556" y="42" width="10" height="128" rx="3" fill="url(#gradMagenta)" data-yyear="42" data-hyear="128" />
-                            <text x="554" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">Oct</text>
-                        </g>
-                        <g class="bar-group" style="--i:10" data-day="Novembre 2025" data-uyear="15200" data-pyear="30100">
-                            <rect class="bar bar-u" filter="url(#barGlow)" x="600" y="80" width="10" height="90" rx="3" fill="url(#gradBleu)" data-yyear="80" data-hyear="90" />
-                            <rect class="bar bar-p" filter="url(#barGlow)" x="614" y="30" width="10" height="140" rx="3" fill="url(#gradMagenta)" data-yyear="30" data-hyear="140" />
-                            <text x="612" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">Nov</text>
-                        </g>
-                        <g class="bar-group" style="--i:11" data-day="Décembre 2025" data-uyear="17400" data-pyear="34600">
-                            <rect class="bar bar-u" filter="url(#barGlow)" x="659" y="70" width="10" height="100" rx="3" fill="url(#gradBleu)" data-yyear="70" data-hyear="100" />
-                            <rect class="bar bar-p" filter="url(#barGlow)" x="673" y="10" width="10" height="160" rx="3" fill="url(#gradMagenta)" data-yyear="10" data-hyear="160" />
-                            <text x="671" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">Déc</text>
-                        </g>
+                        @foreach ($ga['visits']['months'] as $i => $m)
+                            <g class="bar-group" style="--i:{{ $i }}" data-day="{{ $m['label'] }}" data-uyear="{{ $m['u'] }}" data-pyear="{{ $m['p'] }}">
+                                <rect class="bar bar-u" filter="url(#barGlow)" x="{{ round(17 + 58.33 * $i, 1) }}" y="{{ $m['yu'] }}" width="10" height="{{ $m['hu'] }}" rx="3" fill="url(#gradBleu)" data-yyear="{{ $m['yu'] }}" data-hyear="{{ $m['hu'] }}" />
+                                <rect class="bar bar-p" filter="url(#barGlow)" x="{{ round(31 + 58.33 * $i, 1) }}" y="{{ $m['yp'] }}" width="10" height="{{ $m['hp'] }}" rx="3" fill="url(#gradMagenta)" data-yyear="{{ $m['yp'] }}" data-hyear="{{ $m['hp'] }}" />
+                                <text x="{{ round(29 + 58.33 * $i, 1) }}" y="190" text-anchor="middle" font-size="10.5" fill="var(--plomb)">{{ $m['short'] }}</text>
+                            </g>
+                        @endforeach
                     </g>
 
                     <polyline id="visitsTrend" class="trend-overlay" fill="none" stroke="url(#gradTrend)"
@@ -425,29 +239,156 @@
     <section>
         <div class="dash-sec-head">
             <div class="dash-sec-title">Top contenus de la semaine</div><a href="#"
-                class="dash-sec-link">Statistiques</a>
+                class="dash-sec-link" data-html2canvas-ignore="true">Statistiques</a>
         </div>
         <div class="rank-grid">
-            <div class="rank-card">
-                <span class="rank-num">01</span>
-                <div class="rank-info">
-                    <p>Élections communales : les résultats commune par commune</p><span>4 210 lectures</span>
+            @forelse ($ga['top'] as $i => $page)
+                <div class="rank-card">
+                    <span class="rank-num">{{ str_pad($i + 1, 2, '0', STR_PAD_LEFT) }}</span>
+                    <div class="rank-info">
+                        <p>{{ $page['title'] }}</p><span>{{ number_format($page['views'], 0, ',', ' ') }} vues</span>
+                    </div>
                 </div>
-            </div>
-            <div class="rank-card">
-                <span class="rank-num">02</span>
-                <div class="rank-info">
-                    <p>Épisode 42 — Culture Malagasy</p><span>1 860 écoutes</span>
-                </div>
-            </div>
-            <div class="rank-card">
-                <span class="rank-num">03</span>
-                <div class="rank-info">
-                    <p>Marché d'Analakely : reportage terrain</p><span>1 402 lectures</span>
-                </div>
-            </div>
+            @empty
+                <p style="color:var(--plomb);">Aucune donnée pour le moment.</p>
+            @endforelse
         </div>
     </section>
+
+    {{-- ── Audience GA4 : engagement, géographie, appareils, sources, heures de pic ── --}}
+    @if (! empty($ga['audience']))
+        @php
+            $aud = $ga['audience'];
+            $audIcons = [
+                'sessions'   => '<path d="M22 12h-4l-3 9L9 3l-3 9H2" />',
+                'new_users'  => '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M19 8v6M22 11h-6" />',
+                'engagement' => '<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8Z" />',
+                'bounce'     => '<path d="M9 14 4 9l5-5" /><path d="M4 9h10a6 6 0 0 1 6 6v5" />',
+            ];
+            $audColors = [
+                'sessions'   => ['var(--bleu-glow)', 'var(--bleu)'],
+                'new_users'  => ['var(--magenta-glow)', 'var(--magenta)'],
+                'engagement' => ['var(--vert-glow)', 'var(--vert)'],
+                'bounce'     => ['rgba(201,162,39,.18)', 'var(--or)'],
+            ];
+            $hours    = $aud['hours'] ?? [];
+            $maxHour  = max(1, ...(count($hours) ? $hours : [1]));
+            $peakHour = $aud['peak_hour'] ?? null;
+        @endphp
+
+        <section>
+            <div class="dash-sec-head">
+                <div class="dash-sec-title">Audience · 7 jours</div>
+            </div>
+            <div class="stats">
+                @foreach ($aud['kpis'] as $key => $kpi)
+                    <div class="stat" style="--stat-glow:{{ $audColors[$key][0] }}; --stat-color:{{ $audColors[$key][1] }};">
+                        <div class="stat-top">
+                            <div class="stat-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">{!! $audIcons[$key] !!}</svg></div>
+                            <span class="stat-delta {{ $kpi['delta']['up'] ? 'up' : 'down' }}">{{ $kpi['delta']['label'] }}</span>
+                        </div>
+                        <div class="stat-value">{{ $kpi['value'] }}</div>
+                        <div class="stat-label">{{ $kpi['label'] }}</div>
+                    </div>
+                @endforeach
+            </div>
+        </section>
+
+        <section>
+            <div class="dash-sec-head">
+                <div class="dash-sec-title">Provenance géographique · 7 jours</div>
+            </div>
+            <div class="grid2">
+                <div class="panel panel-pad">
+                    <p style="font-weight:700; margin-bottom:1rem;">Pays</p>
+                    @include('dashboard.partials.ga-bar-list', ['items' => $aud['countries'], 'color' => 'var(--bleu)'])
+                </div>
+                <div class="panel panel-pad">
+                    <p style="font-weight:700; margin-bottom:1rem;">Villes</p>
+                    @include('dashboard.partials.ga-bar-list', ['items' => $aud['cities'], 'color' => 'var(--magenta)'])
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="dash-sec-head">
+                <div class="dash-sec-title">Appareils et sources · 7 jours</div>
+            </div>
+            <div class="grid2">
+                <div class="panel panel-pad">
+                    <p style="font-weight:700; margin-bottom:1rem;">Appareils</p>
+                    @include('dashboard.partials.ga-bar-list', ['items' => $aud['devices'], 'color' => 'var(--vert)'])
+                </div>
+                <div class="panel panel-pad">
+                    <p style="font-weight:700; margin-bottom:1rem;">Sources de trafic</p>
+                    @include('dashboard.partials.ga-bar-list', ['items' => $aud['channels'], 'color' => 'var(--or)'])
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="dash-sec-head">
+                <div class="dash-sec-title">Régions et fidélité · 7 jours</div>
+            </div>
+            <div class="grid2">
+                <div class="panel panel-pad">
+                    <p style="font-weight:700; margin-bottom:1rem;">Régions</p>
+                    @include('dashboard.partials.ga-bar-list', ['items' => $aud['regions'] ?? [], 'color' => 'var(--bleu)'])
+                </div>
+                <div class="panel panel-pad">
+                    <p style="font-weight:700; margin-bottom:1rem;">Nouveaux vs récurrents</p>
+                    @include('dashboard.partials.ga-bar-list', ['items' => $aud['new_returning'] ?? [], 'color' => 'var(--vert)'])
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="dash-sec-head">
+                <div class="dash-sec-title">Entrées et sources détaillées · 7 jours</div>
+            </div>
+            <div class="grid2">
+                <div class="panel panel-pad">
+                    <p style="font-weight:700; margin-bottom:1rem;">Pages d'atterrissage (sessions)</p>
+                    @include('dashboard.partials.ga-bar-list', ['items' => $aud['landing_pages'] ?? [], 'color' => 'var(--magenta)'])
+                </div>
+                <div class="panel panel-pad">
+                    <p style="font-weight:700; margin-bottom:1rem;">Sources détaillées (sessions)</p>
+                    @include('dashboard.partials.ga-bar-list', ['items' => $aud['sources'] ?? [], 'color' => 'var(--or)'])
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="dash-sec-head">
+                <div class="dash-sec-title">Heures d'audience · 7 jours</div>
+            </div>
+            <div class="panel panel-pad">
+                @if (array_sum($hours) > 0)
+                    <p style="color:var(--plomb); font-size:.88rem; margin-bottom:1rem;">
+                        Pic d'audience à {{ str_pad($peakHour, 2, '0', STR_PAD_LEFT) }} h (heure du fuseau de la propriété GA4)
+                    </p>
+                    <div style="display:flex; align-items:flex-end; gap:3px; height:120px;">
+                        @foreach ($hours as $h => $v)
+                            <div title="{{ str_pad($h, 2, '0', STR_PAD_LEFT) }} h · {{ number_format($v, 0, ',', ' ') }} visiteurs"
+                                 style="flex:1; height:{{ max(3, round($v / $maxHour * 100)) }}%; border-radius:3px 3px 0 0; background:{{ $h === $peakHour ? 'var(--magenta)' : 'var(--bleu)' }}; opacity:{{ $h === $peakHour ? 1 : .55 }};"></div>
+                        @endforeach
+                    </div>
+                    <div style="display:flex; justify-content:space-between; color:var(--plomb); font-size:.75rem; margin-top:.4rem;">
+                        <span>0 h</span><span>6 h</span><span>12 h</span><span>18 h</span><span>23 h</span>
+                    </div>
+                @else
+                    <p style="color:var(--plomb);">Aucune donnée pour le moment.</p>
+                @endif
+            </div>
+        </section>
+    @endif
+    @else
+        <p style="color:var(--plomb);">Les données Google Analytics sont momentanément indisponibles.</p>
+        @if (config('app.debug') && ! empty($ga['reason']))
+            <p style="color:var(--magenta); font-size:.85rem;">Cause (visible uniquement en mode debug) : {{ $ga['reason'] }}</p>
+        @endif
+    @endif
+</div>{{-- /#export-zone --}}
 @endsection
 
 @push('scripts')
@@ -516,6 +457,7 @@
             else totalEl.textContent = fmt.format(targetTotal);
 
             deltaEl.textContent = deltaEl.getAttribute('data-d' + period);
+            deltaEl.style.color = deltaEl.textContent.indexOf('▼') === 0 ? 'var(--magenta)' : 'var(--vert)';
             periodLabelEl.textContent = period === '7' ? 'cette semaine'
                 : period === '30' ? 'ces 30 derniers jours'
                 : "sur l'année dernière";
@@ -570,6 +512,74 @@
         requestAnimationFrame(() => panel.classList.add('is-ready'));
         refreshTrend('7');
         animateNumber(totalEl, 0, parseInt(totalEl.getAttribute('data-t7'), 10), 1100);
+    })();
+</script>
+
+{{-- ── Export PDF (html2pdf.js, 100 % côté navigateur) ─────────── --}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+    (function () {
+        const btn = document.getElementById('btnPdf');
+        const zone = document.getElementById('export-zone');
+        if (!btn || !zone) return;
+
+        // Les attributs SVG (stroke, fill, stop-color) avec var(--x) ne sont pas lus par html2canvas :
+        // on les remplace par les vraies couleurs, uniquement dans la copie utilisée pour la capture.
+        const rootStyle = getComputedStyle(document.documentElement);
+        const resolveVars = (v) => v.replace(/var\((--[\w-]+)\)/g, (_, name) => rootStyle.getPropertyValue(name).trim() || '#888');
+
+        btn.addEventListener('click', async () => {
+            if (typeof html2pdf === 'undefined') {
+                alert("La bibliothèque d'export PDF n'a pas pu être chargée. Vérifiez votre connexion et réessayez.");
+                return;
+            }
+
+            const label = btn.textContent;
+            btn.textContent = 'Génération…';
+            btn.disabled = true;
+
+            // Capture depuis le haut de la page, après la fin des animations d'entrée
+            window.scrollTo(0, 0);
+            await new Promise(r => setTimeout(r, 1300));
+
+            const bodyBg = getComputedStyle(document.body).backgroundColor;
+            const bg = (bodyBg && bodyBg !== 'rgba(0, 0, 0, 0)') ? bodyBg : '#ffffff';
+            const width = zone.offsetWidth;
+            const height = zone.scrollHeight;
+
+            const opt = {
+                margin: 0,
+                filename: 'sioka-stats-' + new Date().toISOString().slice(0, 10) + '.pdf',
+                image: { type: 'jpeg', quality: 0.95 },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: bg,
+                    scrollX: 0,
+                    scrollY: 0,
+                    onclone: (doc) => {
+                        doc.querySelectorAll('#export-zone svg, #export-zone svg *').forEach(el => {
+                            ['stroke', 'fill', 'stop-color'].forEach(attr => {
+                                const v = el.getAttribute && el.getAttribute(attr);
+                                if (v && v.indexOf('var(') !== -1) el.setAttribute(attr, resolveVars(v));
+                            });
+                        });
+                    }
+                },
+                // Une seule page à la hauteur du contenu : aucun bloc coupé en deux
+                jsPDF: { unit: 'px', format: [width, height], orientation: height > width ? 'portrait' : 'landscape', hotfixes: ['px_scaling'] }
+            };
+
+            try {
+                await html2pdf().set(opt).from(zone).save();
+            } catch (e) {
+                console.error(e);
+                alert("L'export PDF a échoué. Ouvrez la console du navigateur pour plus de détails.");
+            } finally {
+                btn.textContent = label;
+                btn.disabled = false;
+            }
+        });
     })();
 </script>
 @endpush

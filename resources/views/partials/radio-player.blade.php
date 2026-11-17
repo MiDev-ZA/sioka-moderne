@@ -60,4 +60,16 @@
 
     </div>
   </div>
+
+  <script>
+    // Statistiques : une écoute est comptée à chaque démarrage de la lecture (pas à la pause)
+    (function () {
+      var audio = document.getElementById('audioStream');
+      if (!audio || audio.dataset.tracked) { return; }
+      audio.dataset.tracked = '1';
+      audio.addEventListener('play', function () {
+        if (typeof siokaTrack === 'function') { siokaTrack('radio_play', { item_title: 'SIOKA Webradio' }); }
+      });
+    })();
+  </script>
 </div>

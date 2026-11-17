@@ -1,4 +1,4 @@
-<a href="{{ route('articles.show', $article->slug) }}" class="art-card-link" data-page-loading="Chargement de l'article…">
+<a href="{{ route('articles.show', $article->slug) }}" class="art-card-link" data-page-loading="Chargement de l'article…" data-track="article_click" data-track-title="{{ $article->title }}">
   <article class="art-card" tabindex="-1" data-category="{{ $article->category->slug }}">
     <div class="art-card-img">
       <img src="{{ $article->image ? asset('storage/' . $article->image) : asset('images/placeholder-article.jpg') }}" alt="{{ $article->image_alt ?? $article->title }}" loading="lazy">

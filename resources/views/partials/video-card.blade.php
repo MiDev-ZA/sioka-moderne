@@ -14,7 +14,7 @@
   };
   $isNew = \Carbon\Carbon::parse($video['publishedAt'])->diffInHours(now()) < 48;
 @endphp
-<a href="{{ route('webtv.show', $video['id']) }}" class="video-card-link" data-page-loading="Chargement de la vidéo…">
+<a href="{{ route('webtv.show', $video['id']) }}" class="video-card-link" data-page-loading="Chargement de la vidéo…" data-track="video_click" data-track-title="{{ $video['title'] }}">
   <article class="video-card {{ ($featured ?? false) ? 'is-featured' : '' }}">
     <span class="cat-stripe" data-color="{{ $catColor($video['category']) }}" aria-hidden="true"></span>
     <div class="video-thumb">

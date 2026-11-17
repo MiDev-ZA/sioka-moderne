@@ -44,7 +44,10 @@ return [
     ],
 
     'google_analytics' => [
-        'id' => env('GA_MEASUREMENT_ID'),
+        'id'          => env('GA_MEASUREMENT_ID'),
+        'property_id' => env('GA_PROPERTY_ID'),
+        'credentials' => env('GA_CREDENTIALS', storage_path('app/analytics/service-account.json')),
+        'debug'       => env('GA_DEBUG'), // null = automatique (actif seulement si APP_ENV=local)
     ],
 
 ];
