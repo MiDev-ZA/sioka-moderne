@@ -15,6 +15,7 @@
 @import './components/webtv.css';
 @import './components/video-single.css';
 @import './components/search.css';
+@import './components/ads.css';
 
 /* Configuration Tailwind v4 */
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';

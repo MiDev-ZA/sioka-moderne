@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdController;
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\BoiteController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\FilController;
 use App\Http\Controllers\FlashInfoController;
 use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\PodcastController;
+use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\ProgrammeController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\WebTvController;
@@ -56,6 +58,11 @@ Route::post('/boite-aux-lettres', [BoiteController::class, 'send'])
     ->middleware('throttle:5,1')
     ->name('mailbox.send');
 
+// Clic sur une publicité : compte le clic puis redirige vers l'annonceur (public)
+Route::get('/pub/{ad}/clic', [AdController::class, 'click'])
+    ->middleware('throttle:30,1')
+    ->name('ads.click');
+
 // Routes accessibles uniquement aux visiteurs
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AppController::class, 'login'])->name('login');
@@ -67,8 +74,10 @@ Route::middleware('auth')->group(function () {
 
     // ---- Communes à tous les comptes connectés ----
     Route::get('/dashboard', [AppController::class, 'dashboard'])->name('dashboard');
-    Route::get('/lequipe', [AppController::class, 'lequipe'])->name('lequipe');
     Route::get('/profil', [AppController::class, 'profil'])->name('profil');
+    // Profil : chaque utilisateur modifie uniquement son propre compte
+    Route::put('/profil', [ProfilController::class, 'update'])->name('profil.update');
+    Route::put('/profil/mot-de-passe', [ProfilController::class, 'updatePassword'])->name('profil.password');
     Route::post('/logout', [AppController::class, 'logout'])->name('logout');
 
     // ---- Actualités, flash infos, fil d'infos : admin, editor, journalist ----
@@ -142,10 +151,17 @@ Route::middleware('auth')->group(function () {
         Route::get('/auth/youtube', [YoutubeAuthController::class, 'redirect'])->name('youtube.auth');
         Route::get('/auth/youtube/callback', [YoutubeAuthController::class, 'callback'])->name('youtube.callback');
 
-        // ---- L'équipe (membres + organigramme) : modification réservée à l'admin ----
+        // ---- L'équipe (membres + organigramme) : page et modification réservées à l'admin ----
+        Route::get('/lequipe', [AppController::class, 'lequipe'])->name('lequipe');
         Route::post('/lequipe', [EquipeController::class, 'store'])->name('lequipe.store');
         Route::put('/lequipe/{equipe}', [EquipeController::class, 'update'])->name('lequipe.update');
         Route::delete('/lequipe/{equipe}', [EquipeController::class, 'destroy'])->name('lequipe.destroy');
+
+        // ---- Publicités : gestion réservée à l'admin ----
+        Route::get('/publicites', [AdController::class, 'index'])->name('ads');
+        Route::post('/publicites', [AdController::class, 'store'])->name('ads.store');
+        Route::put('/publicites/{ad}', [AdController::class, 'update'])->name('ads.update');
+        Route::delete('/publicites/{ad}', [AdController::class, 'destroy'])->name('ads.destroy');
 
         Route::resource('users', UserController::class)->except(['create', 'show', 'edit']);
     });

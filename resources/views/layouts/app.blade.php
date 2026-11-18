@@ -39,6 +39,7 @@
 </head>
 <body>
 
+  @include('partials.ad-slot', ['adId' => 'top-ticker', 'format' => 'leaderboard'])
   @include('partials.ticker')
   @include('partials.header')
   @include('partials.search-modal')

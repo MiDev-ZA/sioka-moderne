@@ -89,6 +89,17 @@
                     Podcasts
                 </a>
             @endrole
+            {{-- admin uniquement --}}
+            @role('admin')
+                <a href="{{ route('ads') }}" class="{{ request()->routeIs('ads', 'ads.*') ? 'active' : '' }}"
+                    data-page-loading="Chargement des publicités…">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <rect x="3" y="5" width="18" height="14" rx="2" />
+                        <path d="M3 9h18" />
+                    </svg>
+                    Publicités
+                </a>
+            @endrole
             <div class="nav-sep"></div>
             <div class="nav-label">Communauté</div>
             {{-- admin, editor --}}
@@ -116,17 +127,19 @@
                     Boîte aux lettres
                 </a>
             @endrole
-            {{-- Commun à tous les comptes connectés --}}
-            <a href="{{ route('lequipe') }}" class="{{ request()->routeIs('lequipe') ? 'active' : '' }}"
-                data-page-loading="Chargement de l'équipe…">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                    <circle cx="9" cy="7" r="4" />
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
-                L'équipe
-            </a>
+            {{-- admin uniquement --}}
+            @role('admin')
+                <a href="{{ route('lequipe') }}" class="{{ request()->routeIs('lequipe') ? 'active' : '' }}"
+                    data-page-loading="Chargement de l'équipe…">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                    L'équipe
+                </a>
+            @endrole
             {{-- admin uniquement --}}
             @role('admin')
                 <a href="{{ route('users.index') }}" class="{{ request()->routeIs('users.*') ? 'active' : '' }}"
