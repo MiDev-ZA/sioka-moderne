@@ -94,8 +94,8 @@ class AppController extends Controller
     public function webtvIndex(Request $request)
     {
         try {
-            $allVideos = Cache::remember('youtube_all_public_videos', 900, function () {
-                return app(YoutubeService::class)->listPublic(100);
+            $allVideos = Cache::remember('youtube_all_public_videos_v2', 900, function () {
+                return app(YoutubeService::class)->listPublic(null);
             });
         } catch (\Exception $e) {
             $allVideos = [];
