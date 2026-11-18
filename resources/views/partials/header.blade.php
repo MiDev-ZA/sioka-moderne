@@ -12,6 +12,10 @@
 
     // Les ancres pointent vers l'accueil : elles fonctionnent depuis n'importe quelle page
     $home = route('home');
+
+    // Rubriques actives selon la route courante
+    $isActu  = request()->routeIs('news.index', 'categories.show', 'articles.show');
+    $isWebtv = request()->routeIs('webtv.index', 'webtv.show');
 @endphp
 
 <header class="header">
@@ -31,7 +35,7 @@
             <a href="{{ $home }}" class="{{ request()->routeIs('home') ? 'active-magenta' : '' }}">Accueil</a>
 
             <div class="nav-item" id="navActualites">
-                <button type="button" class="nav-link nav-trigger" id="actuTrigger"
+                <button type="button" class="nav-link nav-trigger {{ $isActu ? 'active-magenta' : '' }}" id="actuTrigger"
                     aria-haspopup="true" aria-expanded="false">
                     Actualités
                     <svg class="nav-caret" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
@@ -42,17 +46,19 @@
                 <div class="nav-dropdown" id="actuDropdown" role="menu">
                     <div class="nav-dropdown-inner">
                         @foreach ($navCategories as $slug => $label)
-                            <a href="{{ route('categories.show', $slug) }}" role="menuitem">{{ $label }}</a>
+                            <a href="{{ route('categories.show', $slug) }}" role="menuitem"
+                                class="{{ request()->is('categories/' . $slug) ? 'active-magenta' : '' }}">{{ $label }}</a>
                         @endforeach
                     </div>
                 </div>
             </div>
 
-            <a href="{{ $home }}#webtv" class="nav-webtv"><span class="webtv-dot" aria-hidden="true"></span>WebTV</a>
+            <a href="{{ $home }}#webtv" class="nav-webtv {{ $isWebtv ? 'active-magenta' : '' }}"><span class="webtv-dot" aria-hidden="true"></span>WebTV</a>
             <a href="{{ route('emissions.public') }}"
                 class="{{ request()->routeIs('emissions.public') ? 'active-magenta' : '' }}">Émissions</a>
             <a href="{{ $home }}#podcasts">Podcasts</a>
-            <a href="{{ $home }}#equipe">L'Équipe</a>
+            <a href="{{ route('equipe.public') }}"
+                class="{{ request()->routeIs('equipe.public') ? 'active-magenta' : '' }}">L'Équipe</a>
             <a href="{{ $home }}#contact">Contact</a>
             <a href="{{ $home }}#partenaires">Partenaires</a>
         </nav>
@@ -158,7 +164,7 @@
         <a href="{{ $home }}" class="{{ request()->routeIs('home') ? 'active-magenta' : '' }}">Accueil</a>
 
         <div class="mnav-item">
-            <button type="button" class="mnav-trigger" id="actuTriggerMobile" aria-expanded="false"
+            <button type="button" class="mnav-trigger {{ $isActu ? 'active-magenta' : '' }}" id="actuTriggerMobile" aria-expanded="false"
                 aria-controls="actuPanelMobile">
                 Actualités
                 <svg class="nav-caret" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
@@ -170,17 +176,19 @@
             <div class="mnav-panel" id="actuPanelMobile">
                 <div class="mnav-panel-inner">
                     @foreach ($navCategories as $slug => $label)
-                        <a href="{{ route('categories.show', $slug) }}">{{ $label }}</a>
+                        <a href="{{ route('categories.show', $slug) }}"
+                           class="{{ request()->is('categories/' . $slug) ? 'active-magenta' : '' }}">{{ $label }}</a>
                     @endforeach
                 </div>
             </div>
         </div>
 
-        <a href="{{ $home }}#webtv" class="nav-webtv"><span class="webtv-dot" aria-hidden="true"></span>WebTV</a>
+        <a href="{{ $home }}#webtv" class="nav-webtv {{ $isWebtv ? 'active-magenta' : '' }}"><span class="webtv-dot" aria-hidden="true"></span>WebTV</a>
         <a href="{{ route('emissions.public') }}"
             class="{{ request()->routeIs('emissions.public') ? 'active-magenta' : '' }}">Émissions</a>
         <a href="{{ $home }}#podcasts">Podcasts</a>
-        <a href="{{ $home }}#equipe">L'Équipe</a>
+        <a href="{{ route('equipe.public') }}"
+            class="{{ request()->routeIs('equipe.public') ? 'active-magenta' : '' }}">L'Équipe</a>
         <a href="{{ $home }}#contact">Contact</a>
         <a href="{{ $home }}#partenaires">Partenaires</a>
 
@@ -328,5 +336,57 @@
                 if ($('userMenuBtn')) $('userMenuBtn').focus();
             }
         });
+
+        // ── Liens d'ancre (#webtv, #podcasts, #contact, #partenaires) ──
+        // Sur l'accueil, le lien actif suit la section visible ; sans section visible, c'est « Accueil ».
+        let spyItems = [];
+        let spyHome = [];
+        let spyTick = false;
+
+        function buildSpy() {
+            spyItems = [];
+            spyHome = [];
+            document.querySelectorAll('.nav-main a, .mobile-nav a').forEach(function (a) {
+                const raw = a.getAttribute('href');
+                if (!raw || raw === '#' || a.host !== location.host || a.pathname !== location.pathname) return;
+                if (a.hash.length < 2) { spyHome.push(a); return; }
+                let target = null;
+                try { target = document.getElementById(decodeURIComponent(a.hash.slice(1))); } catch (e) {}
+                if (target) spyItems.push({ link: a, target: target });
+            });
+            updateSpy();
+        }
+
+        function updateSpy() {
+            if (!spyItems.length) return; // pas sur la page qui porte ces sections
+
+            const header = document.querySelector('.header');
+            const line = (header ? header.offsetHeight : 0) + 120;
+            let current = null;
+
+            spyItems.forEach(function (it) {
+                const r = it.target.getBoundingClientRect();
+                if (r.top <= line && r.bottom > line) current = it.target;
+            });
+
+            // Bas de page : la dernière section reste active même si elle est courte
+            const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+            if (atBottom) current = spyItems[spyItems.length - 1].target;
+
+            spyItems.forEach(function (it) { it.link.classList.toggle('active-magenta', it.target === current); });
+            spyHome.forEach(function (a) { a.classList.toggle('active-magenta', current === null); });
+        }
+
+        function scheduleSpy() {
+            if (spyTick) return;
+            spyTick = true;
+            requestAnimationFrame(function () { spyTick = false; updateSpy(); });
+        }
+
+        window.addEventListener('scroll', scheduleSpy, { passive: true });
+        window.addEventListener('resize', scheduleSpy);
+        window.addEventListener('hashchange', scheduleSpy);
+        document.addEventListener('DOMContentLoaded', buildSpy);
+        document.addEventListener('turbo:load', buildSpy);
     })();
 </script>

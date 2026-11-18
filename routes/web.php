@@ -3,6 +3,7 @@
 use App\Http\Controllers\AppController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\BoiteController;
+use App\Http\Controllers\EquipeController;
 use App\Http\Controllers\FilController;
 use App\Http\Controllers\FlashInfoController;
 use App\Http\Controllers\NewsletterController;
@@ -38,6 +39,9 @@ Route::get('/webtv/{id}', [WebTvController::class, 'show'])->name('webtv.show');
 
 // Grille publique des émissions (planning de la semaine)
 Route::get('/nos-emissions', [AppController::class, 'emissionsPublic'])->name('emissions.public');
+
+// Organigramme public de l'équipe
+Route::get('/notre-equipe', [AppController::class, 'equipePublic'])->name('equipe.public');
 
 // Bibliothèque publique des podcasts (chargée en AJAX dans la modale, accessible à tous)
 Route::get('/podcasts/bibliotheque', [AppController::class, 'podcastsLibrary'])->name('podcasts.library');
@@ -137,6 +141,11 @@ Route::middleware('auth')->group(function () {
     Route::middleware('admin')->group(function () {
         Route::get('/auth/youtube', [YoutubeAuthController::class, 'redirect'])->name('youtube.auth');
         Route::get('/auth/youtube/callback', [YoutubeAuthController::class, 'callback'])->name('youtube.callback');
+
+        // ---- L'équipe (membres + organigramme) : modification réservée à l'admin ----
+        Route::post('/lequipe', [EquipeController::class, 'store'])->name('lequipe.store');
+        Route::put('/lequipe/{equipe}', [EquipeController::class, 'update'])->name('lequipe.update');
+        Route::delete('/lequipe/{equipe}', [EquipeController::class, 'destroy'])->name('lequipe.destroy');
 
         Route::resource('users', UserController::class)->except(['create', 'show', 'edit']);
     });

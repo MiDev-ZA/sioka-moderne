@@ -403,6 +403,194 @@
         @endif
     @endif
 </div>{{-- /#export-zone --}}
+
+{{-- Contraste renforcé pour le thème sombre : styles limités au tableau de bord --}}
+<style>
+    :where(
+        html.dark,
+        body.dark,
+        .dark,
+        html.dark-mode,
+        body.dark-mode,
+        .dark-mode,
+        [data-theme="dark"],
+        [data-bs-theme="dark"],
+        [data-color-mode="dark"]
+    ) #export-zone {
+        --plomb: #cbd5e1;
+        --glass-bord: rgba(203, 213, 225, .20);
+        color: #e2e8f0;
+    }
+
+    :where(
+        html.dark,
+        body.dark,
+        .dark,
+        html.dark-mode,
+        body.dark-mode,
+        .dark-mode,
+        [data-theme="dark"],
+        [data-bs-theme="dark"],
+        [data-color-mode="dark"]
+    ) #export-zone .stat-value,
+    :where(
+        html.dark,
+        body.dark,
+        .dark,
+        html.dark-mode,
+        body.dark-mode,
+        .dark-mode,
+        [data-theme="dark"],
+        [data-bs-theme="dark"],
+        [data-color-mode="dark"]
+    ) #export-zone .radial-center strong,
+    :where(
+        html.dark,
+        body.dark,
+        .dark,
+        html.dark-mode,
+        body.dark-mode,
+        .dark-mode,
+        [data-theme="dark"],
+        [data-bs-theme="dark"],
+        [data-color-mode="dark"]
+    ) #export-zone .visits-total strong {
+        color: #f8fafc;
+    }
+
+    :where(
+        html.dark,
+        body.dark,
+        .dark,
+        html.dark-mode,
+        body.dark-mode,
+        .dark-mode,
+        [data-theme="dark"],
+        [data-bs-theme="dark"],
+        [data-color-mode="dark"]
+    ) #export-zone .stat-label,
+    :where(
+        html.dark,
+        body.dark,
+        .dark,
+        html.dark-mode,
+        body.dark-mode,
+        .dark-mode,
+        [data-theme="dark"],
+        [data-bs-theme="dark"],
+        [data-color-mode="dark"]
+    ) #export-zone .radial-center span,
+    :where(
+        html.dark,
+        body.dark,
+        .dark,
+        html.dark-mode,
+        body.dark-mode,
+        .dark-mode,
+        [data-theme="dark"],
+        [data-bs-theme="dark"],
+        [data-color-mode="dark"]
+    ) #export-zone .trend-label,
+    :where(
+        html.dark,
+        body.dark,
+        .dark,
+        html.dark-mode,
+        body.dark-mode,
+        .dark-mode,
+        [data-theme="dark"],
+        [data-bs-theme="dark"],
+        [data-color-mode="dark"]
+    ) #export-zone .visits-total > span,
+    :where(
+        html.dark,
+        body.dark,
+        .dark,
+        html.dark-mode,
+        body.dark-mode,
+        .dark-mode,
+        [data-theme="dark"],
+        [data-bs-theme="dark"],
+        [data-color-mode="dark"]
+    ) #export-zone .visits-legend,
+    :where(
+        html.dark,
+        body.dark,
+        .dark,
+        html.dark-mode,
+        body.dark-mode,
+        .dark-mode,
+        [data-theme="dark"],
+        [data-bs-theme="dark"],
+        [data-color-mode="dark"]
+    ) #export-zone .rank-info p,
+    :where(
+        html.dark,
+        body.dark,
+        .dark,
+        html.dark-mode,
+        body.dark-mode,
+        .dark-mode,
+        [data-theme="dark"],
+        [data-bs-theme="dark"],
+        [data-color-mode="dark"]
+    ) #export-zone .rank-info span,
+    :where(
+        html.dark,
+        body.dark,
+        .dark,
+        html.dark-mode,
+        body.dark-mode,
+        .dark-mode,
+        [data-theme="dark"],
+        [data-bs-theme="dark"],
+        [data-color-mode="dark"]
+    ) #export-zone .panel-pad p,
+    :where(
+        html.dark,
+        body.dark,
+        .dark,
+        html.dark-mode,
+        body.dark-mode,
+        .dark-mode,
+        [data-theme="dark"],
+        [data-bs-theme="dark"],
+        [data-color-mode="dark"]
+    ) #export-zone .dash-sec-title {
+        color: #cbd5e1;
+    }
+
+    :where(
+        html.dark,
+        body.dark,
+        .dark,
+        html.dark-mode,
+        body.dark-mode,
+        .dark-mode,
+        [data-theme="dark"],
+        [data-bs-theme="dark"],
+        [data-color-mode="dark"]
+    ) #export-zone .visits-tooltip {
+        color: #f8fafc;
+        background: #172033;
+        border: 1px solid rgba(203, 213, 225, .22);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
+    }
+
+    :where(
+        html.dark,
+        body.dark,
+        .dark,
+        html.dark-mode,
+        body.dark-mode,
+        .dark-mode,
+        [data-theme="dark"],
+        [data-bs-theme="dark"],
+        [data-color-mode="dark"]
+    ) #export-zone .date-pill:not(#btnPdf) {
+        color: #e2e8f0;
+    }
+</style>
 @endsection
 
 @push('scripts')

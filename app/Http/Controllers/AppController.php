@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Models\Category;
+use App\Models\Equipe;
 use App\Models\Fil;
 use App\Models\FlashInfo;
 use App\Models\NewsletterSubscriber;
@@ -267,12 +268,20 @@ class AppController extends Controller
         $enDirectId = ($programmes[$jourActuel] ?? collect())
             ->first(fn ($p) => $p->start <= $heure && $p->end > $heure)?->id;
 
-        return view('emissions_publique', [
+        return view('sections.emissions_publique', [
             'jours'      => Programme::JOURS,
             'programmes' => $programmes,
             'jourActuel' => $jourActuel,
             'enDirectId' => $enDirectId,
             'nowMinutes' => $now->hour * 60 + $now->minute + $now->second / 60,
+        ]);
+    }
+
+    // Page publique : organigramme de l'équipe (uniquement les membres cochés « Afficher dans l'organigramme »)
+    public function equipePublic()
+    {
+        return view('sections.equipe', [
+            'members' => Equipe::where('org', true)->orderBy('id')->get()->map->toMember()->values(),
         ]);
     }
 
@@ -408,7 +417,9 @@ class AppController extends Controller
 
     public function lequipe()
     {
-        return view('dashboard.lequipe');
+        return view('dashboard.lequipe', [
+            'members' => Equipe::orderBy('id')->get()->map->toMember()->values(),
+        ]);
     }
 
     public function profil()
