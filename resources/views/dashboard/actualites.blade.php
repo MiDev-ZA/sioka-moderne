@@ -264,6 +264,41 @@
     .pagination-wrap { margin-top: 18px; }
     .pagination-wrap--top { margin-top: 0; margin-bottom: 18px; }
 
+    /* ==================== Filtres de la liste ==================== */
+    .filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        gap: 12px 14px;
+        margin-bottom: 18px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid var(--glass-bord);
+    }
+    .filter-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: 0 1 190px; }
+    .filter-field--search { flex: 1 1 260px; }
+    .filter-field label { font-size: 12px; font-weight: 600; color: var(--plomb); }
+    .filter-field input,
+    .filter-field select {
+        width: 100%;
+        padding: 9px 12px;
+        font: inherit;
+        font-size: 13.5px;
+        color: inherit;
+        background: var(--blanc-doux);
+        border: 1px solid var(--glass-bord);
+        border-radius: 12px;
+        transition: border-color .15s ease, box-shadow .15s ease;
+    }
+    .filter-field select option { background: var(--ink-2); color: var(--blanc); }
+    .filter-field input:focus,
+    .filter-field select:focus {
+        outline: none;
+        border-color: var(--bleu);
+        box-shadow: 0 0 0 3px var(--bleu-glow);
+    }
+    .filter-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .filter-summary { font-size: 12.5px; color: var(--plomb); }
+
     /* ==================== Modale (fond flouté) ==================== */
     .modal-overlay {
         position: fixed; inset: 0;
@@ -525,6 +560,46 @@
             </div>
         </div>
 
+        {{-- ===================== Filtres (appliqués côté serveur) ===================== --}}
+        <form method="GET" action="{{ route('actualites') }}" class="filter-bar" data-turbo="false" role="search">
+            <div class="filter-field filter-field--search">
+                <label for="filterQ">Rechercher</label>
+                <input type="text" id="filterQ" name="q" value="{{ $filters['q'] ?? '' }}"
+                       maxlength="100" autocomplete="off"
+                       placeholder="Titre, résumé, slug ou contenu…">
+            </div>
+
+            <div class="filter-field">
+                <label for="filterCategory">Catégorie</label>
+                <select id="filterCategory" name="category" onchange="this.form.submit()">
+                    <option value="">Toutes</option>
+                    @foreach($categories ?? [] as $category)
+                        <option value="{{ $category->id }}" @selected((string) ($filters['category'] ?? '') === (string) $category->id)>{{ $category->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="filter-field">
+                <label for="filterStatus">Statut</label>
+                <select id="filterStatus" name="status" onchange="this.form.submit()">
+                    <option value="">Tous</option>
+                    <option value="published" @selected(($filters['status'] ?? '') === 'published')>En ligne</option>
+                    <option value="draft" @selected(($filters['status'] ?? '') === 'draft')>Brouillon</option>
+                </select>
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="btn btn--primary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="m20 20-3.5-3.5"/></svg>
+                    Filtrer
+                </button>
+                @if($hasFilters ?? false)
+                    <a href="{{ route('actualites') }}" class="btn btn--outline">Réinitialiser</a>
+                    <span class="filter-summary">{{ $articles->total() }} résultat(s)</span>
+                @endif
+            </div>
+        </form>
+
         @if(isset($articles) && count($articles) > 0)
             @if(method_exists($articles, 'hasPages') && $articles->hasPages())
                 <div class="pagination-wrap pagination-wrap--top">{{ $articles->links() }}</div>
@@ -605,8 +680,13 @@
         @else
             <div class="empty-state">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4h9l3 3v13H6V4Z"/><path d="M9 9h6M9 13h6M9 17h4"/></svg>
-                <strong>Aucun article pour le moment</strong>
-                <p>Créez votre premier article pour qu'il apparaisse ici.</p>
+                @if($hasFilters ?? false)
+                    <strong>Aucun article ne correspond à ces filtres</strong>
+                    <p>Modifiez la recherche ou <a href="{{ route('actualites') }}">réinitialisez les filtres</a>.</p>
+                @else
+                    <strong>Aucun article pour le moment</strong>
+                    <p>Créez votre premier article pour qu'il apparaisse ici.</p>
+                @endif
             </div>
         @endif
     </div>

@@ -27,7 +27,7 @@ class AppController extends Controller
             ->where('is_published', true)
             ->whereHas('category', fn ($q) => $q->where('slug', 'a-la-une'))
             ->latest()
-            ->take(5)
+            ->take(4)
             ->get();
 
         $recentArticles = Article::with(['category', 'user'])
@@ -332,11 +332,66 @@ class AppController extends Controller
         return redirect()->route('login');
     }
 
-    public function actualites()
+    // Liste des articles du dashboard : filtres côté serveur (recherche, catégorie, statut)
+    public function actualites(Request $request)
     {
+        // Entrées de filtrage : texte uniquement (refuse ?q[]=x), sans caractères de contrôle, longueur bornée
+        $clean = function (string $key, int $max = 100) use ($request): string {
+            $raw = $request->query($key);
+
+            return is_string($raw)
+                ? mb_substr(trim((string) preg_replace('/[\x00-\x1F\x7F]/u', '', $raw)), 0, $max)
+                : '';
+        };
+
+        $q          = $clean('q');
+        $categoryId = $clean('category', 10);
+        $status     = $clean('status', 10);
+
+        // Valeurs autorisées uniquement
+        $categoryId = ctype_digit($categoryId) ? $categoryId : '';
+        $status     = in_array($status, ['published', 'draft'], true) ? $status : '';
+
+        $query = Article::with(['category', 'user'])
+            // Recherche : chaque mot saisi doit apparaître dans le titre, le résumé, le slug ou le contenu
+            ->when($q !== '', function ($query) use ($q) {
+                $tokens = preg_split('/\s+/u', $q, -1, PREG_SPLIT_NO_EMPTY);
+
+                foreach (array_slice($tokens, 0, 6) as $token) {
+                    // Neutralise les jokers LIKE (% et _) saisis par l'utilisateur ; la valeur reste un paramètre lié
+                    $term = '%' . str_replace(['!', '%', '_'], ['!!', '!%', '!_'], $token) . '%';
+
+                    $query->where(function ($w) use ($term) {
+                        $w->whereRaw("title LIKE ? ESCAPE '!'", [$term])
+                          ->orWhereRaw("summary LIKE ? ESCAPE '!'", [$term])
+                          ->orWhereRaw("slug LIKE ? ESCAPE '!'", [$term])
+                          ->orWhereRaw("content LIKE ? ESCAPE '!'", [$term]);
+                    });
+                }
+            })
+            ->when($categoryId !== '', fn ($query) => $query->where('category_id', (int) $categoryId))
+            ->when($status === 'published', fn ($query) => $query->where('is_published', true))
+            ->when($status === 'draft', fn ($query) => $query->where('is_published', false))
+            ->latest()
+            ->orderByDesc('id');
+
+        $perPage  = 10;
+        $articles = (clone $query)->paginate($perPage)->withQueryString();
+
+        // Après une suppression, la dernière page peut devenir vide : retour à la dernière page valide
+        if ($articles->isEmpty() && $articles->currentPage() > 1) {
+            $articles = $query->paginate($perPage, ['*'], 'page', $articles->lastPage())->withQueryString();
+        }
+
         return view('dashboard.actualites', [
-            'articles' => Article::with('category')->latest()->paginate(10),
+            'articles'   => $articles,
             'categories' => Category::orderBy('name')->get(),
+            'filters'    => [
+                'q'        => $q,
+                'category' => $categoryId,
+                'status'   => $status,
+            ],
+            'hasFilters' => $q !== '' || $categoryId !== '' || $status !== '',
         ]);
     }
 

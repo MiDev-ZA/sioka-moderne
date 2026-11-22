@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -52,6 +53,32 @@ class ArticleController extends Controller
         return $slug;
     }
 
+    /**
+     * Enregistre l'image sous son vrai nom dans storage/app/public/articles
+     * et retourne le chemin à stocker en base (ex. "articles/mon-image.jpg").
+     * Si le nom existe déjà, un suffixe -1, -2... est ajouté pour ne rien écraser.
+     */
+    protected function storeImage(UploadedFile $file): string
+    {
+        $name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $name = trim(preg_replace('/[^\p{L}\p{N}._-]+/u', '-', $name), '-._');
+        $name = $name !== '' ? $name : 'image';
+
+        // Extension déduite du contenu réel du fichier (et non du nom envoyé par le navigateur)
+        $extension = strtolower($file->extension());
+
+        $disk = Storage::disk('public');
+        $filename = "{$name}.{$extension}";
+        $i = 1;
+
+        while ($disk->exists("articles/{$filename}")) {
+            $filename = "{$name}-{$i}.{$extension}";
+            $i++;
+        }
+
+        return $file->storeAs('articles', $filename, 'public');
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate($this->rules($request));
@@ -61,7 +88,7 @@ class ArticleController extends Controller
         $validated['is_published'] = $request->boolean('is_published');
 
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('articles', 'public');
+            $validated['image'] = $this->storeImage($request->file('image'));
         }
 
         Article::create($validated);
@@ -82,7 +109,7 @@ class ArticleController extends Controller
             if ($article->image) {
                 Storage::disk('public')->delete($article->image);
             }
-            $validated['image'] = $request->file('image')->store('articles', 'public');
+            $validated['image'] = $this->storeImage($request->file('image'));
         }
 
         $article->update($validated);
